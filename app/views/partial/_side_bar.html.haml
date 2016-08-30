@@ -10,11 +10,11 @@
       %h2{:title => @project.name}= project_name
       .clear
     %ul.menu
-      %li.odd{:name => "coverage"}= link_to 'Coverage', coverage_project_path(@project), :remote => true
       %li{:name => "test_rounds"}= link_to 'Test Rounds', project_test_rounds_path(@project), :remote => true
       %li.odd{:name => "test_suites"}= link_to 'Test Suites', project_test_suites_path(@project), :remote => true
       %li{:name => "test_plans"}= link_to 'Test Plans', project_test_plans_path(@project), :remote => true
       %li.odd{:name => "automation_scripts"}= link_to 'Automation Scripts', project_automation_scripts_path(@project), :remote => true
+      %li.odd{:name => "coverage"}= link_to 'Automation Coverage', coverage_project_path(@project), :remote => true
 
 :javascript
   $(function(){

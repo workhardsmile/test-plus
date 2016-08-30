@@ -1,4 +1,4 @@
-module testplus
+module TestPlus
   class BasicLog
     # log level constant
     FATAL, ERROR, WARN, INFO, DEBUG = 1, 2, 3, 4, 5

@@ -1,0 +1,13 @@
+- @activities.each do |activity|
+  .activity-box
+    .time= in_time_zone(activity.created_at)
+    .activity
+      = link_to activity.user.email, admin_user_path(activity.user.id), :class => "user"
+      %span.action= " scheduled"
+      %span.object
+        = " a new Test Round"
+        - tr = TestRound.find_by_id(activity.auditable_id)
+        - if tr
+          = link_to activity.auditable_id, project_test_round_path(tr.project.id, tr.id)
+          = " for"
+          = link_to tr.project.name, project_test_rounds_path(tr.project.id)

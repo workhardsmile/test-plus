@@ -1,0 +1,16 @@
+!!!
+%html
+  %head
+    %title TestPlus Reload
+    = stylesheet_link_tag "application"
+    = javascript_include_tag "application"
+    = csrf_meta_tags
+  %body
+    = render :partial => 'partial/top_nav'
+    .clearfix
+    #content.container-fluid
+      = render :partial => 'partial/progress_side_bar'
+      .report-content
+        #inner-content
+          = yield
+    = render :partial => 'partial/footer'

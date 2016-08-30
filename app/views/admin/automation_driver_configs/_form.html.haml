@@ -1,0 +1,124 @@
+-if flash[:error]
+  .alert-message.error= flash[:error].html_safe
+
+= form_for ([:admin, @project, @automation_driver_config]) do |f|
+  -if @automation_driver_config.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@automation_driver_config.errors.count, "error")} prohibited this automation_driver_config from being saved:"
+      %ul
+        - @automation_driver_config.errors.full_messages.each do |msg|
+          %li= msg
+  %fieldset
+    %legend= title
+    .clearfix
+      = f.label :name
+      .required *
+      .input
+        = f.text_field :name, :class => "validate[required, funcCall[checkOnlySpace]]"
+    .clearfix
+      = f.label :automation_driver
+      .required *
+      .input
+        = f.select :automation_driver_id, options_from_collection_for_select(AutomationDriver.all, :id, :name_with_version, @automation_driver_config.automation_driver_id), {}, {:class => "chzn-select, validate[required]"}
+    .clearfix
+      = f.label :source_control
+      .required *
+      .input
+        = f.text_field :source_control, :class => "validate[required, funcCall[checkOnlySpace]]"
+    .clearfix
+      = f.label :sc_username, "Username"
+      .input
+        = f.text_field :sc_username, :class => "validate[funcCall[checkOnlySpace]]"
+    .clearfix
+      = f.label :sc_password, "Password"
+      .input
+        = f.text_field :sc_password, :class => "validate[funcCall[checkOnlySpace]]"
+    .clearfix
+      = f.label :source_paths
+      .required *
+      .input
+        %table.source_path
+          %tr
+            %th{:colspan => '4'} 
+              %span#add_sp_btn{:class => 'btn add_source_path'} Add source path
+          %tr
+            %th#local_header Local
+            %th 
+            %th Remote
+            %th
+          %tr#hidden_adc
+            %td 
+              = text_area_tag "source_path[hidden][local]", '', :class => "local validate[required, funcCall[checkOnlySpace]]", :disabled => true
+            %td =>
+            %td 
+              = text_area_tag "source_path[hidden][remote]", '', :class => "remote validate[required, funcCall[checkOnlySpace]]", :disabled => true
+            %td
+              %img{:class => "delete_sp", :src => asset_path("cross-hover.png")}            
+          - @automation_driver_config.source_paths_as_array.each_with_index do |source_path, index|
+            %tr
+              %td 
+                = text_area_tag "source_path[#{index}][local]", "#{source_path['local']}", :class => "local validate[required, funcCall[checkOnlySpace]]"
+              %td =>
+              %td 
+                = text_area_tag "source_path[#{index}][remote]", "#{source_path['remote']}", :class => "remote validate[required, funcCall[checkOnlySpace]]"
+              %td
+                %img{:class => "delete_sp", :src => asset_path("cross-hover.png")}
+    .clearfix
+      = f.label :script_main_path
+      .required *
+      .input
+        = f.text_field :script_main_path, :class => "validate[required, funcCall[checkOnlySpace]]"                
+
+    .actions
+      = f.submit 'Save', :class => 'btn primary', :id => "submit"
+      = link_to 'Back', admin_project_automation_driver_configs_path(@project), :class => 'btn'
+
+:javascript
+  $(function(){
+    $("#new_automation_driver_config").validationEngine({promptPosition : "bottomRight", scroll: false});
+    $(".edit_automation_driver_config").validationEngine({promptPosition : "bottomRight", scroll: false});
+    $('.delete_sp').click(function(){
+      $(this).parent().parent().children("td").children(".local").validationEngine('hidePrompt');
+      $(this).parent().parent().children("td").children(".remote").validationEngine('hidePrompt');
+      $(this).parent().parent().remove();
+      $("#automation_driver_config_script_main_path").validationEngine('hidePrompt');
+    });
+    var sp_number = 0;
+    $('.add_source_path').click(function(){
+      $("#local_header").validationEngine('hidePrompt');
+      var ele = $("#hidden_adc").clone();
+      ele.appendTo("table.source_path tbody").show("slow");
+      ele.removeAttr("id");
+      ele.removeAttr("style");
+      var prev_id = ele.prev().children("td").children(".local").attr("id");
+      if (prev_id == "source_path_hidden_local") {
+        var current_id = 0;
+      } else {
+        var current_id = parseInt(prev_id.split("_")[2]) + 1;
+      }
+      ele.children("td").children(".local").attr("id", "source_path_" + current_id + "_local").attr("name", "source_path[" + current_id + "][local]").removeAttr("disabled");
+      ele.children("td").children(".remote").attr("id", "source_path_" + current_id + "_remote").attr("name", "source_path[" + current_id + "][remote]").removeAttr("disabled");
+      ele.children("td").last().children(".delete_sp").bind('click', function(){
+        $(this).parent().parent().children("td").children(".local").validationEngine('hidePrompt');
+        $(this).parent().parent().children("td").children(".remote").validationEngine('hidePrompt');
+        $(this).parent().parent().remove();
+        $("#automation_driver_config_script_main_path").validationEngine('hidePrompt');
+      });
+      $("form").validationEngine('detach');
+      $("form").validationEngine({promptPosition : "bottomRight", scroll: false});
+      $("#automation_driver_config_script_main_path").validationEngine('hidePrompt');
+    })
+    $("#submit").click(function(){
+      validation_result = true;
+      if(!$("form").validationEngine('validate')) {
+        validation_result = false;
+      }
+      if($(".local").length == 1) {
+        $("#local_header").validationEngine('showPrompt', '* Please add at least one path.', 'alert', 'bottomRight');
+        $("form").validationEngine('detach');
+        $("form").validationEngine({promptPosition : "bottomRight", scroll: false});
+        validation_result = false;
+      }
+      return validation_result;
+    })
+  });

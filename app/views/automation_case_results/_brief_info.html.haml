@@ -1,0 +1,37 @@
+- test_round = @automation_script_result.test_round
+- os = image_tag("#{test_round.operation_system.name}.png", class: "ui-icon")
+- os = os + "  -  #{test_round.operation_system.name_with_version}"
+- browser = image_tag("#{test_round.browser.name}.png", class: "ui-icon")
+- browser = browser + "  -  #{test_round.browser.name_with_version}"
+- if @automation_script_result.slave_assignments.last && @automation_script_result.slave_assignments.last.slave
+  - slave = @automation_script_result.slave_assignments.last.slave.name  
+- else
+  - slave = 'N/A'
+- if @automation_script_result.end?
+  - if @automation_script_result.error_type
+    - triage = link_to "#{@automation_script_result.error_type.name}","#", :id => "triage-result","remote-data" => "/automation_script_results/#{@automation_script_result.id}/view_triage_result"
+  - else
+    - triage = link_to "Click to triage","#", :id => "triage-result","remote-data" => "/automation_script_results/#{@automation_script_result.id}/add_triage_result"
+- else
+  - triage = 'N/A'
+
+- branch_name = test_round.branch_name.nil? ? "master" : test_round.branch_name
+- parameter = test_round.parameter.nil? ? "" : test_round.parameter
+- parameter_dislay = (parameter.length >= 37) ? parameter.slice(0,37).concat("...") : parameter
+- parameter_html = content_tag(:p, parameter_dislay, :title=>parameter) 
+- left_titles = ['Case Id:', 'Result:','OS:','Environment','Triage Result:']
+- left_values = [@automation_case_result.case_id, @automation_case_result.result, os, test_round.test_environment.name, triage]
+- right_titles = ['Priority:','Slave:', 'Browser:', 'Branch:','Parameter:']
+- right_values = [@automation_case_result.priority, slave, browser, branch_name, parameter_html]
+= render :partial => "partial/brief_info", :locals => {:left_titles => left_titles, :left_values => left_values, :right_titles => right_titles, :right_values => right_values}
+
+:javascript  
+  $("a.#triage-result").click(function() {
+    $.fancybox({
+        width: 400,
+        height: 400,
+        autoSize: false,
+        href: $(this).attr("remote-data"),
+        type: 'ajax'
+    }); 
+  });

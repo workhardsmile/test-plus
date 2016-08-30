@@ -1,0 +1,31 @@
+.edit-automation-note
+  .row.detail
+    .span12.columns
+      %h3= "Edit Automation Script Note"
+  .row
+    .alert-message.block-message.error{:style => "display:none"}
+  .row
+    = form_tag("/automation_scripts/#{@automation_script.id}/save_note",{:id => "save_note",:remote=>true}) do
+      %fieldset
+        .clearfix
+          = label_tag 'Script Note'
+          .input
+            - if @automation_script.note
+              = text_area_tag 'note', @automation_script.note, rows: 10, style: "width: 500px"
+            - else
+              = text_area_tag 'note', nil, placeholder: "No Automation Script Note.", rows: 10, style: "width: 500px"
+        .actions
+          = submit_tag("Save", :class => 'btn primary')
+          %input.btn.cancel_button{:type => "button", :value => "Cancel"}
+
+:javascript
+  $("#save_note").validationEngine()
+
+  $(function(){
+  
+    $(".cancel_button").click(function(){
+      $.fancybox.close();      
+    })
+
+  });
+

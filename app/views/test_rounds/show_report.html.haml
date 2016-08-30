@@ -1,0 +1,201 @@
+.row.sub-header
+  .span12.columns
+    %img.big-icon{:src => asset_path("#{@test_round.result}.png")}
+    %h2
+      =link_to "Test Rounds", project_test_rounds_path(@project), :remote => true
+      %span= " / "    
+      =link_to "#{@test_round.test_type.name}##{@test_round.id}", project_test_round_path(@project, @test_round), :remote => true
+      %span= " / Test Report"    
+  .span3#right
+    -if can? :create, TestRound and @test_round.state == 'completed'            
+      #dropdown-1.dropdown.dropdown-tip
+        %ul.dropdown-menu
+          %li
+            %a.export_to_csv_btn{:href => "#","url" => "/functional/generate_automation_results_report.csv", "test_round_id" => "#{@test_round.id}", :remote => true} Export to CSV
+            =link_to "Show Test Report", project_test_round_show_report_path(@project,@test_round)
+          -unless @test_round.exported_to_testlink?
+            %li
+              %a.save_to_testlink{:href => "#"} Save to Testlink
+          %li
+            %a.config_notify_email{:href => "#", "remote-data" => "/test_rounds/#{@test_round.id}/config_notify_email", :remote => true}Send Notify Email
+      %a.btn.primary{"data-dropdown" => "#dropdown-1"} Custom Actions
+
+
+= render 'brief_info'
+.list-content-box
+
+  .row
+    .span6.columns
+      #result_chart
+
+    .span10.columns
+      #failed_analysis_chart
+
+:javascript
+
+$(function() {
+
+  $(document).ready(function() {
+    $('#result_chart').highcharts({
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: 'Test Result'
+      },
+      tooltip: {
+        enabled: false
+      },
+      legend: {
+        enabled: false
+      },
+      xAxis: {
+        type: 'category',
+        labels: {
+          rotation: -45,
+          style: {
+            fontSize: '11px',
+            fontFamily: 'Verdana, sans-serif'
+          }
+        }
+      },
+      yAxis: {
+        min: 0,
+        minTickInterval: 1,
+        title: {
+          text: 'Number of Test Cases'
+        }
+      },
+
+      series: [{
+        name: '',
+        colorByPoint: true,
+        data: [{
+          name: 'Pass',
+          y: #{
+            @test_round.pass_count
+          },
+          color: '#06b355'          
+        }, {
+          name: 'Failed',
+          y: #{
+            @test_round.failed_count
+          },
+          color: '#b3060e'
+        }, {
+          name: 'Not-Run',
+          y: #{
+            @test_round.not_run_count
+          },
+          color: '#ac06b3'
+        }],
+        dataLabels: {
+          enabled: true,          
+          color: '#4d759e',        
+          formatter: function() {
+            if (this.y != 0) {
+              return this.y;
+            }
+          },
+          style: {
+            fontSize: '13px',
+            fontFamily: 'Verdana, sans-serif'
+          }
+        }        
+      }]
+    });
+
+    $('#failed_analysis_chart').highcharts({
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: 'Failed Reason Analysis'
+      },
+      xAxis: {
+        type: 'category',
+        labels: {
+          rotation: -45,
+          style: {
+            fontSize: '11px',
+            fontFamily: 'Verdana, sans-serif'
+          }
+        }
+      },
+      yAxis: {
+        min: 0,
+        minTickInterval: 1,
+        title: {
+          text: 'Number of Test Cases'
+        }
+      },
+      legend: {
+        enabled: false
+      },
+      tooltip: {
+        enabled: false
+      },
+
+      series: [{
+        name: 'Failed Cases',
+        colorByPoint: true,
+        data: [{
+          name: 'Product Error',
+          y: #{
+            @test_round.failed_count
+          },
+          color: '#b3060e'
+        }, {
+          name: 'Framework Issue',
+          y: #{
+            @triage_result_analysis['Framework Issue']
+          }
+        }, {
+          name: 'Dynamic Issue',
+          y: #{
+            @triage_result_analysis['Dynamic Issue']
+          },
+        }, {
+          name: 'Environment Error',
+          y: #{
+            @triage_result_analysis['Environment Error']
+          }
+        }, {
+          name: 'Data Issue',
+          y: #{
+            @triage_result_analysis['Data Issue']
+          }
+        }, {
+          name: 'Product Change',
+          y: #{
+            @triage_result_analysis['Product Change']
+          }
+        }, {
+          name: 'Script Issue',
+          y: #{
+            @triage_result_analysis['Script Issue']
+          }
+        }, {
+          name: 'Others',
+          y: #{
+            @triage_result_analysis['Other']
+          }
+        }],
+
+        dataLabels: {
+          enabled: true,
+          color: '#4d759e',
+          formatter: function() {
+            if (this.y != 0) {
+              return this.y;
+            }
+          },
+          style: {
+            fontSize: '13px',
+            fontFamily: 'Verdana, sans-serif'
+          }
+        }
+      }]
+    });
+  });
+});

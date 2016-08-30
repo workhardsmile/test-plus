@@ -1,0 +1,45 @@
+-if flash[:error]
+  .alert-message.error= flash[:error].html_safe
+
+= form_for([:admin, @service_project_mapping]) do |f|
+  -if @service_project_mapping.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@service_project_mapping.errors.count, "error")} prohibited this config from being saved:"
+      %ul
+        - @service_project_mapping.errors.full_messages.each do |msg|
+          %li= msg
+  %fieldset
+    %legend= title
+    .clearfix
+      = f.label :service_name, "Service Name"
+      .required *
+      .input
+        = f.text_field :service_name, :class => "validate[required, funcCall[checkOnlySpace]]"
+    .clearfix
+      = f.label :project_mapping_name, "Project Mapping"
+      .required *
+      .input
+        = f.text_field :project_mapping_name, :class => "validate[required, funcCall[checkOnlySpace]]"
+    .clearfix
+      = f.label :project_id, "Project"
+      .required *
+      .input
+        = f.select :project_id, options_from_collection_for_select(Project.all, :id, :name, @service_project_mapping.project_id), {}, {:class => "chzn-select, validate[required]"}
+    .clearfix
+      = f.label "Active"
+      .input.onoffswitch
+        = f.check_box :active, :class => "onoffswitch-checkbox"
+        %label.onoffswitch-label{:for => "service_project_mapping_active"}
+          %span.onoffswitch-inner
+          %span.onoffswitch-switch
+
+
+    .actions
+      = f.submit 'Save', :class => 'btn primary'
+      = link_to 'Back', admin_service_project_mappings_path, :class => 'btn'
+
+:javascript
+  $(function(){
+    $("#new_browser").validationEngine({promptPosition: "bottomRight", scroll: false});
+    $(".edit_browser").validationEngine({promptPosition: "bottomRight", scroll: false});
+  })

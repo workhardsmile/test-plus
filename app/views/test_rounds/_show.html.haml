@@ -1,0 +1,137 @@
+.row.sub-header
+  .span12.columns
+    %img.big-icon{:src => asset_path("#{@test_round.result}.png")}
+    %h2
+      =link_to "Test Rounds", project_test_rounds_path(@project), :remote => true
+      %span= " / #{@test_round.test_type.name}##{@test_round.id}"    
+  .span3#right
+    -if can? :create, TestRound and @test_round.state == 'completed'            
+      #dropdown-1.dropdown.dropdown-tip
+        %ul.dropdown-menu
+          %li
+            %a.export_to_csv_btn{:href => "#","url" => "/functional/generate_automation_results_report.csv", "test_round_id" => "#{@test_round.id}", :remote => true} Export to CSV
+            =link_to "Show Test Report", project_test_round_show_report_path(@project,@test_round)
+          -unless @test_round.exported_to_testlink?
+            %li
+              %a.save_to_testlink{:href => "#"} Save to Testlink
+          %li
+            %a.config_notify_email{:href => "#", "remote-data" => "/test_rounds/#{@test_round.id}/config_notify_email", :remote => true}Send Notify Email
+      %a.btn.primary{"data-dropdown" => "#dropdown-1"} Custom Actions
+= render 'brief_info'
+.list-content-box
+  = render :partial => 'automation_script_results/list', :locals => {:project => @project, :automation_script_results => @automation_script_results, :test_round => @test_round, :search => @search}
+  
+-unless current_user.nil?
+  #save_to_testlink_info.modal.fade{:style => "display: none; "}
+    .modal-header
+      %h3 Save test result to Testlink
+    .alert-message.error{:style => "display: none; "}
+      fix the missing field highlighted in red
+    .clearfix  
+      = form_tag("/projects/#{@test_round.project.id}/test_rounds/#{@test_round.id}/save_to_testlink",{:remote => true,:onsubmit => "return(validateForm(this));",:id => "save_to_testlink_form"}) do
+        %fieldset
+          .clearfix
+            = label_tag 'Testlink Project Name'
+            .required *
+            .input
+              = text_field_tag 'project_name', @test_round.project.test_link_name, {:id=> 'required'}
+          .clearfix
+            = label_tag 'Test Plan Name'
+            .required *          
+            .input
+              = text_field_tag 'test_plan_name',nil , {:id=> 'required'}
+          .clearfix
+            = label_tag 'Build Name'
+            .required *
+            .input
+              = text_field_tag 'build_name',nil , {:id=> 'required'}
+          .clearfix
+            = label_tag 'Platfrom Name'
+            .input
+              = text_field_tag 'platform_name'
+          .clearfix
+            = label_tag 'Dev Key'
+            .required *
+            .input
+              = text_field_tag 'dev_key',nil , {:id=> 'required'}
+          .clearfix
+            = label_tag 'Email Notification'
+            .required *     
+            .input
+              = text_field_tag 'email',current_user.email,{:id=> 'required'}
+          .modal-footer
+            %input.btn.primary.confirm_save{:type => "button", :value => "Save to Testlink",:style=>"float: right;"}
+            %input.btn.cancel_button{:type => "button", :value => "Cancel",:style=>"float: right;"}
+
+
+:javascript
+
+  $("a.config_notify_email").click(function() {
+    $.fancybox({        
+        width: 400,
+        height: 400,
+        autoSize: false,        
+        href: $(this).attr("remote-data"),
+        type: 'ajax'
+    }); 
+  });
+
+  $("a.export_to_csv_btn").click(function(){
+    $("#dropdown-1").dropdown("hide");
+    var myAjaxVariable = null;
+    var export_btn = $(this);
+    $.ajax({
+     url : $(export_btn).attr("url"),
+     type : 'POST',
+     data : {test_round_id:$(export_btn).attr("test_round_id")},
+     async : false,
+     success : function(response) {myAjaxVariable = response;},
+      });
+     window.open( "data:text/csv;charset=utf-8," + escape(myAjaxVariable))
+  });
+
+  function validateForm(f){
+    var selected = true;
+    cleanFormError();
+    $('#save_to_testlink_form #required').each(function(idx, elem){
+    if($(elem).val() == "")
+    {
+      $(elem).parent().addClass('error');
+      selected = false;
+    }
+    });
+    return selected;
+  }
+
+  function cleanFormError()
+  {
+    $('#save_to_testlink_form .error').each(function(idx, elem){
+      $(elem).removeClass('error');          
+    });
+  }
+
+  $(function(){
+    var save_button = $('a.save_to_testlink');
+    var save_popup = $('#save_to_testlink_info');
+    $("a.save_to_testlink:not(:disabled)").click(function(){
+      $("#dropdown-1").dropdown("hide");
+      $('#save_to_testlink_form')[0].reset();
+      save_popup.css("display", "block");
+      $(this).addClass("disabled");
+      $(this).disabled = true;
+      $('.cancel_button').live('click',function(e){
+        cleanFormError();
+        save_popup.css("display", "none");
+        save_button.removeClass("disabled");
+        save_button.disabled = false;
+      });
+      $('.confirm_save').live('click',function(e){
+        if (validateForm($('#save_to_testlink_form')))
+        {
+          $('#save_to_testlink_form').submit()
+          save_popup.css("display", "none");
+          save_button.remove();
+        }
+      });
+    });
+  })

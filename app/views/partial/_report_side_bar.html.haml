@@ -1,0 +1,64 @@
+.sidebar
+  .project-name
+    %img.project-icon{:src => asset_path('report.png')}
+    %h2 Reports
+    .clear
+  %ul.menu
+    %li.odd{:name => "/dre/overall"}= link_to 'Executive Quadrant', dre_overall_path, :remote => true
+    %li{:name => "/dre/history_overall"}= link_to 'DRE History Overall', dre_history_overall_path, :remote => true
+    %li.odd{:name => "/dre/history_markets"}= link_to 'DRE History Markets', dre_history_markets_path, :remote => true
+    %li{:name => "/dre/customer_impact_markets"}= link_to 'Customer Impact Markets', dre_customer_impact_markets_path, :remote => true
+    %li.odd{:name => "/dre/customer_impact_other"}= link_to 'Customer Impact Others', dre_customer_impact_other_path, :remote => true
+    %li{:name => "/dre/ext_found_bugs_by_day"}= link_to 'Ext Prod Bugs by Day', dre_ext_found_bugs_by_day_path, :remote => true
+    %li.odd{:name => "/dre/project/endurance"}= link_to 'Endurance Charts', "/dre/project/endurance", :remote => true
+    %li{:name => "/dre/project/camps"}= link_to 'Camps Charts', "/dre/project/camps", :remote => true
+    %li.odd{:name => "/dre/project/sports"}= link_to 'Team Sports Charts', "/dre/project/sports", :remote => true
+    %li{:name => "/dre/project/swimming"}= link_to 'Swimming Charts', "/dre/project/swimming", :remote => true
+    %li.odd{:name => "/dre/project/membership"}= link_to 'Membership Charts', "/dre/project/membership", :remote => true
+    %li{:name => "/dre/project/platform"}= link_to 'Platform Charts', "/dre/project/platform", :remote => true
+    %li.odd{:name => "/dre/project/framework"}= link_to 'Framework Charts', "/dre/project/framework", :remote => true
+    %li= link_to 'Play Slide Show', "/dre/slide"
+  %ul.play-menu{:style => "display:none;"}
+    - @play_list.each do |play_item|
+      %li= link_to play_item[:title], play_item[:path]
+
+:javascript
+  $(function(){
+    if ($("ul.menu > li[class*='activate']").length <= 0){
+      current_tab = location.pathname;
+      $("ul.menu > li[name*='"+current_tab+"']").addClass("activate");
+    }
+    
+    var first_time = true;
+    var pre_url = null;
+
+    var menu = $("a[data-remote]");
+    //if ($.address.path()!=location.pathname&&(location.pathname.match("/coverage")!=null||location.pathname.match("/dre/overall")!=null)){
+      //$.address.path(location.pathname);
+    // }
+    if (window.ActiveXObject){
+      $.address.init(function(event){
+        menu.address();
+      });
+    }
+    else{
+      $.address.state("/").init(function(event){
+        menu.address();
+      });
+    }
+    $.address.internalChange(function(event){
+      $(this).attr("href","#");
+      if (event.value!=null) {
+        //$.getScript(event.value);
+      }
+    }).externalChange(function(event){
+      if (first_time == true) {
+        first_time = false;
+      }else{
+        if ((pre_url != "/") || (pre_url == "/" && $.address.value() == "/")) {
+          $.getScript($.address.value());
+        }
+      }
+      pre_url = $.address.value();
+    }).history(true);
+  })

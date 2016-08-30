@@ -1,0 +1,10 @@
+var el = $('.send-notification-email');
+<% if flash[:notice] %>
+  var errors = $('<span />');  
+  errors.append('<%= escape_javascript( flash[:notice] ) %>');    
+  el.find('.alert-message.block-message').addClass('error').show().html(errors);
+<% else %>
+  $('.send-notification-email input.send').hide();
+  el.find('.alert-message.block-message').addClass('success').show().html('<p>email has been sent successfully</p>');
+<% end %>
+

@@ -1,0 +1,10 @@
+%h3 Selete Projects to get Automation Status Report
+= form_tag '/functional/generate_automation_status_report.csv' do
+  %fieldset
+    .clearfix
+      - Project.where(:monitor_flag => true).order("dashboard_name ASC").all.each do |project|
+        .slave_project
+          = check_box_tag 'projects[]', project.name, true, {:id => "projects_#{project.name}"}
+          = label_tag "slave_projects_#{project.name}", project.dashboard_name
+    .actions
+      = submit_tag 'Generate', :class => 'btn primary'

@@ -1,0 +1,27 @@
+---
+- :title: Executive Quadrant
+  :path: /dre/overall
+- :title: DRE History Overall
+  :path: /dre/history_overall
+- :title: DRE History Markets
+  :path: /dre/history_markets
+- :title: Customer Impact Markets
+  :path: /dre/customer_impact_markets
+- :title: Customer Impact Others
+  :path: /dre/customer_impact_other
+- :title: Ext Prod Bugs By Day
+  :path: /dre/ext_found_bugs_by_day
+- :title: Endurance Charts
+  :path: /dre/project/endurance
+- :title: Camps Charts
+  :path: /dre/project/camps
+- :title: Team Sports Charts
+  :path: /dre/project/sports
+- :title: Swimming Charts
+  :path: /dre/project/swimming
+- :title: Membership Charts
+  :path: /dre/project/membership
+- :title: Platform Charts
+  :path: /dre/project/platform
+- :title: Framework Charts
+  :path: /dre/project/framework

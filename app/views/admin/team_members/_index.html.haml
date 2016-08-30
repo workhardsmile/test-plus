@@ -1,0 +1,79 @@
+=link_to "<< Time Cards", admin_time_cards_overall_path
+
+- if can?(:manage, TeamMember)
+  %h3 Upload a whole Team Member list
+  = form_tag(admin_team_members_upload_team_member_list_path, {:multipart => true}) do
+    = file_field_tag "file"
+    = submit_tag 'Upload', :class => 'btn primary'
+
+.page-header
+  %h2 Listing Oracle Time Card Members
+  %button.btn.info#search-button Search
+
+#search-form{:style => 'display:none'}
+  = form_for @search, :url => admin_team_members_path, :html => {:method => :get} do |f|
+    .clearfix
+      = f.label "any column"
+      .input
+        = f.text_field :name_or_display_name_or_email_or_manager_or_location_or_country_contains
+    .actions
+      = f.submit 'Search', :class => 'btn'
+
+%table.team-members
+  %tr
+    %th.name= sort_link @search, :name, {}, {:remote => true}
+    %th.display-name= sort_link @search, :display_name, "Display Name", {}, {:remote => true}
+    %th.email= sort_link @search, :email, {}, {:remote => true}
+    %th.cc-list= sort_link @search, :cc_list, {}, {:remote => true}
+    %th.manager= sort_link @search, :manager, {}, {:remote => true}
+    %th.location= sort_link @search, :location, {}, {:remote => true}
+    %th.country= sort_link @search, :country, {}, {:remote => true}
+    %th.project= sort_link @search, :project, {}, {:remote => true}
+    %th.position= sort_link @search, :position, {}, {:remote => true}
+    %th.start-date= sort_link @search, :start_date, {}, {:remote => true}
+    %th.turn-date= sort_link @search, :turn_date, {}, {:remote => true}
+    %th
+
+  - if @team_members.nil? or @team_members.count == 0
+    %tr
+      %td{:colspan => "12"}
+        %h4 No data
+  - else
+    - @team_members.each do |team_member|
+      %tr
+        %td.name= team_member.name
+        %td.display-name= team_member.display_name
+        %td.email= team_member.email
+        %td.cc-list= team_member.cc_list
+        %td.manager= team_member.manager
+        %td.location= team_member.location
+        %td.country= team_member.country
+        %td.project= team_member.project
+        %td.position= team_member.position
+        %td.start-date= team_member.start_date
+        %td.turn-date= team_member.turn_date
+        %td.table-actions
+          %a{:href => edit_admin_team_member_path(team_member)}
+            %img{:src => asset_path('edit.png'), :onmouseover => "this.src='#{asset_path 'edit-hover.png'}'", :onmouseout => "this.src='#{asset_path 'edit.png'}'"}
+          %a{:href => admin_team_member_path(team_member), "data-confirm" => "Are you sure?", 'data-method' => "delete", :rel => "nofollow"}
+            %img{:src => asset_path('cross.png'), :onmouseover => "this.src='#{asset_path 'cross-hover.png'}'", :onmouseout => "this.src='#{asset_path 'cross.png'}'"}
+
+:css
+  table.team-members{table-layout: fixed;}
+  table.team-members td{word-wrap:break-word;}
+  th.name, td.name{width: 100px;}
+  th.display-name, td.display-name{width: 100px;}
+  th.email, td.email{width: 140px}
+  th.cc-list, td.cc-list{width: 300px}
+  th.manager, td.manager{width: 100px}
+  th.location, td.location{width: 100px}
+  th.country, td.country{width: 80px}
+  th.position, td.position{width: 100px}
+  th.project,td.project{width: 100px}
+  th.start-date, td.start-date{width: 100px}
+  th.turn-date, td.turn-date{width: 100px}
+
+:javascript
+  $('#search-button').click(function(){
+    $('#search-form').toggle('slow');
+  });

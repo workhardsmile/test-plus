@@ -1,0 +1,9 @@
+class CreateErrorTypes < ActiveRecord::Migration
+  def change
+    create_table :error_types do |t|
+      t.string :name
+
+      t.timestamps
+    end
+  end
+end

@@ -1,0 +1,41 @@
+.page-header
+  %h2
+    Test Suites
+    %small= "#{@project.test_suites.count} in total"
+    -if can? :create, TestSuite, {:project_id => project.id}
+      = link_to 'New Test Suite', new_project_test_suite_path(project), :class => 'btn primary'
+  
+  = form_for @search, :url => project_test_suites_path, :remote => true do |f|
+    %span.search
+      = f.text_field :name_or_test_type_name_or_creator_email_contains, {:id => 'search'}
+      = f.submit '', {:class => 'btn', :id => 'searchsubmit'}
+
+%table
+  %tr
+    %th=sort_link search, :name, {}, {:remote => true}
+    %th=sort_link search, :test_type_name, "Test type", {}, {:remote => true}
+    %th=sort_link search, :creator_email, "Last Modified", {}, {:remote => true}
+    %th
+  - if test_suites.nil? or test_suites.count == 0
+    %tr
+      %td{:colspan => "3"}
+        %h4 No data
+  - else
+    - test_suites.order('name asc').each do |test_suite|
+      %tr
+        %td
+          - ts_name = test_suite.name
+          - if ts_name && ts_name.length >= 100
+            - ts_name = ts_name.slice(0,100).concat("...")
+          %span= link_to ts_name, project_test_suite_path(project, test_suite), :remote => true, :title => test_suite.name
+        %td= test_suite.test_type.name
+        %td= test_suite.creator.display_name
+        - show_url, edit_url, delete_url = nil
+        - if can? :read, TestSuite, {:project_id => project.id}
+          - show_url = project_test_suite_path(project,test_suite)
+        - if can? :update, TestSuite, {:project_id => project.id}
+          - edit_url = edit_project_test_suite_path(project, test_suite)
+        - if can? :delete, TestSuite, {:project_id => project.id}
+          - delete_url = project_test_suite_path(project, test_suite)       
+        = render :partial => 'partial/table_actions', :locals => {:show_url => show_url, :edit_url => edit_url, :delete_url => delete_url, :confirm_msg => "Delete Test Suite will also delete all Test Rounds refering this Test Suite, are you sure to delete?"}
+= paginate test_suites

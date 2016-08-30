@@ -1,0 +1,36 @@
+.page-header
+  %h3 Service Project Mappings
+.browsers
+  %table.zebra-striped
+    %tr
+      %th Service Name
+      %th CI Mapping Name
+      %th Project
+      %th Status
+      %th
+    - if @service_project_mappings.blank?
+      %tr
+        %td{:colspan => "5"}
+          %h4 No data
+    - else
+      - @service_project_mappings.each do |s|
+        %tr
+          %td= s.service_name
+          %td= s.project_mapping_name
+          %td= s.project.name
+          %td
+            - if s.active
+              %span{:style => "color: #0000FF"}
+                =  "Active"
+            - else
+              %span{:style => "color: #EE3B3B"}
+                = "Inactive"
+          - edit_url, delete_url = nil
+          - if can? :delete, ServiceProjectMapping
+            - delete_url = admin_service_project_mapping_path(s)
+          - if can? :update, ServiceProjectMapping
+            - edit_url = edit_admin_service_project_mapping_path(s)
+          = render :partial => 'partial/table_actions', :locals => {:show_url => nil, :edit_url => edit_url, :delete_url => delete_url }
+
+- if can? :create, ServiceProjectMapping
+  = link_to 'New Mapping', new_admin_service_project_mapping_path, :class => 'btn primary'

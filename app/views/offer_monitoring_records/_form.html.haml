@@ -1,0 +1,22 @@
+= form_for @offer_monitoring_record do |f|
+  -if @offer_monitoring_record.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@offer_monitoring_record.errors.count, "error")} prohibited this offer_monitoring_record from being saved:"
+      %ul
+        - @offer_monitoring_record.errors.full_messages.each do |msg|
+          %li= msg
+
+  .field
+    = f.label :timestamp
+    = f.datetime_select :timestamp
+  .field
+    = f.label :market
+    = f.text_field :market
+  .field
+    = f.label :user_email
+    = f.text_field :user_email
+  .field
+    = f.label :order_id
+    = f.text_field :order_id
+  .actions
+    = f.submit 'Save'

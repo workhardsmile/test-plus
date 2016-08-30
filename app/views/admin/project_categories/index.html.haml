@@ -1,0 +1,31 @@
+.page-header
+  %h2 Project Categories
+
+%table.zebra-striped
+  %tr
+    %th Name
+    %th Created At
+    %th Updated At
+    %th
+
+  - if @project_categories.nil? or @project_categories.count == 0
+    %tr
+      %td{:colspan => "4"}
+        %h4 No data
+  - else
+    - @project_categories.each do |project_category|
+      %tr
+        %td= project_category.name
+        %td= in_time_zone(project_category.created_at)
+        %td= in_time_zone(project_category.updated_at)
+        - show_url, edit_url, delete_url = nil
+        - if can? :update, ProjectCategory
+          - edit_url = edit_admin_project_category_path(project_category)        
+        - if can? :delete, ProjectCategory
+          - delete_url = admin_project_category_path(project_category)  
+          - warning_msg = "This project category cannot be removed because some projects are assigned to it." if project_category.has_associated_projects?
+        = render :partial => 'partial/table_actions', :locals => {:show_url => show_url, :edit_url => edit_url, :delete_url => delete_url, :warning_msg => warning_msg}
+%br
+
+- if can? :create, ProjectCategory
+  = link_to 'New Project category', new_admin_project_category_path, :class => 'btn primary'

@@ -1,0 +1,10 @@
+.page-header
+  %h2
+    Test Plans
+    %small= "#{@project.test_plans.count} in total"
+  = form_for @search, :url => project_test_plans_path, :remote => true do |f|
+    %span.search
+      = f.text_field :name_or_status_or_version_contains, {:id => 'search'}
+      = f.submit '', {:class => 'btn', :id => 'searchsubmit'}
+
+= render :partial => 'list', :locals => {:test_plans => @test_plans, :project => @project, :search => @search}

@@ -1,0 +1,10 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:x.="http://xml.WebService.AutomationDashboard/">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <TestPlan>
+      <TestRoundId>#TESTROUNDID#</TestRoundId>
+      <TestPlanName>#TESTPLANNAME#</TestPlanName>
+      <Status>#STATUS#</Status>
+    </TestPlan>
+  </soapenv:Body>
+</soapenv:Envelope>

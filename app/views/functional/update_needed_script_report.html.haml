@@ -1,0 +1,14 @@
+= form_tag '/functional/generate_update_needed_script_report.csv' do
+  %fieldset
+    %legend Get Test Cases marked as Update Needed
+    .clearfix
+      = label_tag 'Project Name'
+    .clearfix
+      = select_tag "project", options_for_select(Project.all)
+    .clearfix
+      = label_tag 'to'
+      .input
+        = text_field_tag 'to'
+    .actions
+      = submit_tag 'Generate'
+= select_tag "triage_result", options_for_select({"N/A" => "N/A", "Script Error" => "Script Error", "Product Error" => "Product Error"})

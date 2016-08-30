@@ -1,0 +1,32 @@
+.page-header.detail
+  %h3
+    Slave Assignments
+    %small= "#{@slave.slave_assignments.count} in total"
+  = form_for search, :url => slave_slave_assignments_path(@slave), :remote => true do |f|
+    %span.search
+      = f.text_field :status_contains, {:id => 'search'}
+      = f.submit '', {:class => 'btn', :id => 'searchsubmit'}
+
+%table.zebra-striped
+  %tr
+    %th=sort_link search, :automation_script_result_id, "Automation Script Result Id", {}, {:remote => true}
+    %th=sort_link search, :status, "Status", {}, {:remote => true}
+    %th=sort_link search, :driver, "Driver", {}, {:remote => true}
+    %th=sort_link search, :created_at, "Created At", {}, {:remote => true}
+    %th=sort_link search, :uodated_at, "Updated At", {}, {:remote => true}
+
+  - if @slave_assignments.nil? or @slave_assignments.count == 0
+    %tr
+      %td{:colspan => "5"}
+        %h4 No data
+  - else
+    -@slave_assignments.each do |sa|
+      %tr
+        %td
+          =link_to "#{sa.automation_script_result_id}", test_round_automation_script_result_path(sa.automation_script_result.test_round, sa.automation_script_result)
+        %td= sa.status
+        %td= sa.automation_script.automation_driver_config.automation_driver.name
+        %td= sa.created_at
+        %td= sa.updated_at
+
+= paginate @slave_assignments

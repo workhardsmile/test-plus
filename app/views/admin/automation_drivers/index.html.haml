@@ -1,0 +1,26 @@
+.page-header
+  %h3 Listing Automation Drivers
+
+%table.zebra-striped
+  %tr
+    %th Name
+    %th Version
+    %th
+  - if @automation_drivers.blank?
+    %tr
+      %td{:colspan => "3"}
+        %h4 No data
+  - else
+    - @automation_drivers.each do |ad|
+      %tr
+        %td= ad.name
+        %td= ad.version
+        - show_url, edit_url, delete_url = nil
+        - if can? :update, AutomationDriver
+          - edit_url = edit_admin_automation_driver_path(ad)
+        -# if can? :delete, AutomationDriver
+          -# delete_url = admin_automation_driver_path(ad)
+        = render :partial => 'partial/table_actions', :locals => {:show_url => show_url, :edit_url => edit_url, :delete_url => delete_url }
+
+- if can? :create, AutomationDriver
+  = link_to 'New Automation Driver', new_admin_automation_driver_path, :class => 'btn primary'

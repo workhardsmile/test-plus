@@ -1,0 +1,11 @@
+!!!
+%html
+  %head
+    %title TestPlus Reload
+    = stylesheet_link_tag "application"
+    = javascript_include_tag "application"
+    = yield :javascript_include
+    = csrf_meta_tags
+  %body
+    #inner-content
+      = yield

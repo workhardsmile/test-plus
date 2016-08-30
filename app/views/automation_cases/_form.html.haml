@@ -1,0 +1,8 @@
+= form_for [@automation_script, @automation_case] do |f|
+  -if @automation_case.errors.any?
+    #error_explanation
+      - @automation_case.errors.messages.each do |attr, msg|
+        %span.help-inline{:id => "automation_case_#{attr}"}= msg[0]
+
+  .actions
+    = f.submit 'Save'

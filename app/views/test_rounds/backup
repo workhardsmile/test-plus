@@ -1,0 +1,59 @@
+.send-notification-email
+  .row.detail
+    .span8.columns
+      %h3= "Send Notification Email"
+%table.zebra-striped.recivers
+  %tr
+    %th= 'Select'
+    %th= 'Email Address'    
+  - if @notification_emails.nil? or @notification_emails.count == 0
+    %tr
+      %td{:colspan => "2"}
+        %h4 Add Emails
+  - else
+    - @notification_emails.each do |email|
+      %tr
+        %td
+          = check_box_tag 'receive_email', 'yes', true          
+        %td= email                    
+  %tr
+    %td= "others"
+    %td   
+      = text_area_tag 'emails', nil, rows: 10, cols: 100
+      
+.modal-footer
+  %a.btn.primary.send_email{:href => "#"} Send
+  / %a.btn.add_receiver{:href => "#"} Add Receiver
+  %a.btn.cancel{:href => "#"} Cancel
+
+:javascript
+    $("a.cancel").click(function(){
+      $.fancybox.close();      
+    })
+
+    $("a.add_receiver").click(function() {
+      $('table.recivers > tbody:last').append('<tr><td><input checked="checked" id="receive_email" name="receive_email" type="checkbox" value="yes"></td><td><input id="email" name="email" type="text" style="width: 100%"/></td></tr>');
+    });
+
+:javascript
+  / function validateEmail(email) {
+  /   var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  /   return re.test(email);
+  / };
+
+  $("input.cancel").click(function() {
+    $.fancybox.close();
+  });
+
+  / $("input.send").click(function() {
+  /   var other_emails = $('#other_emails').val();
+  /   var arr = other_emails.split(',');
+  /   for (i in arr) {
+  /     alert(arr[i]);
+  /   };
+  /   var emails = [];
+  /   $('input:checked#notify_email').each(function() {
+  /     emails.push($(this).val())
+  /   });
+  /   alert(emails.join(',') + other_emails);
+  / });

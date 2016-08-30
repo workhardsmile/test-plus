@@ -1,0 +1,21 @@
+%p
+  %table
+    %tr
+      %th User
+      %th Ticket
+      %th Summary
+      %th Time
+      
+    - @work_logs.each do |wl|
+      %tr
+        %td= wl['name']
+        %td
+          =link_to wl['ticket'], "http://jirafnd.dev.activenetwork.com/browse/#{wl['ticket']}"
+        %td= wl['summary']
+        %td= ChronicDuration.output(wl['work_time'])
+
+    %tr
+      %td Total
+      %td
+      %td
+      %td= ChronicDuration.output(@work_logs.inject(0){|sum, wl| sum += wl['work_time']})

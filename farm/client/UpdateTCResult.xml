@@ -1,0 +1,13 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:x.="http://xml.WebService.AutomationDashboard/">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <TestCase>
+      <TestRoundId>#TESTROUNDID#</TestRoundId>
+      <TestPlanName>#TESTPLANNAME#</TestPlanName>
+      <TestCaseId>#TCID#</TestCaseId>
+      <Result>#TCRESULT#</Result>
+      <ErrorMessage>#TCERRORMESSAGE#</ErrorMessage>
+      <ScreenShot>#TCSCREENSHOT#</ScreenShot>
+    </TestCase>
+  </soapenv:Body>
+</soapenv:Envelope>

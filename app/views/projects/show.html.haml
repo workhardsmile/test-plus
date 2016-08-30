@@ -1,0 +1,10 @@
+.page-header
+  %h2
+    Test Rounds
+    %small= "#{@project.test_rounds.count} in total"
+    = link_to 'Schedule', new_project_test_round_path(@project), :class => 'btn primary'
+  = form_tag('#', :method => 'get') do
+    %span.search
+      = text_field_tag 'search'
+      = submit_tag '', {:class => 'btn', :id => 'searchsubmit'}
+=render :partial => "test_rounds/list", :locals => {:test_rounds => @project.test_rounds, :project => @project }

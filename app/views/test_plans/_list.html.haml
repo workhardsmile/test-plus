@@ -1,0 +1,18 @@
+%table
+  %tr
+    %th=sort_link search, :name, {}, {:remote => true}
+    %th=sort_link search, :status, {}, {:remote => true}
+    %th=sort_link search, :version, {}, {:remote => true}
+
+  - if test_plans.nil? or test_plans.count == 0
+    %tr
+      %td{:colspan => "3"}
+        %h4 No data
+  - else
+    - test_plans.each do |test_plan|
+      %tr
+        %td= link_to test_plan.name, project_test_plan_path(project, test_plan), :remote => true
+        %td= test_plan.status
+        %td= test_plan.version
+
+= paginate test_plans

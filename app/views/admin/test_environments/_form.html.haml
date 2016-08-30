@@ -1,0 +1,31 @@
+-if flash[:error]
+  .alert-message.error= flash[:error].html_safe
+
+= form_for([:admin, @test_environment]) do |f|
+  -if @test_environment.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@test_environment.errors.count, "error")} prohibited this test_environment from being saved:"
+      %ul
+        - @test_environment.errors.full_messages.each do |msg|
+          %li= msg
+  %fieldset
+    %legend= title
+    .clearfix
+      = f.label :name
+      .required *
+      .input
+        = f.text_field :name, :class => "validate[required, funcCall[checkOnlySpace]]"
+    .clearfix
+      = f.label :value
+      .required *
+      .input
+        = f.text_field :value, :class => "validate[required, funcCall[checkOnlySpace]]"
+    .actions
+      = f.submit 'Save', :class => 'btn primary'
+      = link_to 'Back', admin_test_environments_path, :class => 'btn'
+
+:javascript
+  $(function(){
+    $("#new_test_environment").validationEngine({promptPosition: "bottomRight", scroll: false});
+    $(".edit_test_environment").validationEngine({promptPosition: "bottomRight", scroll: false});
+  })

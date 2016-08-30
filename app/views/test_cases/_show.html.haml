@@ -1,0 +1,31 @@
+.row.sub-header
+  .span16.columns
+    %h2
+      =link_to "#{@test_plan.name}", project_test_plan_path(@project, @test_plan), :remote => true
+      %span=" / #{@test_case.name}"
+
+= render 'brief_info'
+
+.row.detail
+  .span16.columns
+    %h3 Test Steps and Expected Results
+.row
+  .span16.columns
+    %table.test-steps
+      %tr
+        %th NO.
+        %th Steps
+        %th Expected Result
+      - if @test_case and @test_case.tc_steps and !(@test_case.tc_steps.empty?)
+        - @test_case.tc_steps.group(:test_link_id).each do |ts|
+          %tr
+            %td
+              =ts.step_number
+            %td
+              .step-action
+                =ts.step_action.html_safe
+            %td
+              .expected-result
+                =ts.expected_result.html_safe
+      - else
+        %h6 No steps and expected results

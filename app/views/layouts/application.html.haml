@@ -1,0 +1,17 @@
+!!!
+%html
+  %head
+    %title TestPlus Reload
+    = stylesheet_link_tag "application"
+    = stylesheet_link_tag asset_path('fancybox/jquery.fancybox-1.3.4.css')
+    = javascript_include_tag "application"
+    = csrf_meta_tags
+  %body
+    = render :partial => 'partial/top_nav'
+    .clearfix
+    #content.container-fluid
+      = render :partial => 'partial/side_bar'
+      .content
+        #inner-content
+          = yield
+    = render :partial => 'partial/footer'

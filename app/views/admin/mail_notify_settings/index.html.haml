@@ -1,0 +1,30 @@
+.page-header
+  %h2 Listing Mail Notify Settings
+.mail-notify-settings
+
+  %table.zebra-striped
+    %tr
+      %th Mail
+      %th Test Types
+      %th Groups
+      %th
+    - if @mail_notify_settings.nil? or @mail_notify_settings.count == 0
+      %tr
+        %td{:colspan => "4"}
+          %h4 No data
+    - else
+      - @mail_notify_settings.order("id desc").each do |mail_notify_setting|
+        %tr
+          %td= mail_notify_setting.mail
+          %td= mail_notify_setting.all_test_types
+          %td= mail_notify_setting.groups
+          - show_url, edit_url, delete_url = nil
+          - if can? :update, MailNotifySetting, {:project_id => @project.id}
+            - edit_url = edit_admin_project_mail_notify_setting_path(@project, mail_notify_setting)
+          - if can? :delete, MailNotifySetting, {:project_id => @project.id}
+            - delete_url = admin_project_mail_notify_setting_path(@project, mail_notify_setting)
+          = render :partial => 'partial/table_actions', :locals => {:show_url => show_url, :edit_url => edit_url, :delete_url => delete_url}
+
+-if can? :create, MailNotifySetting, {:project_id => @project.id}
+  = link_to 'New Mail notify setting', new_admin_project_mail_notify_setting_path(@project), :class => 'btn primary'
+= link_to 'Back', admin_project_path(@project), :class => 'btn'

@@ -1,0 +1,238 @@
+.automation-progress-box
+  #automation-progress-chart
+
+%table.zebra-striped{:style => "width:960px; margin-top: 18px;margin-bottom: 120px;"}
+  %tr
+    %th Record Date
+    %th Total
+    %th Automated
+    %th Automatable
+    %th Not Ready for Automation
+    %th Update Needed
+    %th Update Manual
+    %th Not a Candidate
+    %th Unknown
+  -record_size = @progress['record_date'].size
+  -@progress['record_date'].each_with_index do |date, index|
+    %tr
+
+      %td= @progress["record_date"][record_size-index-1]
+      %td= @progress["total"][record_size-index-1]
+      %td= @progress["automated"][record_size-index-1]
+      %td= @progress["automatable"][record_size-index-1]
+      %td= @progress["not_ready"][record_size-index-1]
+      %td= @progress["update_needed"][record_size-index-1]
+      %td= @progress["update_manual"][record_size-index-1]
+      %td= @progress["not_candidate"][record_size-index-1]
+      %td= @progress["unknown"][record_size-index-1]
+
+
+
+:javascript
+
+  $(function() {
+    // Load the fonts
+    Highcharts.createElement('link', {
+      href: '//fonts.googleapis.com/css?family=Signika:400,700',
+      rel: 'stylesheet',
+      type: 'text/css'
+    }, null, document.getElementsByTagName('head')[0]);
+
+    // Add the background image to the container
+    Highcharts.wrap(Highcharts.Chart.prototype, 'getContainer', function(proceed) {
+      proceed.call(this);
+      this.container.style.background = 'url(http://www.highcharts.com/samples/graphics/sand.png)';
+    });
+
+
+    Highcharts.theme = {
+      colors: ["#f45b5b", "#8085e9", "#8d4654", "#7798BF", "#aaeeee", "#ff0066", "#eeaaee",
+        "#55BF3B", "#DF5353", "#7798BF", "#aaeeee"
+      ],
+      chart: {
+        backgroundColor: null,
+        style: {
+          fontFamily: "Signika, serif"
+        }
+      },
+      title: {
+        style: {
+          color: 'black',
+          fontSize: '16px',
+          fontWeight: 'bold'
+        }
+      },
+      subtitle: {
+        style: {
+          color: 'black'
+        }
+      },
+      tooltip: {
+        borderWidth: 0
+      },
+      legend: {
+        itemStyle: {
+          fontWeight: 'bold',
+          fontSize: '13px'
+        }
+      },
+      xAxis: {
+        labels: {
+          style: {
+            color: '#6e6e70'
+          }
+        }
+      },
+      yAxis: {
+        labels: {
+          style: {
+            color: '#6e6e70'
+          }
+        }
+      },
+      plotOptions: {
+        series: {
+          shadow: true
+        },
+        candlestick: {
+          lineColor: '#404048'
+        },
+        map: {
+          shadow: false
+        }
+      },
+
+      // Highstock specific
+      navigator: {
+        xAxis: {
+          gridLineColor: '#D0D0D8'
+        }
+      },
+      rangeSelector: {
+        buttonTheme: {
+          fill: 'white',
+          stroke: '#C0C0C8',
+          'stroke-width': 1,
+          states: {
+            select: {
+              fill: '#D0D0D8'
+            }
+          }
+        }
+      },
+      scrollbar: {
+        trackBorderColor: '#C0C0C8'
+      },
+
+      // General
+      background2: '#E0E0E8'
+
+    };
+
+    // Apply the theme
+    Highcharts.setOptions(Highcharts.theme);
+    $('#automation-progress-chart').highcharts({
+      chart: {
+        width: 960,
+        height: 600,
+        zoomType: 'xy'
+      },
+      title: {
+        text: 'Automation progress for #{@project.name}'
+      },
+      subtitle: {
+        text: 'From #{@progress['record_date'].first} to #{@progress['record_date'].last}'
+      },
+      xAxis: [{
+        categories: #{@progress['record_date']},
+        crosshair: true
+      }],
+      yAxis: [{ // Total Cases & Total Automated
+        labels: {
+          format: '{value}',
+          style: {
+            color: Highcharts.getOptions().colors[0]
+          }
+        },
+        title: {
+          text: 'Number of cases',
+          style: {
+            color: Highcharts.getOptions().colors[0]
+          }
+        },
+        opposite: true
+
+      }, { // %Automated
+        gridLineWidth: 0,
+        title: {
+          text: 'Coverage percentage',
+          style: {
+            color: Highcharts.getOptions().colors[3]
+          }
+        },
+        max: 100,
+        min: 0,
+        labels: {
+          format: '{value} %',
+          style: {
+            color: Highcharts.getOptions().colors[3]
+          }
+        }
+
+      }],
+      tooltip: {
+        shared: true
+      },
+      legend: {
+        layout: 'vertical',
+        align: 'left',
+        x: 80,
+        verticalAlign: 'top',
+        y: 55,
+        floating: true,
+        backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+      },
+      series: [{
+        name: 'Newly Automated',
+        type: 'column',
+        yAxis: 0,
+        data: #{@progress['new_auto']},
+        tooltip: {
+          valueSuffix: ' cases'
+        }
+
+      }, {
+        name: 'Total Cases',
+        type: 'spline',
+        yAxis: 0,
+        data: #{@progress['total']},
+        marker: {
+          enabled: false
+        },
+        tooltip: {
+          valueSuffix: ' cases'
+        }
+
+      }, {
+        name: 'Total Automated',
+        yAxis: 0,
+        type: 'spline',
+        data: #{@progress['automated']},
+        tooltip: {
+          valueSuffix: ' cases'
+        }
+      }, {
+        name: '%Automated',
+        type: 'spline',
+        yAxis: 1,
+        data: #{@progress['coverage']},
+        marker: {
+          enabled: false
+        },
+        dashStyle: 'shortdot',
+        tooltip: {
+          valueSuffix: ' %'
+        }
+      }]
+    });
+  });

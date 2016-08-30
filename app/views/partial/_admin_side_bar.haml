@@ -1,0 +1,65 @@
+- can_read_project_category = can? :read, ProjectCategory
+- can_read_project = can? :read, Project
+- can_read_role = can? :read, Role
+- can_read_user = can? :read, User
+- can_update_browser = can? :update, Browser
+- can_update_os = can? :update, OperationSystem
+- can_update_automation_driver = can? :update, AutomationDriver
+- can_update_slave = can? :update, Slave
+- can_update_test_environment = can? :update, TestEnvironment
+- can_manage_import_testlink_config = can? :manage, ImportTestlinkConfig
+- menu_item_count = 0
+- menu_item_count += can_read_project_category ? 1 : 0
+- menu_item_count += can_read_project ? 1 : 0
+- menu_item_count += can_read_role ? 1 : 0
+- menu_item_count += can_read_user ? 1 : 0
+- menu_item_count += can_update_browser ? 1 : 0
+- menu_item_count += can_update_os ? 1 : 0
+- menu_item_count += can_update_automation_driver ? 1 : 0
+- menu_item_count += can_update_slave ? 1 : 0
+- menu_item_count += can_manage_import_testlink_config ? 1 : 0
+
+- if menu_item_count > 1
+  %ul.menu
+    - if can_read_project_category
+      %li{:name => "project_categories"}
+        =link_to 'Project Categories', admin_project_categories_path
+    - if can_read_project
+      %li{:name => "projects"}
+        =link_to 'Projects', admin_projects_path
+    - if can_read_role
+      %li{:name => "roles"}
+        =link_to 'Roles', admin_roles_path
+    - if can_update_os
+      %li{:name => "operation_systems"}
+        =link_to 'Operation Systems', admin_operation_systems_path
+    - if can_update_browser
+      %li{:name => "browsers"}
+        =link_to 'Browsers', admin_browsers_path
+    - if can_update_test_environment
+      %li{:name => "test_environements"}
+        =link_to 'Test Environments', admin_test_environments_path
+    - if can_update_automation_driver
+      %li{:name => "automation_drivers"}
+        =link_to 'Automation Drivers', admin_automation_drivers_path
+    - if can_update_slave
+      %li{:name => "slaves"}
+        =link_to 'Slaves', admin_slaves_path
+    - if can_read_user
+      %li{:name => "users"}
+        =link_to 'Users', admin_users_path
+    - if can_manage_import_testlink_config
+      %li{:name => "testlink_sync"}
+        =link_to 'Testlink Sync', admin_import_testlink_configs_path
+      %li{:name => "service_project_mapping"}
+        =link_to 'Service Project Mapping', admin_service_project_mappings_path
+
+  .clearfix
+
+:javascript
+  $(function(){
+    //var current_tab = location.pathname.split("/")[2].replace(/_/g," ").replace("dre","DRE");
+    var current_tab = location.pathname.split("/")[2];
+
+    $("ul.menu > li[name*='"+current_tab+"']").addClass("activate");
+  })

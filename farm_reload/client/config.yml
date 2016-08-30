@@ -1,0 +1,10 @@
+--- !ruby/object:TestPlus::Protocol::ClientInfo
+name: mactest-slave1
+project_name: Camps
+operation_system: !ruby/object:TestPlus::Protocol::OperationSystem
+  name: Windows XP
+  version: "6.0"
+automation_drivers:
+- !ruby/object:TestPlus::Protocol::AutomationDriver
+  name: qtp
+  version: 10.0

@@ -1,0 +1,30 @@
+.page-header
+  %h2
+    = "Automation Cases of #{@automation_script.name}"
+    %small= "#{@automation_script.automation_cases.count} in total"
+  
+  = form_for search, :url => automation_script_automation_cases_path(automation_script), :remote => true do |f|
+    %span.search
+      = f.text_field :name_or_case_id_or_priority_or_version_contains, {:id => 'search'}
+      = f.submit '', {:class => 'btn', :id => 'searchsubmit'}
+
+%table
+  %tr
+    %th=sort_link search, :name, {}, {:remote => true}
+    %th=sort_link search, :case_id, "Case Id", {}, {:remote => true}
+    %th=sort_link search, :version, {}, {:remote => true}
+    %th=sort_link search, :priority, {}, {:remote => true}
+
+  - if automation_cases.nil? or automation_cases.count == 0
+    %tr.link
+      %td{:colspan => "4"}
+        %h4 No data
+  - else
+    - automation_cases.each do |automation_case|
+      %tr
+        %td= automation_case.name
+        %td= automation_case.case_id
+        %td= automation_case.version
+        %td= automation_case.priority
+
+= paginate automation_cases

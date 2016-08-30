@@ -1,0 +1,169 @@
+%html
+  %head
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}
+  %body
+    :css
+      /**/
+      .container {
+        width: 940px;
+      }
+      .container {
+        margin-right: auto;
+        margin-left: auto;
+        *zoom: 1;
+      }
+      table {
+        max-width: 100%;
+        background-color: transparent;
+        border-collapse: collapse;
+        border-spacing: 0;
+      }
+      .table {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+      .table th, .table td {
+        padding: 8px;
+        line-height: 20px;
+        text-align: left;
+        vertical-align: top;
+        border-top: 1px solid #dddddd;
+      }
+      .table th {
+        font-weight: bold;
+      }
+      .table tbody tr.success > td {
+        background-color: #dff0d8;
+      }
+      .table tbody tr.error > td {
+        background-color: #f2dede;
+      }
+      .table tbody tr.warning > td {
+        background-color: #fcf8e3;
+      }
+      .table tbody tr.info > td {
+        background-color: #d9edf7;
+      }
+      .row {
+        zoom:1;
+      }
+      .row .span1 {
+        float:left;
+        width:40px;
+        margin-left:20px;
+      }
+      .row .span2 {
+        float:left;
+        width:100px;
+        margin-left:20px;
+      }
+      .row .span3 {
+        float:left;
+        width:160px;
+        margin-left:20px;
+      }
+      .row .span4 {
+        float:left;
+        width:220px;
+        margin-left:20px;
+      }
+      .row .span5 {
+        float:left;
+        width:280px;
+        margin-left:20px;
+      }
+      .row .span6 {
+        float:left;
+        width:340px;
+        margin-left:20px;
+      }
+      .row .span7 {
+        float:left;
+        width:400px;
+        margin-left:20px;
+      }
+      .row .span8 {
+        float:left;
+        width:460px;
+        margin-left:20px;
+      }
+      .row .span9 {
+        float:left;
+        width:520px;
+        margin-left:20px;
+      }
+      .row .span10 {
+        float:left;
+        width:580px;
+        margin-left:20px;
+      }
+      .row .span11 {
+        float:left;
+        width:640px;
+        margin-left:20px;
+      }
+      .row .span12 {
+        float:left;
+        width:700px;
+        margin-left:20px;
+      }
+      .row .span13 {
+        float:left;
+        width:760px;
+        margin-left:20px;
+      }
+      .row .span14 {
+        float:left;
+        width:820px;
+        margin-left:20px;
+      }
+      .row .span15 {
+        float:left;
+        width:880px;
+        margin-left:20px;
+      }
+      .row .span16 {
+        float:left;
+        width:940px;
+        margin-left:20px;
+      }
+      .title {
+        border-bottom: 1px solid #cccccc;
+        padding-left: 5px;
+        margin: 10px 0 10px 0;
+      }
+      ol, ul {
+        list-style:none;
+      }
+      .info ul.items li {
+        font-weight: bold;
+      }
+      /**/
+    .row.title
+      %h3 Save result to Testlink
+    .row.info
+      %ul.items
+        - @message['notes'].each do |note|
+          %li= note
+    - if @message['export_results'].size > 0                  
+      %table.table
+        %thead
+          %tr
+            %th TestCase ID
+            %th Testlinnk ID
+            %th Test Result
+            %th Export Notes
+        %tbody
+          - @message['export_results'].each do |r|
+            - if r[:status] == true
+              %tr.success
+                %td= r[:case_id]
+                %td= r[:testlink_id]
+                %td= r[:tc_result]
+                %td= r[:message]            
+            - else
+              %tr.error
+                %td= r[:case_id]
+                %td= r[:testlink_id]
+                %td= r[:tc_result]
+                %td= r[:message]

@@ -1,0 +1,20 @@
+%h1 Orders in Production
+
+%table
+  %tr
+    %th Timestamp
+    %th Market
+    %th User Email
+    %th Order Number
+    %th
+  - @offer_monitoring_records.each do |offer_monitoring_record|
+    %tr
+      %td= offer_monitoring_record.timestamp
+      %td= offer_monitoring_record.market
+      %td= offer_monitoring_record.user_email
+      %td= offer_monitoring_record.order_id
+      %td= link_to 'Destroy', offer_monitoring_record, :confirm => 'Are you sure?', :method => :delete
+= paginate @offer_monitoring_records
+
+
+

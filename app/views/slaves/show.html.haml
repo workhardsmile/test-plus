@@ -1,0 +1,9 @@
+.row.sub-header
+  .span10.columns
+    %h2
+      =link_to "Farm", "/slaves", :remote => true
+      %span= " / #{@slave.name}"
+  .span6.columns#right
+    %span.creation-info= "Created at #{in_time_zone(@slave.created_at)}"
+
+= render :partial => 'slave_assignments/list', :locals => {:slave_assignments => @slave_assignments, :slave => @slave, :search => @search}

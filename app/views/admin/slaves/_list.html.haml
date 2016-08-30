@@ -1,0 +1,41 @@
+.page-header
+  %h2
+    Slaves
+    %small= "#{Slave.count} in total"
+  - if can? :create, Slave
+    = link_to 'New Slave', new_admin_slave_path, :class => 'btn primary'
+  = form_for search, :url => admin_slaves_path, :remote => true do |f|
+    %span.search
+      = f.text_field :name_or_ip_address_or_project_name_or_test_type_contains, {:id => 'search'}
+      = f.submit '', {:class => 'btn', :id => 'searchsubmit'}
+
+%table.zebra-striped
+  %tr
+    %th=sort_link search, :name, "Name", {}, {:remote => true}
+    %th=sort_link search, :ip_address, "IP Address", {}, {:remote => true}
+    %th=sort_link search, :project_name, "Project", {}, {:remote => true}
+    %th=sort_link search, :test_type, "Test Type", {}, {:remote => true}
+    %th=sort_link search, :priority, "Priority", {}, {:remote => true}
+    %th=sort_link search, :active, "Status", {}, {:remote => true}
+    %th
+  - if slaves.nil? or slaves.count == 0
+    %tr
+      %td{:colspan => "6"}
+        %h4 No data
+  - else
+    - slaves.each do |slave|
+      %tr
+        %td= slave.name
+        %td= slave.ip_address
+        %td= slave.project_name
+        %td= slave.test_type
+        %td= slave.priority
+        %td= slave.active ? "Active" : "Inactive"
+        - show_url, edit_url, delete_url = nil
+        - if can? :update, Slave
+          - edit_url = edit_admin_slave_path(slave)
+        - if can? :delete, Slave
+          - delete_url = admin_slave_path(slave)
+        = render :partial => 'partial/table_actions', :locals => {:show_url => show_url, :edit_url => edit_url, :delete_url => delete_url }
+    
+= paginate slaves

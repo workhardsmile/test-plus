@@ -1,0 +1,41 @@
+-if flash[:error]
+  .alert-message.error= flash[:error].html_safe
+
+= form_for([:admin, @import_testlink_config]) do |f|
+  -if @import_testlink_config.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@import_testlink_config.errors.count, "error")} prohibited this config from being saved:"
+      %ul
+        - @import_testlink_config.errors.full_messages.each do |msg|
+          %li= msg
+  %fieldset
+    %legend= title
+    .clearfix
+      = f.label :testplus_project
+      .required *
+      .input
+        = f.text_field :testplus_project, :class => "validate[required, funcCall[checkOnlySpace]]"
+    .clearfix
+      = f.label :testlink_project
+      .required *
+      .input
+        = f.text_field :testlink_project, :class => "validate[required, funcCall[checkOnlySpace]]"
+
+    .clearfix
+      = f.label "Active"
+      .input.onoffswitch
+        = f.check_box :active, :class => "onoffswitch-checkbox"
+        %label.onoffswitch-label{:for => "import_testlink_config_active"}
+          %span.onoffswitch-inner
+          %span.onoffswitch-switch
+
+
+    .actions
+      = f.submit 'Save', :class => 'btn primary'
+      = link_to 'Back', admin_import_testlink_configs_path, :class => 'btn'
+
+:javascript
+  $(function(){
+    $("#new_browser").validationEngine({promptPosition: "bottomRight", scroll: false});
+    $(".edit_browser").validationEngine({promptPosition: "bottomRight", scroll: false});
+  })

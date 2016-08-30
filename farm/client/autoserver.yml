@@ -1,0 +1,38 @@
+server_ip: 10.109.0.69
+server_log: autoserver_server.log
+client_log: autoserver_client.log
+#browser or capability path
+firefox_path: C:\\Program Files\\Mozilla Firefox\\firefox.exe
+#qtp_path: C:\\Program Files\\HP\\QuickTest Professional\\bin\\QTPro.exe
+qtp_path: C:\\QTP\\bin\\QTPro.exe
+#firefox_path: D:\\Mozilla Firefox\\firefox.exe
+#qtp_path: D:\\QTP\\bin\\QTPro.exe
+soapui_path: D:\\soapui-3.5.1\\soapui-3.5.1.jar
+
+camps_code:
+ svn_path: C:\\Program Files\\Subversion\\bin\\svn.exe
+ result_path: C:\\Test Results
+ regression_path: C:\\QA Automation\\Camps\\Trunk\\Framework\\testsuites\\regressions\\
+ bvt_path: C:\\QA Automation\\Camps\\Trunk\\Framework\\testsuites\\BVTs\\
+ package_path: C:\\QA Automation\\Camps\\Trunk\\Framework\\package\\
+ datapools_path: C:\\QA Automation\\Camps\\Trunk\\Framework\\datapools\\
+ screenshot_path: C:\\QA Automation\\Camps\\Trunk\\Framework\\test_results\\Error_Picture\\
+
+endurance_code:
+ svn_path: C:\\Program Files\\Subversion\\bin\\svn.exe
+ result_path: C:\\Test Results
+ regression_path: C:\\QA Automation\\Endurance\\Trunk\\Framework\\testsuites\\regressions\\
+ bvt_path: C:\\QA Automation\\Endurance\\Trunk\\Framework\\testsuites\\BVTs\\
+ package_path: C:\\QA Automation\\Endurance\\Trunk\\Framework\\package\\
+ datapools_path: C:\\QA Automation\\Endurance\\Trunk\\Framework\\datapools\\
+ screenshot_path: C:\\QA Automation\\Endurance\\Trunk\\Framework\\test_results\\Error_Picture\\
+
+sports_code:
+ svn_path: C:\\Program Files\\Subversion\\bin\\svn.exe
+ result_path: C:\\Test Results
+ regression_path: C:\\QA Automation\\Sports\\Trunk\\Framework\\testsuites\\regressions\\
+ bvt_path: C:\\QA Automation\\Sports\\Trunk\\Framework\\testsuites\\BVTs\\
+ package_path: C:\\QA Automation\\Sports\\Trunk\\Framework\\package\\
+ datapools_path: C:\\QA Automation\\Sports\\Trunk\\Framework\\datapools\\
+ screenshot_path: C:\\QA Automation\\Sports\\Trunk\\Framework\\test_results\\Error_Picture\\
+

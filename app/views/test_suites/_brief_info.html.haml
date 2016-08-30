@@ -1,0 +1,5 @@
+- left_titles = ['Creator:', 'Test Type:']
+- left_values = [@test_suite.creator.display_name, @test_suite.test_type.name]
+- right_titles = ['Created at:', 'Updated at:']
+- right_values = [in_time_zone(@test_suite.created_at), in_time_zone(@test_suite.updated_at)]
+= render :partial => "partial/brief_info", :locals => {:left_titles => left_titles, :left_values => left_values, :right_titles => right_titles, :right_values => right_values}

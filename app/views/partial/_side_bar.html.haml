@@ -1,0 +1,63 @@
+-if @project
+  .sidebar
+    %input#hidden-item{:type => "hidden"}
+    .project-name
+      %img.project-icon{:src => @project.icon_image.url(:thumb)}
+      - project_name = @project.name
+      - if project_name && project_name.length >= 10
+        - project_name = project_name.slice(0,8).concat("...")
+
+      %h2{:title => @project.name}= project_name
+      .clear
+    %ul.menu
+      %li.odd{:name => "coverage"}= link_to 'Coverage', coverage_project_path(@project), :remote => true
+      %li{:name => "test_rounds"}= link_to 'Test Rounds', project_test_rounds_path(@project), :remote => true
+      %li.odd{:name => "test_suites"}= link_to 'Test Suites', project_test_suites_path(@project), :remote => true
+      %li{:name => "test_plans"}= link_to 'Test Plans', project_test_plans_path(@project), :remote => true
+      %li.odd{:name => "automation_scripts"}= link_to 'Automation Scripts', project_automation_scripts_path(@project), :remote => true
+
+:javascript
+  $(function(){
+    if ($("ul.menu > li[class*='activate']").length <= 0){
+      //current_tab = location.pathname.split("/projects/");
+      //$("ul.menu > li[name*='"+current_tab+"']").addClass("activate");
+      $("ul.menu > li").each(function(i){
+        if (location.pathname.search($(this).attr("name")) != -1) {
+          $(this).addClass("activate");
+        }
+      });
+    }
+
+    var first_time = true;
+    var pre_url = null;
+
+    var menu = $("a[data-remote]");
+    //if ($.address.path()!=location.pathname&&(location.pathname.match("/coverage")!=null||location.pathname.match("/dre/overall")!=null)){
+      //$.address.path(location.pathname);
+    // }
+    if (window.ActiveXObject){
+      $.address.init(function(event){
+        menu.address();
+      });
+    }
+    else{
+      $.address.state("/").init(function(event){
+        menu.address();
+      });
+    }
+    $.address.internalChange(function(event){
+      $(this).attr("href","#");
+      if (event.value!=null) {
+        //$.getScript(event.value);
+      }
+    }).externalChange(function(event){
+      if (first_time == true) {
+        first_time = false;
+      }else{
+        if ((pre_url != "/") || (pre_url == "/" && $.address.value() == "/")) {
+          $.getScript($.address.value());
+        }
+      }
+      pre_url = $.address.value();
+    }).history(true);
+  })

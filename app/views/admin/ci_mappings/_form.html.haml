@@ -1,0 +1,50 @@
+-if flash[:error]
+  .alert-message.error= flash[:error].html_safe
+
+= form_for ([:admin, @project, @ci_mapping]) do |f|
+  -if @ci_mapping.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@ci_mapping.errors.count, "error")} prohibited this ci_mapping from being saved:"
+      %ul
+        - @ci_mapping.errors.full_messages.each do |msg|
+          %li= msg
+  %fieldset
+    %legend= title
+    .clearfix
+      = f.label :ci_value
+      .required *
+      .input
+        = f.text_field :ci_value, :class => "validate[required, funcCall[checkOnlySpace]]"
+    .clearfix
+      = f.label :test_suite
+      .required *
+      .input
+        - if @ci_mapping.test_suite
+          = f.select :test_suite_id, options_from_collection_for_select(@project.test_suites, :id, :name, @ci_mapping.test_suite.id), {}, {:class => "chzn-select, validate[required]"}
+        - else
+          = f.select :test_suite_id, options_from_collection_for_select(@project.test_suites, :id, :name), {}, {:class => "chzn-select, validate[required]"}
+    .clearfix
+      = f.label :browser_id
+      .required *
+      .input
+        - if @ci_mapping.browser
+          = f.select :browser_id, options_from_collection_for_select(@project.browsers, :id, :name_with_version, @ci_mapping.browser.id), {}, {:class => "chzn-select, validate[required]"}
+        - else
+          = f.select :browser_id, options_from_collection_for_select(@project.browsers, :id, :name_with_version), {}, {:class => "chzn-select, validate[required]"}
+    .clearfix
+      = f.label :operation_system_id
+      .required *
+      .input
+        - if @ci_mapping.operation_system
+          = f.select :operation_system_id, options_from_collection_for_select(@project.operation_systems, :id, :name_with_version, @ci_mapping.operation_system.id), {}, {:class => "chzn-select, validate[required]"}
+        - else
+          = f.select :operation_system_id, options_from_collection_for_select(@project.operation_systems, :id, :name_with_version), {}, {:class => "chzn-select, validate[required]"}
+    .actions
+      = f.submit 'Save', :class => 'btn primary'
+      = link_to 'Back', admin_project_ci_mappings_path(@project), :class => 'btn'
+
+:javascript
+  $(function(){
+    $("#new_ci_mapping").validationEngine({promptPosition : "bottomRight", scroll: false});
+    $(".edit_ci_mapping").validationEngine({promptPosition : "bottomRight", scroll: false});
+  });

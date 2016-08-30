@@ -1,0 +1,38 @@
+.view-triage-message  
+  .row.detail
+    .span12.columns
+      %h3= "View Triage Result"
+  .row
+    .alert-message.block-message.error{:style => "display:none"}
+  .row
+    = form_tag("/automation_script_results/#{@automation_script_result.id}/save_triage_result",{:id => "save_triage_result",:remote=>true}) do
+      %fieldset
+        .clearfix
+          = label_tag 'Error Type'
+          .required *
+          .input
+            = select_tag "error_type_id", options_for_select(ErrorType.all_options, @automation_script_result.error_type_id), :disabled => true
+        .clearfix
+          = label_tag 'Comment'
+          .required *          
+          .input
+            = text_area_tag 'triage_result', @automation_script_result.triage_result,rows: 10, style: "width: 500px", disabled: true
+        .actions
+          - if @automation_script_result.is_triage_result_editable?
+            %input.btn.primary.update_button{:type => "button", :value => "Edit", "remote-data" => "/automation_script_results/#{@automation_script_result.id}/add_triage_result"}
+          %input.btn.cancel_button{:type => "button", :value => "Cancel"}
+
+:javascript
+    $(".cancel_button").click(function(){
+      $.fancybox.close();      
+    })
+
+    $("input.update_button").click(function() {
+      $.fancybox({
+          width: 400,
+          height: 400,
+          autoSize: false,
+          href: $(this).attr("remote-data"),
+          type: 'ajax'
+      }); 
+    });          

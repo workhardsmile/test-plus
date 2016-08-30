@@ -1,0 +1,31 @@
+-if flash[:error]
+  .alert-message.error= flash[:error].html_safe
+
+= form_for ([:admin, @project, @test_round]) do |f|
+  -if @test_round.errors.any?
+    #error_explanation
+      - @test_round.errors.messages.each do |attr, msg|
+        %span.help-inline{:id => "test_round_#{attr}"}= msg[0]
+  %fieldset
+    %legend New Test Round
+    .clearfix
+      = f.label :test_object
+      .input
+        = f.text_field :test_object, :class => "validate[required, funcCall[checkOnlySpace]]"
+    .clearfix
+      = f.label :test_suite
+      .input
+        = f.select :test_suite_id, options_from_collection_for_select(@project.test_suites, :id, :name), {}, {:class => "chzn-select"}
+    .clearfix
+      = f.label :test_environment
+      .input
+        = f.select :test_environment_id, options_from_collection_for_select(TestEnvironment.all, :id, :name), {}, {:class => "chzn-select"}
+    = f.hidden_field :creator_id, :value => current_user.id
+    .actions
+      = f.submit 'Schedule!', :class => 'btn primary'
+      = link_to 'Back', admin_project_path(@project), :class => 'btn'
+:javascript
+  $(function(){
+    $("#new_test_round").validationEngine({promptPosition : "bottomRight", scroll: false});
+    $(".edit_test_round").validationEngine({promptPosition : "bottomRight", scroll: false});
+   });

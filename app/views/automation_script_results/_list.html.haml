@@ -1,0 +1,140 @@
+.page-header.detail
+  %h3 Automation Script Results
+  = form_for search, :url => test_round_automation_script_results_path(test_round), :remote => true do |f|
+    %span.search
+      = f.text_field :automation_script_name_or_state_or_automation_script_version_or_triage_result_or_automation_script_owner_email_contains, {:id => 'search'}
+      = f.submit '', {:class => 'btn', :id => 'searchsubmit'}
+
+%table.zebra-striped
+  %tr
+    %th=sort_link search, :result, "Result", {}, {:remote => true}      
+    %th=sort_link search, :automation_script_name, "Name", {}, {:remote => true}
+    %th=sort_link search, :state, {}, {:remote => true}
+    %th=sort_link search, :slave, {}, {:remote => true}
+    %th=sort_link search, :automation_script_owner_email, "Owner", {}, {:remote => true}
+    %th=sort_link search, :start_time, "Start Time", {}, {:remote => true}
+    %th=sort_link search, :end_time, "End Time", {}, {:remote => true}
+    %th=sort_link search, :triage_result, "Triage Result", {}, {:remote => true}
+    %th Slave Logs
+    %th Rerun/Stop
+
+  - if automation_script_results.nil? or automation_script_results.count == 0
+    %tr
+      %td{:colspan => "9"}
+        %h4 No data
+  - else
+    -automation_script_results.each do |asr|
+      %tr
+        %td
+          - icon_name = asr.result
+          - icon_name = asr.state if asr.state == "stopping"
+          %img.ui-icon{:src => asset_path("#{icon_name}.png")}
+        %td  
+          - asr_name = asr.name
+          - if asr_name and asr_name.length >= 30
+            - asr_name = asr_name.slice(0,30).concat("...")
+          %b= link_to "#{asr_name}", test_round_automation_script_result_path(test_round, asr), :remote => true, :title => asr.name
+        %td= asr.state
+        %td
+          -sa = asr.slave_assignments.last
+          -if sa && sa.slave
+            = link_to "#{sa.slave.name}", slave_path(sa.slave)
+          -else
+            No slave yet
+        %td= asr.automation_script.owner.display_name
+        %td{:title=>"Timeout: #{asr.automation_script.time_out_limit} seconds"}
+          = in_time_zone(asr.start_time)
+        %td{:title=>"Timeout: #{asr.automation_script.time_out_limit} seconds"}
+          = in_time_zone(asr.end_time)
+        - triage_result = asr.triage_result
+        %td
+          - if asr.end? && can?(:update, AutomationScriptResult, {:project_id => test_round.project.id}) 
+            - if asr.triage_result == "N/A"
+              - unless asr.result == 'pass'
+                %input{:type => "button", :value => "Triage", "remote-data" => "/automation_script_results/#{asr.id}/add_triage_result", :class => "btn primary add-triage-result"}
+            - else
+              - if asr.error_type.result_type == "failed"
+                - triage_result_class = "btn danger view-triage-result"
+              - else  
+                - triage_result_class = "btn view-triage-result"
+              %input{:type => "button", :value => "#{asr.error_type.name}", "remote-data" => "/automation_script_results/#{asr.id}/view_triage_result", :class => triage_result_class}
+        %td
+          -sa = asr.slave_assignments.last
+          -if sa && sa.slave && asr.end_time
+            = link_to "View", test_round_automation_script_result_show_logs_path(asr.test_round, asr), :class => "btn primary"
+        %td
+          - if asr.is_rerunnable? && can?(:update, AutomationScriptResult, {:project_id => test_round.project.id}) 
+            %input.btn.primary.rerun_btn{:type => "button", :value => "Rerun", "remote-data" => "/automation_script_results/#{asr.id}/rerun"}
+          - if asr.result == "pending" && asr.state != "scheduling" && can?(:update, AutomationScriptResult, {:project_id => test_round.project.id})
+            - if asr.state == "stopping"
+              %input{:type => "button", :value => "Stopping", "remote-data" => "/automation_script_results/#{asr.id}/stop", :class => "btn primary rerun_btn disabled", :disabled => "disabled"}
+            - else
+              %input{:type => "button", :value => "Stop", "remote-data" => "/automation_script_results/#{asr.id}/stop", :class => "btn primary rerun_btn"}
+
+= paginate automation_script_results
+
+:javascript
+  $(function(){
+    $("input.view-triage-result").click(function() {
+      $.fancybox({
+          width: 400,
+          height: 400,
+          autoSize: false,
+          href: $(this).attr("remote-data"),
+          type: 'ajax'
+      }); 
+    });
+    $("input.add-triage-result").click(function() {
+      $.fancybox({
+          width: 400,
+          height: 400,
+          autoSize: false,
+          href: $(this).attr("remote-data"),
+          type: 'ajax'
+      }); 
+    });
+
+    $("input.rerun_btn:not(:disabled)").click(function() {
+      $(this).addClass("disabled");
+      $(this).disabled = true;
+      $.ajax({
+        url: $(this).attr("remote-data")
+      }).success(function(data) {
+        location.reload();
+      })
+    });
+
+    $(".triage-result").change(function() {
+      var triage_result = $("option:selected", this).text();
+      var comments = prompt("Please enter your comments", "");
+      if (comments != null) {
+        if (comments != "") {
+          triage_result = triage_result + ", " + comments
+        }
+      var display_text = triage_result;
+      if (triage_result.length > 18)
+        {
+          display_text = triage_result.substring(0,18)+"..."
+        };
+
+
+        var id = $(this).attr("id");
+        var url = "/update_automation_script_result_triagge_result?id=" + id + "&triage_result=" + triage_result;
+        var ele = $(this);
+
+        $.ajax({url: url, dataType: "json"}).success(function(data){
+          if (data.result == "failed") {
+              alert("Updating triage result failed, something is wrong with the server. Please try again later.");
+            } 
+          else 
+            {
+              ele.parent().attr("title", triage_result);                        
+              $("input[remote-data='/automation_script_results/" + id + "/rerun']").remove();
+              ele.parent().parent().children().first().children("img").attr("src", "/assets/" + data.asr_result + ".png");
+              $("img.big-icon").attr("src", "/assets/" + data.tr_result + ".png");
+              ele.parent().html(display_text);
+            }
+        });
+      }
+    });
+  });

@@ -1,0 +1,15 @@
+- os =image_tag("#{@test_round.operation_system.name}.png", class: "ui-icon")
+- os = os + "  -  #{@test_round.operation_system.name_with_version}"
+- browser =image_tag("#{@test_round.browser.name}.png", class: "ui-icon")
+- browser = browser + "  -  #{@test_round.browser.name_with_version}"
+- branch_name = @test_round.branch_name.nil? ? "master" : @test_round.branch_name
+- parameter = @test_round.parameter.nil? ? "" : @test_round.parameter
+- parameter_dislay = (parameter.length >= 37) ? parameter.slice(0,37).concat("...") : parameter
+- parameter_html = content_tag(:p, parameter_dislay, :title=>parameter) 
+- left_titles = ['Test Objects:', 'Test Suite:', 'Test Environment:', 'Start Time:', 'End Time:', 'Duration:','OS:', 'Branch:']
+- left_values = [@test_round.test_object, @test_round.test_suite.name, @test_round.test_environment.name, in_time_zone(@test_round.start_time), in_time_zone(@test_round.end_time), @test_round.duration.nil? ? "N/A" : ChronicDuration.output(@test_round.duration), os,branch_name]
+- right_titles = ['Pass Count:', 'Failed Count:', 'Warning Count:', 'Not Run Count:', 'Passrate:', 'Result:','Browser:', 'Parameter:']
+- right_values = [@test_round.pass, @test_round.failed, @test_round.warning, @test_round.not_run, @test_round.pass_rate.nil? ? 'N/A' : number_to_percentage(@test_round.pass_rate, :precision => 2), @test_round.result,browser, parameter_html]
+
+
+= render :partial => "partial/brief_info", :locals => {:left_titles => left_titles, :left_values => left_values, :right_titles => right_titles, :right_values => right_values}

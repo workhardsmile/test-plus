@@ -1,0 +1,5 @@
+--- !ruby/object:RoundTask
+id: 1
+command: qtp $Camps AUI BVTs $BuildNumber=20 $AUT_ENV=INT $Sprint=34 $TimeOut=3600 $MarketName=camps
+status: NA
+priority:

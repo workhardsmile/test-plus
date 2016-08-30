@@ -1,0 +1,24 @@
+.page-header
+  %h3 Listing Browsers
+.browsers
+  %table.zebra-striped
+    %tr
+      %th Name
+      %th Version
+      %th
+    - if @browsers.blank?
+      %tr
+        %td{:colspan => "3"}
+          %h4 No data
+    - else
+      - @browsers.each do |b|
+        %tr
+          %td= b.name
+          %td= b.version
+          - show_url, edit_url, delete_url = nil
+          - if can? :update, Browser
+            - edit_url = edit_admin_browser_path(b)
+          = render :partial => 'partial/table_actions', :locals => {:show_url => show_url, :edit_url => edit_url, :delete_url => delete_url }
+
+- if can? :create, Browser
+  = link_to 'New Browser', new_admin_browser_path, :class => 'btn primary'

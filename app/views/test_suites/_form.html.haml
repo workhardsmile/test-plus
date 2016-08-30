@@ -1,0 +1,131 @@
+.page-header
+  %h2= title
+
+= form_for [@project, @test_suite] do |f|
+  -if @test_suite.errors.any?
+    #error_explanation
+      - @test_suite.errors.messages.each do |attr, msg|
+        %span.help-inline{:id => "test_suite_#{attr}"}= msg[0]
+
+  %fieldset
+    .clearfix
+      = f.label :name
+      .required *
+      .input
+        = f.text_field :name, :class => "validate[required, funcCall[checkOnlySpace]]"
+    .clearfix
+      = f.label :test_type
+      .input
+        = f.select :test_type_id, options_from_collection_for_select(TestType.all, :id, :name, @test_suite.test_type ? @test_suite.test_type.id : "Regression"), {}
+    = f.hidden_field :creator_id, :value => current_user.id
+    .clearfix
+      = f.label :automation_scripts
+      .required *
+      .input
+        .row
+          = form_tag("/projects/#{@project.id}/search_automation_script",{:id => "search_automation_script",:method => "get",:remote=>true, :class=>"form-horizontal"}) do
+            = text_field_tag :search_by_name, nil, :placeholder => 'Enter name to search...'
+            = select_tag(:search_by_owner, options_from_collection_for_select(User.find(@project.automation_script_owner_ids), :id, :display_name),{:prompt => "- Any Owner -"})
+            = select_tag(:search_by_tag, options_for_select(@project.automation_script_tags),{:prompt => "- Any Tags -"})
+            .columns#right.span5
+              %input.btn.primary.do_search{:value => "Search", :style => "width: 45px;"}
+              %input.btn.reset_filter{:value => "Reset", :style => "width: 45px;"}
+    .clearfix
+      .input
+        .row
+          .columns.span7
+            .select-with-horizontal-scrollbar
+              %select.as-select-with-scrollbar#automationscripts{:multiple => 'multiple'}
+                - (@project.automation_scripts.order('name asc') - @test_suite.automation_scripts.order('name asc')).each do |as|
+                  %option{:value => as.id, :title => as.name}= as.name
+            %a#add-all-button
+              %span.multi-select-item-add.ui-icon
+              Choose All
+          .columns.span1#drag-arrow
+            %a.multi-select-item-add.ui-icon#add-button
+            .clearfix
+            %a.multi-select-item-remove.ui-icon#remove-button
+          .columns.span7
+            .select-with-horizontal-scrollbar
+              %select.as-select-with-scrollbar#automationscripts-selected{:multiple => 'multiple', :class => "validate[funcCall[checkNullSelectBox]]"}
+                - @test_suite.automation_scripts.order('name asc').each do |as|
+                  %option{:value => as.id, :title => as.name}= as.name
+            %a#clear-all-button
+              %span.multi-select-item-remove.ui-icon
+              Clear All
+            = hidden_field_tag "test_suite[automation_script_ids][]", ""
+          #as-ids
+    .actions
+      = f.submit 'Save', :class => 'btn primary'
+      = link_to 'Back', project_test_suites_path(@project), :class => 'btn'
+
+:javascript
+
+  $(function(){
+    $("form.edit_test_suite").on("keypress", function (e) {
+      if (e.keyCode == 13) {
+          return false;
+      }
+    });
+    $("#new_test_suite").validationEngine({promptPosition : "bottomRight", scroll: false});
+    $(".edit_test_suite").validationEngine({promptPosition : "bottomRight", scroll: false});
+    function contains(id) {
+      var result = false;
+      $('#automationscripts-selected option').each(function(idx, elem){
+        if ($(elem).attr('value')==id){
+          result = true;
+          return result;
+        }
+      });
+      return result;
+    }
+
+    $("input#search_by_name").on("keypress", function (e){
+      if (e.keyCode == 13){
+        var as_tag = $("select#search_by_tag").val();
+        var as_owner_id = $("select#search_by_owner").val();
+        var as_name = $("input#search_by_name").val();
+        var url = "/projects/#{@project.id}/search_automation_script"
+        $.ajax({url:url,dataType:"json",data: {search_by_tag: as_tag, search_by_owner: as_owner_id, search_by_name: as_name}}).success(function(data){$("#automationscripts").empty(); if (data.automation_scripts.length>0){$.each(data.automation_scripts, function(i,item){if (contains(item.id)==false){var ele="<option value='"+item.id+"'>"+item.name+"</option>";$("#automationscripts").append(ele);} });} });
+      };
+    });
+
+    $("input.do_search").click(function(){
+        var as_tag = $("select#search_by_tag").val();
+        var as_owner_id = $("select#search_by_owner").val();
+        var as_name = $("input#search_by_name").val();
+        var url = "/projects/#{@project.id}/search_automation_script"
+        $.ajax({url:url,dataType:"json",data: {search_by_tag: as_tag, search_by_owner: as_owner_id, search_by_name: as_name}}).success(function(data){$("#automationscripts").empty(); if (data.automation_scripts.length>0){$.each(data.automation_scripts, function(i,item){if (contains(item.id)==false){var ele="<option value='"+item.id+"'>"+item.name+"</option>";$("#automationscripts").append(ele);} });} });
+    });
+    $("input.reset_filter").click(function(){
+        var url = "/projects/#{@project.id}/search_automation_script"
+        $.ajax({url:url,dataType:"json"}).success(function(data){$("#automationscripts").empty(); if (data.automation_scripts.length>0){$.each(data.automation_scripts, function(i,item){if (contains(item.id)==false){var ele="<option value='"+item.id+"'>"+item.name+"</option>";$("#automationscripts").append(ele);} });} });
+    });
+    $('#automationscripts-selected option').each(function(idx, elem){
+      $('#as-ids').append($('.span7 #test_suite_automation_script_ids_').clone().val($(elem).attr('value')));
+    });
+    $('#add-button').click(function(){
+      $('#automationscripts :selected').each(function(idx, elem){
+        $('#automationscripts-selected').append($(elem));
+        $('#as-ids').append($('.span7 #test_suite_automation_script_ids_').clone().val($(elem).attr('value')));
+      });
+    });
+    $('#remove-button').click(function(){
+      $('#automationscripts-selected :selected').each(function(idx, elem){
+        $('#automationscripts').append($(elem));
+        $('#as-ids input').remove("input[value='"+elem.value+"']");
+      });
+    });
+    $('#add-all-button').click(function(){
+      $('#automationscripts option').each(function(idx, elem){
+        $('#automationscripts-selected').append($(elem));
+        $('#as-ids').append($('.span7 #test_suite_automation_script_ids_').clone().val($(elem).attr('value')));
+      });
+    });
+    $('#clear-all-button').click(function(){
+      $('#as-ids').empty();
+      $('#automationscripts-selected option').each(function(idx, elem){
+        $('#automationscripts').append($(elem));
+      });
+    });
+  });

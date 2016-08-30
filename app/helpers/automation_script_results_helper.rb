@@ -1,0 +1,2 @@
+module AutomationScriptResultsHelper
+end

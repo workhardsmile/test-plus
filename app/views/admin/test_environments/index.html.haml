@@ -1,0 +1,24 @@
+.page-header
+  %h3 Listing Test Environments
+.browsers
+  %table.zebra-striped
+    %tr
+      %th Name
+      %th Value
+      %th
+    - if @test_environments.blank?
+      %tr
+        %td{:colspan => "3"}
+          %h4 No data
+    - else
+      - @test_environments.each do |e|
+        %tr
+          %td= e.name
+          %td= e.value
+          - show_url, edit_url, delete_url = nil
+          - if can? :update, TestEnvironment
+            - edit_url = edit_admin_test_environment_path(e)
+          = render :partial => 'partial/table_actions', :locals => {:show_url => show_url, :edit_url => edit_url, :delete_url => delete_url }
+
+- if can? :create, TestEnvironment
+  = link_to 'New Test Environment', new_admin_test_environment_path, :class => 'btn primary'

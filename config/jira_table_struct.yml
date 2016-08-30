@@ -1,0 +1,131 @@
+-
+  name: jiraissue
+  model: FndSubJiraIssue
+  columns:
+    - id: integer
+    - pkey: string
+    - issuetype: string
+    - project: integer
+    - created: datetime
+    - resolutiondate: datetime
+    - priority: string
+    - resolution: string
+    - issuestatus:  string
+    - issuetype: string
+    - summary: string
+-
+  name: priority
+  model: Priority
+  columns:
+    - id: string
+    - pname: string
+-
+  name: resolution
+  model: Resolution
+  columns:
+    - id: string
+    - pname: string
+-
+  name: issuestatus
+  model: IssueStatus
+  columns:
+    - id: string
+    - pname: string
+-
+  name: issuetype
+  model: IssueType
+  columns:
+    - id: string
+    - pname: string
+-
+  name: customfieldvalue
+  model: CustomFieldValue
+  columns:
+    - id: integer
+    - issue: integer
+    - customfield: integer
+    - stringvalue: string
+    - numbervalue: integer
+-
+  name: customfieldoption
+  model: CustomFieldOption
+  columns:
+    - id: integer
+    - customvalue: string
+    - customfield: integer
+
+-
+  name: worklog
+  model: WorkLog
+  columns:
+    - id: integer
+    - startdate: datetime
+    - updated: datetime
+    - author: string
+    - timeworked: integer
+    - issueid: integer
+-
+  name: issuelink
+  model: IssueLink
+  columns:
+    - id: integer
+    - destination: integer
+    - linktype: integer
+    - source: integer
+-
+  name: nodeassociation
+  model: NodeAssociation
+  columns:
+    - source_node_id: integer
+    - association_type: string
+    - sink_node_id: integer
+-
+  name: projectversion
+  model: ProjectVersion
+  columns:
+    - id: integer
+    - vname: string
+-
+  name: changeitem
+  model: ChangeItem
+  relation: changegroup
+  columns:
+    - id: integer
+    - field: string
+    - oldvalue: text
+    - newvalue: text
+    - oldstring: text
+    - newstring: text
+    - groupid: integer
+  field_map:
+    - field: change_field
+
+-
+  name: changegroup
+  model: ChangeGroup
+  relation: nodeassociation
+  columns:
+    - id: integer
+    - author: string
+    - created: datetime
+    - issueid: integer
+-
+  name: cwd_user
+  model: CwdUser
+  columns:
+    - id: integer
+    - display_name: string
+    - user_name: string
+    - credential: string
+-
+  name: cwd_membership
+  model: CwdMembership
+  columns:
+    - id: integer
+    - parent_name: string
+-
+  name: project
+  model: FndProject
+  columns:
+    - id: integer
+    - pname: string

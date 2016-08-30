@@ -1,0 +1,10 @@
+= form_for @screen_shot do |f|
+  -if @screen_shot.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@screen_shot.errors.count, "error")} prohibited this screen_shot from being saved:"
+      %ul
+        - @screen_shot.errors.full_messages.each do |msg|
+          %li= msg
+
+  .actions
+    = f.submit 'Save'

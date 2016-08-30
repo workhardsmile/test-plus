@@ -1,0 +1,22 @@
+.row.detail
+  .span16.columns
+    %h3 Details
+.row.brief-info
+  .span8.columns.brief-left
+    .span3.columns
+      %ul.title
+        -left_titles.each do |t|
+          %li= t
+    .span5.columns
+      %ul.value
+        -left_values.each do |v|
+          %li= v
+  .span8.columns.brief-right
+    .span3.columns
+      %ul.title
+        -right_titles.each do |t|
+          %li= t
+    .span5.columns
+      %ul.value
+        -right_values.each do |v|
+          %li= v

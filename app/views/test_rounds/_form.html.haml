@@ -1,0 +1,87 @@
+= form_for [@project, @test_round] do |f|
+  -if @test_round.errors.any?
+    #error_explanation
+      - @test_round.errors.messages.each do |attr, msg|
+        %span.help-inline{:id => "test_round_#{attr}"}= msg[0]
+  %fieldset
+    %legend New Test Round
+    .clearfix
+      = f.label :test_object
+      .required *
+      .input
+        = f.text_field :test_object, :class => "validate[required, funcCall[checkOnlySpace]]"
+    .clearfix
+      = f.label :test_suite
+      .required *
+      .input
+        = f.select :test_suite_id, options_from_collection_for_select(@project.test_suites, :id, :name), {}, {:class => "chzn-select validate[required]"}
+    .clearfix
+      = f.label :test_environment
+      .required *
+      .input
+        = f.select :test_environment_id, options_from_collection_for_select(@project.test_environments, :id, :name), {}, {:class => "chzn-select validate[required]"}
+    .clearfix
+      = f.label :operation_system
+      .required *
+      .input
+        = f.select :operation_system_id, options_from_collection_for_select(@project.operation_systems, :id, :name_with_version), {}, {:class => "chzn-select validate[required,funcCall[checkHELLO]]"}
+    .clearfix
+      = f.label :browser
+      .required *
+      .input
+        = f.select :browser_id, options_from_collection_for_select(@project.browsers, :id, :name_with_version), {}, {:class => "chzn-select validate[required]"}
+    .clearfix
+      = f.label :branch_name      
+      .input
+        = f.select :branch_name, options_for_select(@project.branches,selected: "master"), {}, {:class => "chzn-select"}
+    .clearfix
+      = f.label :assign_to_slave
+      .input
+        = f.select :assigned_slave_id, options_for_select(get_eligible_slaves(@project.name)), {}, {:class => "chzn-select"}
+    .clearfix
+      = f.label :parameter
+      .input
+        = f.text_field :parameter
+    .clearfix
+      = f.label "Auto-Rerun"
+      .input.onoffswitch
+        %input#auto_rerun_switch.onoffswitch-checkbox{:checked => false, :name => "enable_auto_rerun", :type => "checkbox"}
+          %label.onoffswitch-label{:for => "auto_rerun_switch"}
+            %span.onoffswitch-inner
+            %span.onoffswitch-switch
+
+    = f.hidden_field :creator_id, :value => current_user.id
+    .actions
+      = f.submit 'Schedule!', :class => 'btn primary', :id => 'schedule_commit_button'
+      = link_to 'Back', project_test_rounds_path, :class => 'btn'
+
+
+
+:javascript  
+  $(function(){    
+    var submit = true;
+    $("#new_test_round").validationEngine({
+      promptPosition: "bottomRight", 
+      scroll: false,
+      onValidationComplete: function(form, status){
+        if(status == false){
+          submit = false;
+        } else{
+          $("#schedule_commit_button").addClass("disabled");
+          submit = true;
+          $("#schedule_commit_button").submit();
+        }
+      }
+    });
+
+    $("#schedule_commit_button").submit(function(){
+      submit = true;
+      $(".chzn-container > .chzn-single > span").each(function(i){
+        if ($(this).text() == "Select an Option") {
+          $(this).parent().parent().validationEngine("showPrompt", "This a custom msg", "error", "bottomRight", true);
+          submit = false;
+        }
+      });
+      return submit;
+    });
+  });

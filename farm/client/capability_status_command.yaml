@@ -1,0 +1,3 @@
+--- !ruby/object:CapabilityStatusCommand
+name: qtp
+status: busy

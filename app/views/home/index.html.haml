@@ -1,0 +1,70 @@
+.home-box
+  .outer-home-box
+    .inner-home-box= render 'coverage'
+  / .outer-home-box
+  /   .inner-home-box
+  /     .chart-title
+  /       %h5 TestPlus Statistics
+  /     .info
+  /       %span.desc.desc-pre= "Hosts"
+  /       - @project_count.to_s.split(//).each do |c|
+  /         %span.digital{:class => "digital-#{c}"}
+  /       %span.desc.desc-suf=" Projects"
+  /       .clearfix
+  /     .info
+  /       %span.desc.desc-pre= "Contains"
+  /       - @automation_script_count.to_s.split(//).each do |c|
+  /         %span.digital{:class => "digital-#{c}"}
+  /       %span.desc.desc-suf="Scripts"
+  /       .clearfix
+  /     .info
+  /       %span.desc.desc-pre= "Scheduled"
+  /       - @test_round_count.to_s.split(//).each do |c|
+  /         %span.digital{:class => "digital-#{c}"}
+  /       %span.desc.desc-suf="Tests"
+  /       .clearfix
+  .clearfix
+.home-box
+  .outer-home-box
+    .inner-home-box
+      .chart-title
+        %h5 Activity Stream
+      .filter-dropdown
+        = select_tag 'activities-filter', content_tag(:option, 'None', :value => '') + options_from_collection_for_select(Project.all, :name, :name)
+        %span#activities-filter-tip Filter by: 
+
+        / = f.select :project_category_id, options_from_collection_for_select(ProjectCategory.order('name asc'), :id, :name, @project.project_category_id), {}, {:class => "chzn-select", :id => "activities-filter"}
+        .clearfix
+      .activity-stream
+        = render 'activities'
+  / .outer-home-box#dre-table
+  /   .inner-home-box
+  /     .chart-title
+  /       %h5 ActiveWorks DRE Overall
+  /     = render 'dre/overall_small'
+  .clearfix
+
+:css
+  #dre-table{
+    cursor: pointer;
+  }
+
+:javascript
+  $(function(){
+    $('#activities-filter').chosen();
+    $('#activities-filter').change(function(e){
+      var value = $(e.target).val();
+      var url = "/get_activities_by_project";
+      $.ajax({type: 'GET', url: url, data: {name: value} }).success(function(data) {
+        $('.activity-stream').empty().append(data);
+      });
+    });
+  });
+
+
+/ :javascript
+/   $(function(){
+/     $('#dre-table').click(function(){
+/       window.location = "/dre/overall";
+/     });
+/   });

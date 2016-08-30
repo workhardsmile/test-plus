@@ -1,0 +1,31 @@
+= form_for @project do |f|
+  -if @project.errors.any?
+    #error_explanation
+      - @project.errors.messages.each do |attr, msg|
+        %span.help-inline{:id => "project_#{attr}"}= msg[0]
+
+  %fieldset
+    %legend= title
+    .clearfix
+      = f.label :name
+      .input
+        = f.text_field :name
+    .clearfix
+      = f.label :leader
+      .input
+        = f.select :leader_id, options_from_collection_for_select(User.all, :id, :display_name)
+    .clearfix
+      = f.label :project_category
+      .input
+        = f.select :project_category_id, options_from_collection_for_select(ProjectCategory.all, :id, :name)
+    .clearfix
+      = f.label :source_control_path
+      .input
+        = f.text_field :source_control_path
+    .clearfix
+      = f.label :icon
+      .input
+        = f.file_field :icon_image
+    .actions
+      = f.submit 'Save', :class => 'btn primary'
+      = link_to 'Cancel', projects_path, :class => 'btn'

@@ -1,0 +1,34 @@
+.page-header
+  %h3 Configs of Testlink Sync
+.browsers
+  %table.zebra-striped
+    %tr
+      %th TestPlus Project Name
+      %th Testlink Project Name
+      %th Status
+      %th
+    - if @import_testlink_configs.blank?
+      %tr
+        %td{:colspan => "3"}
+          %h4 No data
+    - else
+      - @import_testlink_configs.each do |config|
+        %tr
+          %td= config.testplus_project
+          %td= config.testlink_project
+          %td
+            - if config.active
+              %span{:style => "color: #0000FF"}
+                =  "Active"
+            - else
+              %span{:style => "color: #EE3B3B"}
+                = "Inactive"
+          - edit_url, delete_url = nil
+          - if can? :delete, ImportTestlinkConfig
+            - delete_url = admin_import_testlink_config_path(config)
+          - if can? :update, ImportTestlinkConfig
+            - edit_url = edit_admin_import_testlink_config_path(config)
+          = render :partial => 'partial/table_actions', :locals => {:show_url => nil, :edit_url => edit_url, :delete_url => delete_url }
+
+- if can? :create, ImportTestlinkConfig
+  = link_to 'New Config', new_admin_import_testlink_config_path, :class => 'btn primary'

@@ -1,0 +1,44 @@
+.page-header
+  %h2 Listing Test Rounds
+  = form_for search, :url => admin_project_test_rounds_path, :remote => true do |f|
+    %span.search
+      = f.text_field :test_suite_test_type_name_or_test_environment_name_or_test_suite_name_or_test_object_contains, {:id => 'search'}
+      = f.submit '', {:class => 'btn', :id => 'searchsubmit'}
+.test-rounds
+  %table.zebra-striped
+    %tr
+      %th ID
+      %th Test Type
+      %th Test Environment
+      %th Test Suite
+      %th Test Object
+      %th
+    - if test_rounds.nil? or test_rounds.count == 0
+      %tr
+        %td{:colspan => "6"}
+          %h4 No data
+    - else
+      - test_rounds.each do |test_round|
+        %tr
+          %td= test_round.id
+          %td= test_round.test_suite.test_type.name
+          %td= test_round.test_environment.name
+          %td
+            - ts_name = test_round.test_suite.name
+            - if ts_name && ts_name.length >= 30
+              - ts_name = ts_name.slice(0,30).concat("...")
+            %span{:title => test_round.test_suite.name}= ts_name
+          %td
+            - test_object = test_round.test_object
+            - if test_object && test_object.length >= 40
+              - test_object = test_object.slice(0,40).concat("...")
+            %span{:title => test_round.test_object}= test_object
+          - show_url, edit_url, delete_url = nil
+          - if can? :delete, TestRound, {:project_id => project.id}
+            - delete_url = admin_project_test_round_path(project, test_round)          
+          = render :partial => 'partial/table_actions', :locals => {:show_url => show_url, :edit_url => edit_url, :delete_url => delete_url}
+
+
+= paginate test_rounds
+
+= link_to 'Back', admin_project_path(project), :class => 'btn'

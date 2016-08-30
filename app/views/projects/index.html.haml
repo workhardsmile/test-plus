@@ -1,0 +1,22 @@
+.page-header
+  %h2
+    All projects
+    %small= " #{Project.count} in total"
+  = form_tag('#', :method => 'get') do
+    %span.search
+      = text_field_tag 'search'
+      = submit_tag '', {:class => 'btn', :id => 'searchsubmit'}
+
+.projects
+  - @projects.group_by{|project| project.project_category}.each do |project_category, projects|
+    .sub-page-header
+      =image_tag 'catalog.png'
+      %h3
+        = project_category.name
+    - projects.each_slice(5) do |pa|
+      .row
+        - pa.each do |project|
+          .span3.columns
+            %a{:href => coverage_project_path(project)}
+              %h4= project.name
+              = image_tag project.icon_image.url(:large)

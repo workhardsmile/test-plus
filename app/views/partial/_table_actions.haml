@@ -1,0 +1,15 @@
+- confirm_msg ||= 'Are you sure?'
+- warning_msg ||= nil
+%td
+  - unless show_url.nil?
+    %a.table_actions{:href => show_url}
+      %img{:src => asset_path('show.png'), :onmouseover => "this.src='#{asset_path 'show-hover.png'}'", :onmouseout => "this.src='#{asset_path 'show.png'}'"}
+  - unless edit_url.nil?  
+    %a.table_actions{:href => edit_url}
+      %img{:src => asset_path('edit.png'), :onmouseover => "this.src='#{asset_path 'edit-hover.png'}'", :onmouseout => "this.src='#{asset_path 'edit.png'}'"}
+  - unless delete_url.nil?
+    - if warning_msg.nil?
+      %a.table_actions{:href => delete_url, "data-confirm" => confirm_msg, 'data-method' => "delete", :rel => "nofollow"}
+        %img{:src => asset_path('cross.png'), :onmouseover => "this.src='#{asset_path 'cross-hover.png'}'", :onmouseout => "this.src='#{asset_path 'cross.png'}'"}
+    - else
+      %img{:src => asset_path('cross.png'), :style => "cursor:pointer", :onclick => "alert('#{warning_msg}')", :onmouseover => "this.src='#{asset_path 'cross-hover.png'}'", :onmouseout => "this.src='#{asset_path 'cross.png'}'"}

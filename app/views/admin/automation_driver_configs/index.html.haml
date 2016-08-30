@@ -1,0 +1,30 @@
+.page-header
+  %h2 Listing Automation Driver Configs
+.ci-mappings
+  %table.zebra-striped
+    %tr
+      %th Name
+      %th Automation Driver
+      %th Source Control
+      %th
+
+    - if @automation_driver_configs.nil? or @automation_driver_configs.count == 0
+      %tr
+        %td{:colspan => "4"}
+          %h4 No data
+    - else
+      - @automation_driver_configs.each do |adc|
+        %tr
+          %td= adc.name
+          %td= adc.automation_driver.name_with_version
+          %td= adc.source_control
+          - show_url, edit_url, delete_url = nil
+          - if can? :update, AutomationDriverConfig, {:project_id => @project.id}
+            - edit_url = edit_admin_project_automation_driver_config_path(@project, adc)
+          - if can? :delete, AutomationDriverConfig, {:project_id => @project.id}
+            - delete_url = admin_project_automation_driver_config_path(@project, adc)
+          = render :partial => 'partial/table_actions', :locals => {:show_url => show_url, :edit_url => edit_url, :delete_url => delete_url}
+
+- if can? :create, AutomationDriverConfig, {:project_id => @project.id}
+  = link_to 'New Automation Driver Config', new_admin_project_automation_driver_config_path(@project), :class => 'btn primary'
+= link_to 'Back', admin_project_path(@project), :class => 'btn'

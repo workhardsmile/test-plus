@@ -1,0 +1,7 @@
+.row.sub-header
+  .span16.columns
+    %h2
+      =link_to @automation_script.name, project_automation_script_path(@project, @automation_script), :remote => true
+      %span=" / #{@automation_case.name}"
+
+= render 'brief_info'

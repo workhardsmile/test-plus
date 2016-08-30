@@ -1,0 +1,22 @@
+%h1 Listing screen_shots
+
+%table
+  %tr
+    %th
+    %th
+    %th
+
+  - if @screen_shots.nil? or @screen_shots.count == 0
+    %tr
+      %td{:colspan => "3"}
+        %h4 No data
+  - else
+    - @screen_shots.each do |screen_shot|
+      %tr
+        %td= link_to 'Show', screen_shot
+        %td= link_to 'Edit', edit_screen_shot_path(screen_shot)
+        %td= link_to 'Destroy', screen_shot, :confirm => 'Are you sure?', :method => :delete
+
+%br
+
+= link_to 'New Screen shot', new_screen_shot_path

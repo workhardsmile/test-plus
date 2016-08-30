@@ -1,0 +1,17 @@
+= form_tag '/functional/generate_bug_report.csv' do
+  %fieldset
+    %legend Critierias
+    .clearfix
+      = label_tag 'project'
+      .input
+        = text_field_tag 'project'
+    .clearfix
+      = label_tag 'from'
+      .input
+        = text_field_tag 'from'
+    .clearfix
+      = label_tag 'to'
+      .input
+        = text_field_tag 'to'
+    .actions
+      = submit_tag 'Generate'

@@ -1,0 +1,38 @@
+.page-header
+  %h1 Listing Projects
+%table.zebra-striped
+  %tr
+    %th Name
+    %th Leader
+    %th Created At
+    %th Source Control Path
+    %th
+
+  - if @projects.nil? or @projects.count == 0
+    %tr
+      %td{:colspan => "5"}
+        %h4 No data
+  - else
+    - @projects.each do |project|
+      %tr
+        %td
+          %b= project.name
+        %td= project.leader.display_name
+        %td= in_time_zone(project.created_at)
+        %td= project.source_control_path
+        - show_url, edit_url, delete_url = nil
+        - if can? :read, Project, {:project_id => project.id}
+          - show_url = admin_project_path(project)
+        - if can? :update, Project, {:project_id => project.id}
+          - edit_url = edit_admin_project_path(project)
+        - if can? :delete, Project, {:project_id => project.id}
+          - delete_url = admin_project_path(project)
+        = render :partial => 'partial/table_actions', :locals => {:show_url => show_url, :edit_url => edit_url, :delete_url => delete_url}
+
+%br
+
+- if can? :create, Project
+  = link_to 'New Project', new_admin_project_path, :class => 'btn primary'
+-# if can? :update_display_order, Project
+  -#= link_to 'Display Order', admin_projects_display_order_path, :class => 'btn'
+

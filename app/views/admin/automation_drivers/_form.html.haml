@@ -1,0 +1,32 @@
+-if flash[:error]
+  .alert-message.error= flash[:error].html_safe
+
+= form_for([:admin, @automation_driver]) do |f|
+  -if @automation_driver.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@automation_driver.errors.count, "error")} prohibited this automation driver from being saved:"
+      %ul
+        - @automation_driver.errors.full_messages.each do |msg|
+          %li= msg
+  %fieldset
+    %legend= title
+    .clearfix
+      = f.label :name
+      .required *
+      .input
+        = f.text_field :name, :class => "validate[required, funcCall[checkOnlySpace]]"
+    .clearfix
+      = f.label :version
+      .required *
+      .input
+        = f.text_field :version, :class => "validate[required, funcCall[checkOnlySpace]]"
+    .actions
+      = f.submit 'Save', :class => 'btn primary'
+      = link_to 'Back', admin_automation_drivers_path, :class => 'btn'
+
+:javascript
+  $(function(){
+    $("#new_automation_driver").validationEngine({promptPosition: "bottomRight", scroll: false});
+    $(".edit_automation_driver").validationEngine({promptPosition: "bottomRight", scroll: false});
+  })
+  

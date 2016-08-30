@@ -1,0 +1,36 @@
+.page-header
+  %h2
+    Slaves
+    %small= "#{slave_count} in total"
+  = form_for search, :url => slaves_path, :remote => true do |f|
+    %span.search
+      = f.text_field :name_or_ip_address_or_project_name_or_status_contains, {:id => 'search'}
+      = f.submit '', {:class => 'btn', :id => 'searchsubmit'}
+
+%table.zebra-striped
+  %tr
+    %th=sort_link search, :name, "Name", {}, {:remote => true}
+    %th=sort_link search, :ip_address, "IP Address", {}, {:remote => true}
+    %th=sort_link search, :project_name, "Project", {}, {:remote => true}
+    %th=sort_link search, :status, "Status", {}, {:remote => true}
+    %th="Browsers"
+    %th="Drivers"
+  - if slaves.nil? or slaves.count == 0
+    %tr
+      %td{:colspan => "6"}
+        %h4 No data
+  - else
+    - slaves.each do |slave|
+      %tr
+        %td= link_to "#{slave.name}", slave_slave_assignments_path(slave)
+        %td= slave.ip_address
+        %td= slave.project_name
+        %td= slave.status_with_active
+        %td
+          - slave.capabilities_hash[:browsers].each do |browser|
+            = image_tag("#{browser}.png", class: "ui-icon",title: "#{browser}")
+        %td
+          - slave.capabilities_hash[:drivers].each do |driver|
+            = image_tag("#{driver}.png", class: "ui-icon",title: "#{driver}")
+
+= paginate slaves

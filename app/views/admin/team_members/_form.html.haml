@@ -1,0 +1,29 @@
+= form_for @team_member, :url => {:controller => 'admin/team_members', :action => 'create'} do |f|
+  -if @team_member.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@team_member.errors.count, "error")} prohibited this team_member from being saved:"
+      %ul
+        - @team_member.errors.full_messages.each do |msg|
+          %li= msg
+
+  %fieldset
+    %legend= title
+    .clearfix
+      = f.label :name
+      .input
+        = f.text_field :name
+    .clearfix
+      = f.label :display_name
+      .input
+        = f.text_field :display_name
+    .clearfix
+      = f.label :email
+      .input
+        = f.text_field :email
+    .clearfix
+      = f.label :cc_list
+      .input
+        = f.text_field :cc_list
+    .actions
+      = f.submit 'Save', :class => 'btn primary'
+      = link_to 'Back', admin_team_members_path, :class => 'btn'

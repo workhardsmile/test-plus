@@ -1,0 +1,51 @@
+.page-header
+  %h2
+    Automation Scripts
+    %small= "#{@project.automation_scripts.count} in total"
+  = form_for search, :url => project_automation_scripts_path(@project), :remote => true do |f|
+    %span.search
+      = f.text_field :name_or_status_or_version_or_owner_email_contains, {:id => 'search'}
+      = f.submit '', {:class => 'btn', :id => 'searchsubmit'}
+
+%table
+  %tr
+    %th=sort_link search, :name, {}, {:remote => true}
+    %th=sort_link search, :status, {}, {:remote => true}
+    %th=sort_link search, :version, {}, {:remote => true}
+    %th=sort_link search, :owner_email, "Owner", {}, {:remote => true}
+    %th= 'Script Note'
+    %th
+  - if automation_scripts.nil? or automation_scripts.count == 0
+    %tr
+      %td{:colspan => "5"}
+        %h4 No data
+  - else
+    - automation_scripts.each do |automation_script|
+      %tr
+        %td= link_to automation_script.name, automation_script_automation_cases_path(automation_script), :remote => true
+        %td= automation_script.status
+        %td= automation_script.version
+        %td= automation_script.owner.display_name
+        -if (can? :delete, AutomationScript, {:project_id => project.id}) or (!current_user.nil? && automation_script.owner.display_name == current_user.display_name)
+          %td          
+            %input{:type => "button", :value => "Edit", "remote-data" => "/automation_scripts/#{automation_script.id}/edit_note", :class => "btn primary automation-note"}
+          = render :partial => 'partial/table_actions', :locals => {:show_url => automation_script_automation_cases_path(automation_script), :edit_url => nil, :delete_url => project_automation_script_path(project,automation_script)}
+        -else
+          %td
+            - if automation_script.note           
+              %input{:type => "button", :value => "View", "remote-data" => "/automation_scripts/#{automation_script.id}/view_note", :class => "btn automation-note"}
+            - else
+              %span= 'N/A'
+          = render :partial => 'partial/table_actions', :locals => {:show_url => automation_script_automation_cases_path(automation_script), :edit_url => nil, :delete_url => nil}
+= paginate automation_scripts
+
+:javascript
+  $("input.automation-note").click(function() {
+    $.fancybox({
+        width: 400,
+        height: 400,        
+        autoSize: false,
+        href: $(this).attr("remote-data"),
+        type: 'ajax'
+    }); 
+  });

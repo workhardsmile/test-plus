@@ -1,0 +1,51 @@
+.row.sub-header
+  .span12.columns
+    %img.big-icon{:src => asset_path("#{@automation_script_result.result}.png")}
+    %h2
+      =link_to "#{@test_round.test_type.name}##{@test_round.id}", project_test_round_path(@project, @test_round), :remote => true
+      %span=" / "
+      - as_name = @automation_script_result.name
+      - if as_name && as_name.length >= 30
+        - as_name = as_name.slice(0,30).concat("...")
+      %span{:title => @automation_script_result.name}="#{as_name}"
+  .span3.columns#right
+    #dropdown-1.dropdown.dropdown-tip
+      %ul.dropdown-menu
+        - asr =  @automation_script_result
+        - project = @automation_script_result.test_round.project
+        - if asr.end?
+          %li
+            = link_to "View Triage Result","#", :id => "action-view-triage-result","remote-data" => "/automation_script_results/#{@automation_script_result.id}/view_triage_result"
+        - if asr.is_rerunnable? && can?(:update, AutomationScriptResult, {:project_id => project.id}) 
+          %li.rerun_container
+            %a.rerun_btn{:href => "#", "remote-data" => "/automation_script_results/#{asr.id}/rerun",:remote => true} Rerun Script
+        -sa = @automation_script_result.slave_assignments.last  
+        -if sa && sa.slave && @automation_script_result.end_time
+          %li
+            =link_to "Show Log", test_round_automation_script_result_show_logs_path(@automation_script_result.test_round, @automation_script_result)
+    %a.btn.primary{"data-dropdown" => "#dropdown-1"} Custom Actions        
+= render 'brief_info'
+= render :partial => "partial/service_info", :locals => {:asr => @automation_script_result}
+.list-content-box
+  = render :partial => 'automation_case_results/list', :locals => {:automation_case_results => @automation_case_results, :automation_script_result => @automation_script_result, :search => @search}
+
+:javascript
+  $(function(){  
+    $("#action-view-triage-result").click(function(){
+      $("#dropdown-1").dropdown("hide");
+      $.fancybox({
+          width: 400,
+          height: 400,
+          autoSize: false,
+          href: $("#action-view-triage-result").attr("remote-data"),
+          type: 'ajax'
+      }); 
+    });
+    $("a.rerun_btn:not(:disabled)").click(function(){
+      $(this).parent().addClass("disabled");
+      $(this).disabled = true;
+      $.ajax({url: $(this).attr("remote-data")}).success(function(data) {
+        location.reload();
+      })
+    });    
+  });

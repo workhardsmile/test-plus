@@ -1,0 +1,10 @@
+%h2 Calculate Original Time Estimate
+
+= form_tag "/functional/rmf_original_estimate_query.csv" do
+  .field
+    = label_tag 'Roadmap Feature Jira Key:'
+    = text_field_tag 'rmf_key'
+    = label_tag 'Sub Task Type to calculate:'
+    = text_field_tag 'task_type'
+  .actions
+    = submit_tag 'Calculate'

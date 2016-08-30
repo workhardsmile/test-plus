@@ -1,0 +1,48 @@
+-if flash[:error]
+  .alert-message.error= flash[:error].html_safe 
+.page-header
+  %h2
+    Users
+    %small= "#{@total_user} in total"
+  - if can? :create, User
+    = link_to 'New User', new_admin_user_path, :class => 'btn primary'
+  = form_for @search, :url => admin_users_path, :html => {:method => :get} do |f|
+    %span.search
+      = f.text_field :email_or_display_name_contains, {:id => 'search'}
+      = f.submit '', {:class => 'btn', :id => 'searchsubmit'}
+%table.zebra-striped
+  %tr
+    %th Email
+    %th Display Name
+    %th Status
+    %th
+
+  - if @users.nil? or @users.count == 0
+    %tr
+      %td{:colspan => "4"}
+        %h4 No data
+  - else
+    - @users.each do |user|
+      %tr
+        %td= user.email
+        %td= user.display_name
+        %td
+          - if user.active
+            %span{:style => "color: #0000FF"}
+              =  "Active"
+          - else
+            %span{:style => "color: #EE3B3B"}
+              = "Inactive"
+        - if user.active
+          - show_url, edit_url, delete_url = nil
+          - if can? :update, Project
+            - edit_url = edit_admin_user_path(user)
+          - if can? :delete, Project
+            - delete_url = admin_user_path(user)
+          = render :partial => 'partial/table_actions', :locals => {:show_url => show_url, :edit_url => edit_url, :delete_url => delete_url}
+        - else
+          %td
+            %a{:href => "/admin/activate_user/#{user.id}", "data-confirm" => "Are you sure activate this user?"}
+              %img{:src => asset_path('active.png'), :style => "height: 26px"}
+%br
+= paginate @users

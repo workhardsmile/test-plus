@@ -1,0 +1,7 @@
+.row.detail
+  .span16.columns
+    %h3 Services:
+.row.service-info
+  -if asr.target_services
+    -asr.target_services.each do |ts|
+      .service-item= "#{ts.name} : #{ts.version}"

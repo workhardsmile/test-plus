@@ -1,0 +1,24 @@
+.page-header
+  %h3 Listing Operation Systems
+.browsers
+  %table.zebra-striped
+    %tr
+      %th Name
+      %th Version
+      %th
+    - if @operation_systems.blank?
+      %tr
+        %td{:colspan => "3"}
+          %h4 No data
+    - else
+      - @operation_systems.each do |os|
+        %tr
+          %td= os.name
+          %td= os.version
+          - show_url, edit_url, delete_url = nil
+          - if can? :update, OperationSystem
+            - edit_url = edit_admin_operation_system_path(os)
+          = render :partial => 'partial/table_actions', :locals => {:show_url => show_url, :edit_url => edit_url, :delete_url => delete_url }
+
+- if can? :create, OperationSystem
+  = link_to 'New Operation System', new_admin_operation_system_path, :class => 'btn primary'

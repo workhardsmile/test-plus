@@ -1,0 +1,122 @@
+.row.sub-header
+  .span12.columns
+    %img.big-icon{:src => asset_path("#{@automation_case_result.result}.png")}
+    %h2
+      =link_to "#{@automation_script_result.test_round.test_type.name}##{@automation_script_result.test_round.id}", project_test_round_path(@automation_script_result.test_round.project, @automation_script_result.test_round), :remote => true
+      %span=" / "
+      - as_name = @automation_script_result.name
+      - if as_name && as_name.length >= 15
+        - as_name = as_name.slice(0,15).concat("...")
+      =link_to as_name, test_round_automation_script_result_path(@automation_script_result.test_round, @automation_script_result), :remote => true, :title => @automation_script_result.name
+      %span=" / "
+      - ac_name = @automation_case_result.name
+      - if ac_name && ac_name.length >= 15
+        - ac_name = ac_name.slice(0,15).concat("...")
+      %span{:title => @automation_case_result.name}="#{ac_name}"
+  .span3.columns#right
+    #dropdown-1.dropdown.dropdown-tip
+      %ul.dropdown-menu
+        - asr =  @automation_script_result
+        - project = @automation_script_result.test_round.project
+        - if asr.end?
+          %li
+            = link_to "View Triage Result","#", :id => "action-view-triage-result","remote-data" => "/automation_script_results/#{@automation_script_result.id}/view_triage_result"
+        - if asr.is_rerunnable? && can?(:update, AutomationScriptResult, {:project_id => project.id}) 
+          %li.rerun_container
+            %a.rerun_btn{:href => "#", "remote-data" => "/automation_script_results/#{asr.id}/rerun",:remote => true} Rerun Script
+        -sa = @automation_script_result.slave_assignments.last  
+        -if sa && sa.slave && @automation_script_result.end_time
+          %li
+            =link_to "Show Log", test_round_automation_script_result_show_logs_path(@automation_script_result.test_round, @automation_script_result)
+    %a.btn.primary{"data-dropdown" => "#dropdown-1"} Custom Actions         
+=render "brief_info"
+
+.row.detail.toggle_header
+  .span16.columns
+    %img.big-icon{:src => asset_path("plus.ico")}
+    %h3 Test Steps and Expected Results
+.row.detail.toggle_body{:style=>"display:none"}
+  .span16.columns
+    - if @test_case and @test_case.tc_steps and !(@test_case.tc_steps.empty?)
+      %table.test-steps
+        %tr
+          %th NO.
+          %th Steps
+          %th Expected Result
+        - @test_case.tc_steps.group(:test_link_id).each do |ts|
+          %tr
+            %td
+              =ts.step_number
+            %td
+              .step-action
+                =ts.step_action.html_safe
+            %td
+              .expected-result
+                =ts.expected_result.html_safe
+    - else
+      .error-message
+        %span
+          %h6 No steps and expected results
+
+.row.detail.toggle_header  
+  .span16.columns
+    %img.big-icon{:src => asset_path("minus.ico")}
+    %h3 Error Message
+.row.detail.toggle_body
+  .span16.columns        
+    - if @automation_case_result.error_message and @automation_case_result.error_message != ""          
+      - format_error_message(@automation_case_result.error_message)
+    - else
+      .error-message
+        %h6 No Error Messages
+
+.row.detail.toggle_header
+  .span16.columns
+    %img.big-icon{:src => asset_path("minus.ico")}    
+    %h3 Screen Shot
+.row.detail.toggle_body
+  .span16.columns
+    .screen-shot-box
+      - if @automation_case_result.screen_shots && @automation_case_result.screen_shots.count > 0
+        - @automation_case_result.screen_shots.each do |ss|
+          .screen-shot-image
+            = link_to image_tag(ss.screen_shot.url(:thumb)), ss.screen_shot.url, :rel => 'attachments', :class => "screen-shot"
+      - else
+        %h6 No Screen Shots
+  
+
+
+:javascript
+  $(".toggle_header").click(function() {
+    $header = $(this);
+    $icon = $header.children().first().children(".big-icon")
+    $body = $header.next(".toggle_body");
+    $body.slideToggle(500, function () {
+      if($body.is(":visible"))
+        $icon.attr("src", "#{asset_path('minus.ico')}");
+      else
+        $icon.attr("src", "#{asset_path('plus.ico')}");
+    });
+
+  });
+
+  $(function(){
+    $("a.screen-shot").fancybox({ 'autoDimensions' : true});
+    $("#action-view-triage-result").click(function(){
+      $("#dropdown-1").dropdown("hide");
+      $.fancybox({
+          width: 400,
+          height: 400,
+          autoSize: false,
+          href: $("#action-view-triage-result").attr("remote-data"),
+          type: 'ajax'
+      }); 
+    });
+    $("a.rerun_btn:not(:disabled)").click(function(){
+      $(this).parent().addClass("disabled");
+      $(this).disabled = true;
+      $.ajax({url: $(this).attr("remote-data")}).success(function(data) {
+       window.location.replace("http://#{request.host_with_port}#{test_round_automation_script_result_path(@automation_script_result.test_round, @automation_script_result)}")
+      })
+    }); 
+  });

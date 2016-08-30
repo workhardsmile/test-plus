@@ -1,0 +1,33 @@
+
+.page-header
+  %h2
+    Check AA Offer in Production
+  = form_for search, :url => offer_reports_path, :remote => true do |f|
+    %span.search
+      = f.text_field :market_or_offer_type_or_result_contains, {:id => 'search'}
+      = f.submit '', {:class => 'btn', :id => 'searchsubmit'}
+
+%table.zebra-striped
+  %tr
+    %th= sort_link search, :result, {}, {:remote => true}
+    %th= 'Test Round'
+    %th=sort_link search, :market, {}, {:remote => true}
+    %th= 'Offer Type'
+    %th= 'Description'
+    %th=sort_link search, :timestamp, {}, {:remote => true}
+  - offer_reports.each do |offer_report|
+    - tr = TestRound.where(:id => offer_report.test_round_id)    
+    %tr
+      %td= image_tag("#{offer_report.result.downcase}.png", class: "ui-icon")
+      %td
+        -if tr.size > 0
+          = link_to offer_report.test_round_id, project_test_round_path(tr.first.project, tr.first)
+        -else 
+          = offer_report.test_round_id
+      %td= offer_report.market
+      %td= offer_report.offer_type
+      %td= offer_report.description
+      %td= offer_report.timestamp
+
+= paginate offer_reports
+

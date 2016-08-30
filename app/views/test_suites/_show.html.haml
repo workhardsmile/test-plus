@@ -1,0 +1,45 @@
+.row.page-header
+  %h2.span10.columns
+    =link_to "Test Suites", project_test_suites_path(@project)
+    %span= " / "
+    - ts_name = @test_suite.name
+    - if ts_name && ts_name.length >= 30
+      - ts_name = ts_name.slice(0,30).concat("...")
+    %span{:title => @test_suite.name}= "#{ts_name}"
+    %small= "#{@test_suite.automation_scripts.count} in total"
+  .span6.columns#right
+    -if can? :manage, TestSuite
+      = link_to 'Edit Test Suite', edit_project_test_suite_path(@project,@test_suite), :class => 'btn primary'
+
+    = form_for @search, :url => project_test_suite_path(@project,@test_suite), :remote => true do |f|
+      %span.search
+        = f.text_field :name_or_status_or_owner_email_contains, {:id => 'search'}
+        = f.submit '', {:class => 'btn', :id => 'searchsubmit'}
+
+%table
+  %tr
+    %th=sort_link @search, :name, {}, {:remote => true}
+    %th=sort_link @search, :status, {}, {:remote => true}
+    %th=sort_link @search, :owner_email, "Owner", {}, {:remote => true}
+  - if @automation_scripts.nil? or @automation_scripts.count == 0
+    %tr
+      %td{:colspan => "3"}
+        %h4 No data
+  - else
+    - @automation_scripts.each do |automation_script|
+      %tr
+        %td= link_to automation_script.name, automation_script_automation_cases_path(automation_script), :remote => true
+        %td= automation_script.status
+        %td= automation_script.owner.display_name
+= paginate @automation_scripts
+
+:javascript
+  $("input.automation-note").click(function() {
+    $.fancybox({
+        width: 400,
+        height: 400,
+        autoSize: false,
+        href: $(this).attr("remote-data"),
+        type: 'ajax'
+    });
+  });

@@ -1,0 +1,33 @@
+/*
+ * This is a manifest file that'll automatically include all the stylesheets available in this directory
+ * and any sub-directories. You're free to add application-wide styles to this file and they'll appear at
+ * the top of the compiled file, but it's generally better to create a new file per style scope.
+ *= require_self
+ *= require_tree .
+*/
+/*----------------------------------------------------------------------------Forum theme CSS file for Mozilla Developer NetworkCreated by Craig Cook - focalcurve.com on 13 June,2010Colors -Orange #fb9500Green #8dc434Blue #00b6f0Red #ed2024Gold #f8d575Off-black #333Dark red #630a0cLink #369Hover #25aVisited #69cFont sizes -16px * .875 = 14px (base size)14px * 1.857 = 26px14px * 1.714 = 24px14px * 1.571 = 22px14px * 1.428 = 20px14px * 1.285 = 18px14px * 1.142 = 16px14px * .928 = 13px14px * .857 = 12px14px * .786 = 11px14px * .714 = 10px14px * .642 = 9px-----------------------------------------------------------------------------*/
+/* @Fonts *********/
+@font-face {
+  font-family:"League Gothic";
+  src:url('/fonts/League_Gothic-webfont.eot');
+  /* IE9 */
+  src:url('/fonts/League_Gothic-webfont.eot?') format('eot'),/* IE6-8 */
+  url('/fonts/League_Gothic-webfont.woff') format('woff'),/* Modern browsers */
+  url('/fonts/League_Gothic-webfont.ttf') format('truetype'),/* Older Webkits */
+  url('/fonts/League_Gothic-webfont.svg#webfont') format('svg');
+  /* Opera */
+  font-weight:normal;
+  font-style:normal;
+}
+@font-face {
+  font-family:"Bebas Neue";
+  src:url('/fonts/BebasNeue-webfont.eot');
+  /* IE9 */
+  src:url('/fonts/BebasNeue-webfont.eot?') format('eot'),/* IE6-8 */
+  url('/fonts/BebasNeue-webfont.woff') format('woff'),/* Modern browsers */
+  url('/fonts/BebasNeue-webfont.ttf') format('truetype'),/* Older Webkits */
+  url('/fonts/BebasNeue-webfont.svg#webfont') format('svg');
+  /* Opera */
+  font-weight:normal;
+  font-style:normal;
+}

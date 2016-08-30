@@ -1,0 +1,31 @@
+-if flash[:error]
+  .alert-message.error= flash[:error].html_safe
+
+= form_for([:admin, @operation_system]) do |f|
+  -if @operation_system.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@operation_system.errors.count, "error")} prohibited this browser from being saved:"
+      %ul
+        - @operation_system.errors.full_messages.each do |msg|
+          %li= msg
+  %fieldset
+    %legend= title
+    .clearfix
+      = f.label :name
+      .required *
+      .input
+        = f.text_field :name, :class => "validate[required, funcCall[checkOnlySpace]]"
+    .clearfix
+      = f.label :version
+      .required *
+      .input
+        = f.text_field :version, :class => "validate[required, funcCall[checkOnlySpace]]"
+    .actions
+      = f.submit 'Save', :class => 'btn primary'
+      = link_to 'Back', admin_operation_systems_path, :class => 'btn'
+
+:javascript
+  $(function(){
+    $("#new_operation_system").validationEngine({promptPosition: "bottomRight", scroll: false});
+    $(".edit_operation_system").validationEngine({promptPosition: "bottomRight", scroll: false});
+  })

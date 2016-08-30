@@ -1,0 +1,31 @@
+.page-header
+  %h2
+    Test Cases
+    %small= "#{@test_plan.test_cases.count} in total"
+  = form_for @search, :url => test_plan_test_cases_path(@test_plan), :remote => true do |f|
+    %span.search
+      = f.text_field :name_or_case_id_or_version_or_priority_or_automated_status_contains, {:id => 'search'}
+      = f.submit '', {:class => 'btn', :id => 'searchsubmit'}
+
+%table
+  %tr
+    %th=sort_link search, :name, {}, {:remote => true}
+    %th=sort_link search, :case_id, "Case Id", {}, {:remote => true}
+    %th=sort_link search, :version, {}, {:remote => true}
+    %th=sort_link search, :priority, {}, {:remote => true}
+    %th=sort_link search, :automated_status, {}, {:remote => true}
+
+  - if test_cases.nil? or test_cases.count == 0
+    %tr
+      %td{:colspan => "5"}
+        %h4 No data
+  - else
+    - test_cases.each do |test_case|
+      %tr
+        %td= link_to test_case.name, test_plan_test_case_path(test_plan, test_case), :remote => true
+        %td= test_case.case_id
+        %td= test_case.version
+        %td= test_case.priority
+        %td= test_case.automated_status
+
+= paginate test_cases

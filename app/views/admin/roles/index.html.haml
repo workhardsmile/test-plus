@@ -1,0 +1,27 @@
+.page-header
+  %h2 Roles
+
+%table.zebra-striped
+  %tr
+    %th Name
+    %th 
+
+  - if @roles.nil? or @roles.count == 0
+    %tr
+      %td{:colspan => "2"}
+        %h4 No data
+  - else
+    - @roles.each do |role|
+      %tr
+        %td= role.name
+        - show_url, edit_url, delete_url = nil
+        - if can? :update, Role
+          - edit_url = edit_admin_role_path(role)
+        - if can? :delete, Role and role.name != "admin"
+          - delete_url = admin_role_path(role)
+          - warning_msg = "This Role cannot be removed because some users are assigned to it." if !role.could_be_deleted?
+        = render :partial => 'partial/table_actions', :locals => {:show_url => show_url, :edit_url => edit_url, :delete_url => delete_url, :warning_msg => warning_msg}
+%br
+
+- if can? :create, Role
+  = link_to 'New role', new_admin_role_path, :class => 'btn primary'

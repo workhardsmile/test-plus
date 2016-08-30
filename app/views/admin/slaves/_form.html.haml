@@ -1,0 +1,123 @@
+-if flash[:error]
+  .alert-message.error= flash[:error].html_safe
+
+= form_for([:admin, @slave]) do |f|
+  -if @slave.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@slave.errors.count, "error")} prohibited this slave from being saved:"
+      %ul
+        - @slave.errors.full_messages.each do |msg|
+          %li= msg
+  %fieldset
+    %legend= title
+    .clearfix
+      = f.label :name
+      .required *
+      .input
+        = f.text_field :name, :class => "validate[required, funcCall[checkOnlySpace]]"
+    .clearfix
+      = f.label :ip_address, "IP Address"
+      .input
+        = f.text_field :ip_address, :class => "readonly", :readonly => true
+    .clearfix
+      = f.label :project_name, "Project(s)", :id => "slave_project_name"
+      .required *
+      .input
+        %span.slave_project.asterisk
+          = check_box_tag 'slave_projects[]', '*', @slave.project_name == '*' ? true : false, {:id => 'slave_projects_asterisk'}
+          = label_tag 'slave_projects_asterisk', '*'
+        - Project.all.each do |project|
+          .slave_project
+            = check_box_tag 'slave_projects[]', project.name, @slave.project_name_arr.include?(project.name) ? true : false, {:id => "slave_projects_#{project.name}", :class => "cb_slave_projects"}
+            = label_tag "slave_projects_#{project.name}", project.name
+        -# = f.text_field :project_name, :class => "validate[required, funcCall[checkOnlySpace]]"
+    .clearfix
+      = f.label :test_type, "Test Type", :id =>"slave_test_type"
+      .required *
+      .input
+        %span.slave_test_type.asterisk
+          = check_box_tag 'slave_test_types[]', '*', @slave.test_type == '*' ? true : false, {:id => 'slave_test_types_asterisk'}
+          = label_tag 'slave_test_types_asterisk', '*'
+        - TestType.all.each do |test_type|
+          .slave_test_type
+            = check_box_tag 'slave_test_types[]', test_type.name, @slave.test_type_arr.include?(test_type.name) ? true : false, {:id => "slave_test_types_#{test_type.name}", :class => "cb_slave_test_types"}
+            = label_tag "slave_test_types_#{test_type.name}", test_type.name
+        -# = f.text_field :test_type, :class => "validate[required, funcCall[checkOnlySpace]]"
+    .clearfix
+      = f.label :priority
+      .required *
+      .input
+        = f.text_field :priority, :class => "validate[required, funcCall[checkOnlySpace], funcCall[checkPositiveInteger]]"
+    .clearfix
+      = f.label :active, "Status"
+      .required *
+      .input
+        = f.select :active, options_for_select({"Active" => :true, "Inactive" => :false}, @slave.active), :class => "chzn-select, validate[required]"
+    .actions
+      = f.submit 'Save', :class => 'btn primary', :id => "save"
+      = link_to 'Back', admin_slaves_path, :class => 'btn'
+
+:javascript
+  $(function(){
+    $("#new_slave").validationEngine({promptPosition: "bottomRight", scroll: false});
+    $(".edit_slave").validationEngine({promptPosition: "bottomRight", scroll: false});
+    $(".cb_slave_projects").click(function(){
+      $('#slave_project_name').validationEngine('hidePrompt');
+      $("#slave_projects_asterisk").attr('checked', false);
+    });
+    $("#slave_projects_asterisk").click(function(){
+      $('#slave_project_name').validationEngine('hidePrompt');
+      if (this.checked == true) {
+        $(".cb_slave_projects").each(function(){
+          this.disabled = true
+        })
+      } else {
+        $(".cb_slave_projects").each(function(){
+          this.disabled = false
+        })
+      }
+    });
+    $(".cb_slave_test_types").click(function(){
+      $('#slave_test_type').validationEngine('hidePrompt');
+      $("#slave_test_types_asterisk").attr('checked', false);
+    });
+    $("#slave_test_types_asterisk").click(function(){
+      $('#slave_test_type').validationEngine('hidePrompt');
+      if (this.checked == true) {
+        $(".cb_slave_test_types").each(function(){
+          this.disabled = true
+        })
+      } else {
+        $(".cb_slave_test_types").each(function(){
+          this.disabled = false
+        })
+      }
+    });
+    $("#save").click(function(){
+      var slave_projects_selected = false;
+      var slave_test_types_selected = false;
+      $('input[name="slave_projects[]"]').each(function(){
+        if (this.checked == true) {
+          slave_projects_selected = true;
+          return false;
+        }
+      });
+      $('input[name="slave_test_types[]"]').each(function(){
+        if (this.checked == true) {
+          slave_test_types_selected = true;
+          return false;
+        }
+      });
+      if (slave_projects_selected == false) {
+        $("#slave_project_name").addClass("validate[required]");
+      } else {
+        $("#slave_project_name").removeClass("validate[required]");
+      }
+      if (slave_test_types_selected == false) {
+        $("#slave_test_type").addClass("validate[required]");
+      } else {
+        $("#slave_test_type").removeClass("validate[required]");
+        }
+    });
+  })
+  

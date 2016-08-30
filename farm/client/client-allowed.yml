@@ -1,0 +1,11 @@
+--- !ruby/object:ClientAllowed
+browsers:
+  Internet Explorer: true
+  Mozilla Firefox: false
+capabilities:
+  qtp: true
+  soapui: false
+market:
+  camps: true
+  endurance: false
+  sports: false

@@ -1,0 +1,318 @@
+@mixin opacity-transform
+  -webkit-transition: opacity
+  -webkit-transition-timing-function: ease-out
+  -webkit-transition-duration: 500ms
+
+@mixin search-box
+  position: relative
+  width: 200px
+  height: 25px
+  border: 1px solid #c1c1c1
+  -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.25)
+  -moz-box-shadow: inset 0 1px 3px rgba(0,0,0,0.25)
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.25)
+  -moz-border-radius: 13px
+  -webkit-border-radius: 13px
+  border-radius: 13px
+  padding: 0px
+  margin: 0px
+  float: right
+
+@mixin search-input
+  border: 0px
+  padding: 0px
+  background-color: transparent
+  position: absolute
+  left: 0px
+  width: 190px
+  height: 25px
+  padding-left: 10px
+  -moz-border-radius: 13px
+  -moz-border-radius-topleft: 13px
+  -webkit-border-radius: 13px
+  -webkit-border-top-left-radius: 13px
+  border-top-left-radius: 13px
+  -moz-border-radius-bottomleft: 13px
+  -webkit-border-bottom-left-radius: 13px
+  border-bottom-left-radius: 13px
+  outline: none
+
+@mixin search-submit
+  border: 0px
+  background: transparent url('search-button.png') no-repeat center left
+  position: absolute
+  left: 173px
+  height: 25px
+  width: 27px
+  cursor: pointer
+  -moz-border-radius-topright: 13px
+  -webkit-border-top-right-radius: 13px
+  border-top-right-radius: 13px
+  -moz-border-radius-bottomright: 13px
+  -webkit-border-bottom-right-radius: 13px
+  border-bottom-right-radius: 13px
+
+.zebra-striped
+  tbody
+    tr:hover
+      td
+        background-color: #b4d5fe
+
+.page-header
+  overflow: hidden
+  h2
+    float: left
+    padding-top: 5px
+    padding-bottom: 5px
+  a
+    margin-top: 10px
+    margin-left: 5px
+  form
+    float: right
+    padding-top: 5px
+    margin: 0
+    .search
+      @include search-box
+    input#search
+      @include search-input
+    input#searchsubmit
+      @include search-submit
+
+.projects
+  .columns
+    text-align: center
+    a:hover
+      opacity: .5
+      @include opacity-transform
+      text-decoration: none
+    a
+      opacity: 1
+      @include opacity-transform
+      text-decoration: none
+      img
+        margin: 0 30px 0 30px
+        width: 100px
+        height: 100px
+
+.sub-page-header
+  border-bottom: 1px dashed #CCC
+  margin: 20px
+  img
+    float: left
+    margin-right: 5px
+.brief-info
+  ul
+    list-style: none
+    li
+      color: #333
+      margin-bottom: 5px
+  ul.title
+    li
+      font-weight: bold
+      margin-bottom: 5px
+  .brief-right
+    border-left: 1px solid #ccc
+.detail
+  border-bottom: 1px solid #ccc
+  padding-left: 5px
+  margin: 10px 0 10px 0
+  h3
+    float: left
+a
+  color: #404040
+a:hover
+  text-decoration: none
+.creation-info
+  display: block
+  margin-top: 20px
+  text-align: right
+tr.link
+  cursor: pointer
+.content
+  .row
+    overflow: hidden
+#right
+  float: right
+  margin-right: 5px
+ul.menu
+  border-left: solid 1px #ccc
+  padding: 0
+  li.odd
+    background: #EDF3FE
+  li
+    cursor: pointer
+    a
+      margin-left: 25px
+  li:hover
+    background: #666666
+    a
+      color: #cccccc
+  li.has-sub
+    background-image: url(arrow.png)
+    background-repeat: no-repeat
+    background-position: 0 5px
+  li.has-subs:hover
+    background-image: url(arrow.png)
+    background-repeat: no-repeat
+    background-position: 0 -22px
+  li.slidedown
+    background-image: url(arrow.png)
+    background-repeat: no-repeat
+    background-position: 0 -48px
+  li.activate
+    background: #2a2a2a
+    a
+      color: white
+  ul.sublist
+    display: none
+    margin: 0 0
+    list-style: none
+    li
+      border-top: solid 1px #ccc
+      padding: 10px 0 10px 10px
+.project-name
+  margin-left: 25px
+  display: block
+  h2
+    display: block
+    margin-left: 55px
+    padding: 5px 3px
+  .project-icon
+    height: 42px
+    width: 42px
+    float: left
+
+#project_coverageDiv
+  height: 70%
+  margin-top: 15px
+
+.pagination
+  border: 1px solid #DDD
+  border: 1px solid rgba(0, 0, 0, 0.15)
+  -webkit-border-radius: 3px
+  -moz-border-radius: 3px
+  border-radius: 3px
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05)
+  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05)
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05)
+  span.gap
+    height: 27px
+    border-right: 1px solid #DDD
+    padding-top: 7px
+    padding-left: 14px
+    padding-right: 14px
+  span
+    float: left
+    a
+      display: block
+      border-right: 1px solid #DDD
+      text-decoration: none
+      line-height: inherit
+      font-weight: inherit
+      height: 27px
+      padding-top: 9px
+      display: block
+      padding-left: 14px
+      padding-right: 14px
+    a:hover
+      background-color: #C7EEFE
+  span.current
+    background-color: #C7EEFE
+    border-right: 1px solid #DDD
+    text-decoration: none
+    line-height: inherit
+    font-weight: inherit
+    height: 27px
+    padding-top: 9px
+    display: block
+    padding-left: 14px
+    padding-right: 14px
+.sub-header
+  background-color: #FEFBF3
+  border: 1px solid rgba(0, 0, 0, 0.15)
+  -webkit-border-radius: 3px
+  -moz-border-radius: 3px
+  border-radius: 3px
+  padding: 5px 5px
+.service-info
+  color: #333
+  margin-left: 25px
+  .service-item
+    float: left
+    background: #A9DBA9
+    padding: 5px 10px
+    margin: 10px 10px 10px 0
+    -webkit-border-radius: 4px
+    -moz-border-radius: 4px
+    border-radius: 4px
+.error-message
+  color: #333
+  margin-left: 20px
+  margin-bottom: 10px
+.screen-shot-box
+  margin-top: 5px
+  margin-left: 20px
+  margin-bottom: 10px
+  .screen-shot-image
+    display: inline-block
+    margin: 10px
+    padding: 10px
+    border: 1px solid #CCC
+.hidden
+  display: none
+#hidden
+  display: none
+.chart-box
+  height: 30%
+  width: 100%
+  margin-top: 15px
+  display:inline-block
+  div
+    height: 100%
+.ext_found_by_day_chart
+  height: 30%
+  width: 92%
+  margin: 2%
+  display:inline-block
+  div
+    height: 100%
+.project-chart-box
+  height: 800px
+  min-height: 800px
+#server-log-box
+  display: none
+#server-log-content
+  width: 900px
+  font-size: 14px
+  margin: 10px
+  line-height: 120%
+table.test-steps
+  margin-top: 10px
+  td
+    border-bottom: 1px solid #CCC
+  tr
+    td
+      color: #333
+      padding: 10px 10px
+.step-action
+  word-wrap: break-word
+  width: 546px
+.expected-result
+  word-wrap: break-word
+  width: 546px
+ul.value
+  li.long-name:hover
+    background-color: #eeeef9  
+.alert
+  margin-left: 15px
+.required
+  padding-top: 6px
+  font-family: tahoma
+  font-size: 13px
+  line-height: 18px
+  float: left
+  width: 15px
+  text-align: right
+  color: #ff0000
+.readonly
+  background: #f5f5f5

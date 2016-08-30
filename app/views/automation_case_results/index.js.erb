@@ -1,0 +1,4 @@
+$('.list-content-box').fadeOut('slow', function(){
+  $('.list-content-box').html('<%= escape_javascript(render("index")) %>');
+  $('.list-content-box').fadeIn('slow');
+});

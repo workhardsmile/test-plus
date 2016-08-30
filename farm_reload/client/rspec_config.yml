@@ -1,0 +1,10 @@
+svn_path: C:\\Program Files\\Subversion\\bin\\svn.exe
+membership_code:
+ svn_path: C:\\Program Files\\Subversion\\bin\\svn.exe
+ script_path: C:\\QA Automation\\Membership\\trunk\\framework\\testsuites\\
+ package_path: C:\\QA Automation\\Membership\\trunk\\framework\\package\\
+ common_path: C:\\QA Automation\\Membership\\trunk\\framework\\common\\
+ components_path: C:\\QA Automation\\Membership\\trunk\\framework\\components\\
+ objects_path: C:\\QA Automation\\Membership\\trunk\\framework\\objects\\
+ screenshot_path: C:/QA Automation/Membership/trunk/framework/screen_shots/
+ main_path: C:\\QA Automation\\Membership\\trunk\\framework\\

@@ -1,0 +1,82 @@
+%div{:style => "display:none"}
+  #multiple_site_form.popup_window
+    %h3 Schedule test against multiple sites    
+
+    = form_tag("/test_rounds/execute_multiple_site",method: 'post', id: "create_multiple_site") do
+      %fieldset
+        .row
+          .span7.columns
+            .clearfix
+              = label_tag 'Test object'
+              .required *
+              .input
+                =text_field_tag(:test_object, nil,class: "validate[required, funcCall[checkOnlySpace]]")
+            .clearfix
+              = label_tag 'Test suite'
+              .required *
+              .input
+                =select_tag :test_suite_id, options_from_collection_for_select(project.test_suites, :id, :name)
+            .clearfix
+              = label_tag 'Test Environment'
+              .required *
+              .input
+                =select_tag :test_environment_id, options_from_collection_for_select(project.test_environments, :id, :name)
+            .clearfix
+              = label_tag 'Browser'
+              .required *
+              .input
+                =select_tag :browser_id, options_from_collection_for_select(project.browsers, :id, :name_with_version)
+
+          .span7.columns#right
+            .clearfix
+              = label_tag 'Operation system'
+              .input
+                =select_tag :operation_system_id, options_from_collection_for_select(project.operation_systems, :id, :name_with_version)
+            .clearfix
+              = label_tag 'Branch name'
+              .input
+                =select_tag :branch_name, options_for_select(project.branches,selected: "master")
+            .clearfix
+              = label_tag 'Assign to slave'
+              .input
+                =select_tag :assigned_slave_id, options_for_select(get_eligible_slaves(project.name))
+            .clearfix
+              = label_tag "Auto-Rerun"
+              .input.onoffswitch
+                %input#auto_rerun_switch.onoffswitch-checkbox{:checked => false, :name => "enable_auto_rerun", :type => "checkbox"}
+                  %label.onoffswitch-label{:for => "auto_rerun_switch"}
+                    %span.onoffswitch-inner
+                    %span.onoffswitch-switch
+
+        = hidden_field_tag :creator_id, current_user.id
+        .row
+          .clearfix
+            = label_tag "Site name"
+            .required *
+            .input
+              = text_area_tag(:site_names, nil,size: "85x5", style: "width:auto",  class: "validate[required, funcCall[checkOnlySpace]]")
+              .help-block
+                = "name of sites to be texted against, use comma as the seperator"
+
+      .actions
+        =submit_tag('Schedule!', :class => 'btn primary', :id => 'schedule_multiple_site')
+        %input.btn.cancel_button{:type => "button", :value => "Cancel"}
+
+:javascript
+  $(function(){
+    $(".cancel_button").click(function(){
+      $.fancybox.close();      
+    })
+    var submit = true;
+    $("#create_multiple_site").validationEngine({
+      promptPosition: "bottomRight", 
+      scroll: false,
+      onSuccess: function(form, status){
+        if(status == true){
+          $("#schedule_multiple_site").addClass("disabled");
+          $("#schedule_multiple_site").submit();
+        }
+      }
+    });
+
+  });

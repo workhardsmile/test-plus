@@ -1,0 +1,54 @@
+#browser or capability path
+firefox_path: C:\\Program Files\\Mozilla Firefox\\firefox.exe
+#qtp_path: C:\\Program Files\\HP\\QuickTest Professional\\bin\\QTPro.exe
+qtp_path: C:\\QTP\\bin\\QTPro.exe
+#firefox_path: D:\\Mozilla Firefox\\firefox.exe
+#qtp_path: D:\\QTP\\bin\\QTPro.exe
+soapui_path: D:\\soapui-3.5.1\\soapui-3.5.1.jar
+
+camps_code:
+ svn_path: C:\\Program Files\\Subversion\\bin\\svn.exe
+ result_path: C:\\Test Results
+ regression_path: C:\\QA Automation\\Camps\\trunk\\framework\\testsuites_testplus\\regressions\\
+ bvt_path: C:\\QA Automation\\Camps\\trunk\\framework\\testsuites_testplus\\BVTs\\
+ package_path: C:\\QA Automation\\Camps\\trunk\\framework\\package\\
+ datapools_path: C:\\QA Automation\\Camps\\trunk\\framework\\datapools\\
+ screenshot_path: C:/QA Automation/Camps/trunk/framework/test_results/Error_Picture/
+
+giving_code:
+ svn_path: C:\\Program Files\\Subversion\\bin\\svn.exe
+ result_path: C:\\Test Results
+ regression_path: C:\\QA Automation\\Endurance\\trunk\\framework\\testsuites\\regressions\\FUI\\
+ bvt_path: C:\\QA Automation\\Endurance\\trunk\\framework\\testsuites\\Dashboard BVTs\\
+ package_path: C:\\QA Automation\\Endurance\\trunk\\framework\\package\\
+ datapools_path: C:\\QA Automation\\Endurance\\trunk\\framework\\datapools\\
+ screenshot_path: C:/QA Automation/Endurance/trunk/framework/test_results/Error_Picture/
+    
+endurance_code:
+ svn_path: C:\\Program Files\\Subversion\\bin\\svn.exe
+ result_path: C:\\Test Results
+ regression_path: C:\\QA Automation\\Endurance\\trunk\\framework\\testsuites\\regressions\\
+ bvt_path: C:\\QA Automation\\Endurance\\trunk\\framework\\testsuites\\Dashboard BVTs\\
+ package_path: C:\\QA Automation\\Endurance\\trunk\\framework\\package\\
+ datapools_path: C:\\QA Automation\\Endurance\\trunk\\framework\\datapools\\
+ screenshot_path: C:/QA Automation/Endurance/trunk/framework/test_results/Error_Picture/
+
+sports_code:
+ svn_path: C:\\Program Files\\Subversion\\bin\\svn.exe
+ result_path: C:\\Test Results
+ regression_path: C:\\QA Automation\\Sports\\trunk\\framework\\testsuites\\regressions\\
+ bvt_path: C:\\QA Automation\\Sports\\trunk\\framework\\testsuites\\BVTs\\
+ package_path: C:\\QA Automation\\Sports\\trunk\\framework\\package\\
+ datapools_path: C:\\QA Automation\\Sports\\trunk\\framework\\datapools\\
+ screenshot_path: C:/QA Automation/Sports/trunk/framework/test_results/Error_Picture/
+
+backoffice_code:
+ svn_path: C:\\Program Files\\Subversion\\bin\\svn.exe
+ result_path: C:\\Test Results
+ regression_path: C:\\QA Automation\\Backoffice\\trunk\\framework\\testsuites\\regressions\\
+ bvt_path: C:\\QA Automation\\Backoffice\\trunk\\framework\\testsuites\\Dashboard BVTs\\
+ package_path: C:\\QA Automation\\Backoffice\\trunk\\framework\\package\\
+ datapools_path: C:\\QA Automation\\Backoffice\\trunk\\framework\\datapools\\
+ screenshot_path: C:/QA Automation/Backoffice/trunk/framework/test_results/Error_Picture/
+ 
+ 

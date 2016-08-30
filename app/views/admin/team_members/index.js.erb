@@ -1,0 +1,5 @@
+$('#content').fadeOut('slow', function(){
+  $("#content").attr("class","container");
+  $('#content').html('<%= escape_javascript(render("index")) %>');
+  $('#content').fadeIn('slow');
+});

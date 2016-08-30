@@ -1,0 +1,43 @@
+.send-notification-email
+  .row.detail
+    .span8.columns
+      %h3= "Send Notification Email"
+  .row
+    .alert-message.block-message{:style => "display:none"}
+  
+  = form_tag("/test_rounds/#{@test_round.id}/send_notify_email",{:id => "send_notify_email",:remote=>true, :class=>"form-stacked"}) do
+    %fieldset
+      - unless @notification_emails.nil? or @notification_emails.count == 0
+        - @notification_emails.each do |email|          
+          .clearfix
+            = check_box_tag 'reciver', email, true
+            %span= email.downcase
+      .clearfix
+        = label_tag "Add extra addresses"
+        %textarea#other_emails.xxlarge{:name => "other_emails", :style=>"height: 80px"}
+        %span.help-block
+          enter email addresses seperate by comma
+        %span.help-block
+          only activenetwork.com or active.com email is allowed
+      .clearfix
+        = hidden_field_tag 'notify_emails'
+      .actions
+        %input.btn.primary.send{:type=>"Submit", :value => "Send"}
+        %input.btn.cancel{:type=> "Reset",:value => "Back"}
+
+
+:javascript
+
+  $("input.cancel").click(function() {
+    $.fancybox.close();
+  });
+
+  $("input.send").click(function() {
+    var other_emails = $('#other_emails').val();    
+    var emails = [];
+    $('input:checked#reciver').each(function() {
+      emails.push($(this).val())
+    });
+    emails.push(other_emails);
+    $('#notify_emails').val(emails.join(','));
+  });

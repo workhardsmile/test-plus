@@ -1,0 +1,75 @@
+.topbar
+  .fill
+    .container
+      %ul
+        %li
+          %a#logo{:href => '/'}
+            .top-logo
+              %h3 TestPlus
+              = image_tag 'logo2.png'
+        %li.menu
+          = link_to 'Project', '#', :class => 'menu'
+          %ul.menu-dropdown
+            %li= link_to 'All', projects_path
+            %li.divider
+            -#Project.find(:all, :order => 'display_order').each do |project|
+            -Project.order('name ASC').each do |project|
+              %li= link_to project.name, project_test_rounds_path(project)
+        %li= link_to 'Farm', "/slaves"
+        %li= link_to 'Admin', admin_projects_path
+      = render :partial => 'partial/login_menu'
+      
+:javascript
+  $("a.menu").click(function(){
+    if ($(this).parent('li').hasClass('open')){
+      $(this).parent('li').removeClass('open');
+    }
+    else{
+      $(this).parent('li').addClass('open');
+    }
+  });    
+  $(function(){
+    $('a.menu').parent('li').removeClass('open'); 
+    if ($("ul.menu > li[class*='activate']").length <= 0){
+      //current_tab = location.pathname.split("/projects/");
+      //$("ul.menu > li[name*='"+current_tab+"']").addClass("activate");
+      $("ul.menu > li").each(function(i){
+        if (location.pathname.search($(this).attr("name")) != -1) {
+          $(this).addClass("activate");
+        }
+      });
+    }
+
+    var first_time = true;
+    var pre_url = null;
+
+    var menu = $("a[data-remote]");
+    //if ($.address.path()!=location.pathname&&(location.pathname.match("/coverage")!=null||location.pathname.match("/dre/overall")!=null)){
+      //$.address.path(location.pathname);
+    // }
+    if (window.ActiveXObject){
+      $.address.init(function(event){
+        menu.address();
+      });
+    }
+    else{
+      $.address.state("/").init(function(event){
+        menu.address();
+      });
+    }
+    $.address.internalChange(function(event){
+      $(this).attr("href","#");
+      if (event.value!=null) {
+        //$.getScript(event.value);
+      }
+    }).externalChange(function(event){
+      if (first_time == true) {
+        first_time = false;
+      }else{
+        if ((pre_url != "/") || (pre_url == "/" && $.address.value() == "/")) {
+          $.getScript($.address.value());
+        }
+      }
+      pre_url = $.address.value();
+    }).history(true);
+  })

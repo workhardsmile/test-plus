@@ -1,0 +1,91 @@
+-if flash[:error]
+  .alert-message.error= flash[:error].html_safe
+
+= form_for ([:admin, @role]) do |f|
+  -if @role.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@role.errors.count, "error")} prohibited this role from being saved:"
+      %ul
+        - @role.errors.full_messages.each do |msg|
+          %li= msg
+  %fieldset
+    %legend= title
+    .clearfix
+      = f.label :name
+      .required *
+      .input
+        = f.text_field :name, :readonly => %w(admin qa_manager qa_developer qa).include?(@role.name) ? true : false, :class => "validate[required, funcCall[checkOnlySpace]]"
+    - if @role.name != "admin"
+      .clearfix
+        - val_rad = ""
+        - if not(@role.ability_definitions.nil?) and not(@role.ability_definitions.empty?)
+          - @role.ability_definitions.each do |rad|
+            - val_rad += "||Can #{rad.ability} #{rad.resource}"
+        = text_area_tag "ability_definitions", val_rad, :class => "hidden"
+      .clearfix
+        %label Role ability definitions
+        .input
+          = select_tag "rad abilities", options_for_select({"Manage" => "manage", "Create" => "create", "Update" => "update"}), :include_blank => true, :id => "rad_ability", :class => "ability chzn-select"
+          = select_tag "rad resources", options_for_select({"TestRound" => "TestRound", "TestPlan" => "TestPlan", "TestSuite" => "TestSuite", "AutomationScript" => "AutomationScript", "AutomationCase" => "AutomationCase", "TestCase" => "TestCase", "AutomationScriptResult" => "AutomationScriptResult", "AutomationCaseResult" => "AutomationCaseResult", "AutomationDriverConfig" => "AutomationDriverConfig", "Project" => "Project", "ProjectCategory" => "ProjectCategory", "Slave" => "Slave"}), :include_blank => true, :id => "rad_resource", :class => "role-ability-definitions chzn-select"
+          = link_to 'Add', '#', :class => 'btn role-ability-definitions left', :id => 'add_rad_btn'    
+          %table.abilities
+            %tr
+              %th Ability
+              %th
+            %tr#hidden_rad
+              %td
+                To be cloned
+              %td
+                %a{:class => "delete_rad", :href => "#"}
+                  %img{:src => asset_path("cross-hover.png")}
+            - if @role.ability_definitions.nil? or @role.ability_definitions.empty?
+              %tr.no-tata
+                %td{:colspan => 2}
+                  %h4 No data
+            - else
+              - @role.ability_definitions.each do |rad|
+                %tr.data-list
+                  %td= "Can #{rad.ability} #{rad.resource}"
+                  %td
+                    %a{:class => "delete_rad", :href => "#"}
+                      %img{:src => asset_path("cross-hover.png")}            
+    .actions
+      = f.submit 'Save', :class => 'btn primary'
+      = link_to 'Back', admin_roles_path, :class => 'btn'
+
+:javascript
+  $(function(){
+    $("#new_role").validationEngine({promptPosition : "bottomRight", scroll: false});
+    $(".edit_role").validationEngine({promptPosition : "bottomRight", scroll: false});
+    $('#add_rad_btn').click(function(){
+      var ability = $('#rad_ability option:selected').val();
+      var resource = $('#rad_resource option:selected').text();
+      var text = "Can " + ability + " " + resource;
+      var rads_current_value = $("#ability_definitions").val();
+      if ($.trim(ability) == "" || $.trim(resource) == ""){
+        alert("Please select an ability and a resource!");
+      } else if (rads_current_value.match(text) != null) {
+        alert("The selected ability definition already exists for the role!");
+      } else {
+        if ($("table.abilities tbody tr.no-tata").length > 0) {
+          $("table.abilities tbody tr.no-tata").remove();
+        }
+        var ele = $("#hidden_rad").clone();
+        ele.children("td").first().html(text);
+        ele.appendTo("table.abilities tbody").show("slow");
+        $("#ability_definitions").val(rads_current_value + "||" + text);
+        ele.children("td").last().children(".delete_rad").bind('click', function(){
+          $(this).parent().parent().fadeOut("slow");
+          var delete_rad = "||" + $(this).parent().prev().text();
+          var new_rads_value = $("#ability_definitions").val().replace(delete_rad,"");
+          $("#ability_definitions").val(new_rads_value);
+        });
+      }
+    });
+    $('.delete_rad').click(function(){
+      $(this).parent().parent().fadeOut("slow");
+      var delete_rad = "||" + $(this).parent().prev().text();
+      var new_rads_value = $("#ability_definitions").val().replace(delete_rad,"");
+      $("#ability_definitions").val(new_rads_value);
+    });
+  })

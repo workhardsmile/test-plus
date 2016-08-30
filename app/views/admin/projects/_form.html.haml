@@ -1,0 +1,74 @@
+-if flash[:error]
+  .alert-message.error= flash[:error].html_safe
+
+= form_for ([:admin, @project]) do |f|
+  -if @project.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@project.errors.count, "error")} prohibited this project from being saved:"
+      %ul
+        - @project.errors.full_messages.each do |msg|
+          %li= msg
+  %fieldset
+    %legend= title
+    .clearfix
+      = f.label :name
+      .required *
+      .input
+        = f.text_field :name,  :class => "validate[required, funcCall[checkOnlySpace]]"
+    .clearfix
+      = f.label :leader
+      .input
+        = f.select :leader_id, options_from_collection_for_select(User.where('active != false').order('display_name asc'), :id, :display_name, @project.leader_id), {}, {:class => "chzn-select"}
+    .clearfix
+      = f.label :project_category
+      .input
+        = f.select :project_category_id, options_from_collection_for_select(ProjectCategory.order('name asc'), :id, :name, @project.project_category_id), {}, {:class => "chzn-select"}
+    .clearfix
+      = f.label :source_control_path
+      .input
+        = f.text_field :source_control_path
+    .clearfix
+      = f.label :test_link_name
+      .input
+        = f.text_field :test_link_name
+    .clearfix
+      = f.label :dashboard_name
+      .input
+        = f.text_field :dashboard_name
+    .clearfix
+      = f.label :monitor_progress
+      .input
+        = f.check_box :monitor_flag
+    .clearfix
+      = f.label :icon
+      .input
+        = f.file_field :icon_image
+    .clearfix
+      = f.label 'operation_systems'
+      .required *
+      .input
+        = select_tag 'project[operation_systems][]', options_from_collection_for_select(OperationSystem.all, :id, :name_with_version, @project.operation_systems.collect{|os|os.id}), {:multiple => true, :class => "validate[required]"}
+    .clearfix
+      = f.label :browsers
+      .required *
+      .input
+        = select_tag 'project[browsers][]', options_from_collection_for_select(Browser.all, :id, :name_with_version, @project.browsers.collect{|b|b.id}), {:multiple => true, :class => "validate[required]"}
+    .clearfix
+      = f.label :test_environments
+      .required *
+      .input
+        = select_tag 'project[test_environments][]', options_from_collection_for_select(TestEnvironment.all, :id, :name, @project.test_environments.collect{|b|b.id}), {:multiple => true, :class => "validate[required]"}
+    .actions
+      = f.submit 'Save', :class => 'btn primary'
+      = link_to 'Cancel', admin_projects_path, :class => 'btn'
+
+:javascript
+  $(function(){
+    $("#new_project").validationEngine({promptPosition : "bottomRight", scroll: false});
+    $(".edit_project").validationEngine({promptPosition : "bottomRight", scroll: false});
+  });
+
+:css
+  select#project_operation_systems_,select#project_browsers_,select#project_test_environments_{
+    height: 120px;
+  }

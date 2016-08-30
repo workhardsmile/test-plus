@@ -1,0 +1,6 @@
+#!/bin/bash
+# This a shell script. Run it directly.
+QUEUE=testlink_save_result rake environment resque:work &
+QUEUE=testplus_farm rake environment resque:work &
+QUEUES=testplus_mailer rake environment resque:work &
+#QUEUE=test_resque rake environment resque:work &

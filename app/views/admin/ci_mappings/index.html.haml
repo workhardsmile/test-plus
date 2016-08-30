@@ -1,0 +1,32 @@
+.page-header
+  %h2 Listing Ci Mappings
+.ci-mappings
+  %table.zebra-striped
+    %tr
+      %th CI Value
+      %th Test Suite
+      %th Operation System
+      %th Browser
+      %th
+
+    - if @ci_mappings.nil? or @ci_mappings.count == 0
+      %tr
+        %td{:colspan => "5"}
+          %h4 No data
+    - else
+      - @ci_mappings.each do |ci_mapping|
+        %tr
+          %td= ci_mapping.ci_value
+          %td= ci_mapping.test_suite.name
+          %td= ci_mapping.operation_system.name_with_version
+          %td= ci_mapping.browser.name_with_version
+          - show_url, edit_url, delete_url = nil
+          - if can? :update, CiMapping, {:project_id => @project.id}
+            - edit_url = edit_admin_project_ci_mapping_path(@project, ci_mapping)
+          - if can? :delete, CiMapping, {:project_id => @project.id}
+            - delete_url = admin_project_ci_mapping_path(@project, ci_mapping)
+          = render :partial => 'partial/table_actions', :locals => {:show_url => show_url, :edit_url => edit_url, :delete_url => delete_url}
+
+- if can? :create, CiMapping, {:project_id => @project.id}
+  = link_to 'New Ci mapping', new_admin_project_ci_mapping_path(@project), :class => 'btn primary'
+= link_to 'Back', admin_project_path(@project), :class => 'btn'

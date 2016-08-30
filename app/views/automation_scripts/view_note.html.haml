@@ -1,0 +1,9 @@
+.edit-automation-note
+  .row.detail
+    .span12.columns
+      %h3= "Automation Script Note"
+  .row        
+    %form
+      %fieldset
+        .clearfix        
+          = text_area_tag 'note', @automation_script.note, rows: 10, style: "width: 695px"

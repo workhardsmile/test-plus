@@ -1,0 +1,67 @@
+
+.row.sub-header
+  .span12.columns
+    %img.big-icon{:src => asset_path("#{@automation_script_result.result}.png")}      
+    %h2
+      =link_to "#{@test_round.test_type.name}##{@test_round.id}", project_test_round_path(@project, @test_round), :remote => true
+      %span=" / "
+      - as_name = @automation_script_result.name
+      - if as_name && as_name.length >= 30
+        - as_name = as_name.slice(0,30).concat("...")
+      =link_to as_name, test_round_automation_script_result_path(@test_round, @automation_script_result)
+      %span=" / Logs"
+  .span3.columns#right
+    #dropdown-1.dropdown.dropdown-tip
+      %ul.dropdown-menu
+        - asr =  @automation_script_result
+        - project = @automation_script_result.test_round.project
+        - if asr.end?
+          %li
+            = link_to "View Triage Result","#", :id => "action-view-triage-result","remote-data" => "/automation_script_results/#{@automation_script_result.id}/view_triage_result"
+        - if asr.is_rerunnable? && can?(:update, AutomationScriptResult, {:project_id => project.id}) 
+          %li.rerun_container
+            %a.rerun_btn{:href => "#", "remote-data" => "/automation_script_results/#{asr.id}/rerun",:remote => true} Rerun Script
+    %a.btn.primary{"data-dropdown" => "#dropdown-1"} Custom Actions        
+.page-header.detail
+
+.row     
+.log-info
+  .row.brief-info
+    .span8.columns.brief-left
+      .span3.columns
+        %ul.title
+          %li Start Time
+      .span5.columns
+        %ul.value
+          %li= @automation_script_result.start_time
+    .span8.columns.brief-right
+      .span3.columns
+        %ul.title
+          %li End Time
+      .span5.columns
+        %ul.value
+          %li= @automation_script_result.end_time
+  .detail
+  .log-details{:style => "height: 600px"}
+    <iframe src="#{TestPlus_CONFIG['logserver_url']}/view?roundId=#{@automation_script_result.test_round_id}&scriptName=#{@automation_script_result.name}" frameborder=0 scrolling="auto"></iframe>
+
+:javascript
+  $(function(){  
+    $("#action-view-triage-result").click(function(){
+      $("#dropdown-1").dropdown("hide");
+      $.fancybox({
+          width: 400,
+          height: 400,
+          autoSize: false,
+          href: $("#action-view-triage-result").attr("remote-data"),
+          type: 'ajax'
+      }); 
+    });
+    $("a.rerun_btn:not(:disabled)").click(function(){
+      $(this).parent().addClass("disabled");
+      $(this).disabled = true;
+      $.ajax({url: $(this).attr("remote-data")}).success(function(data) {
+       window.location.replace("http://#{request.host_with_port}#{test_round_automation_script_result_path(@automation_script_result.test_round, @automation_script_result)}")
+      })
+    });    
+  });

@@ -1,0 +1,31 @@
+%p#notice= notice
+
+.page-header
+  %h2= "Manage items in #{@project.name}"
+%table.zebra-striped.manage-items
+  %tr
+    %th Object
+    %th Count
+    %th
+  %tr
+    %td
+      =link_to "CI Mappings", admin_project_ci_mappings_path(@project)
+    %td= @project.ci_mappings.count
+    %td
+  %tr
+    %td
+      =link_to "Mail Notify Settings", admin_project_mail_notify_settings_path(@project)
+    %td= @project.mail_notify_settings.count
+    %td
+  %tr
+    %td
+      =link_to "Test Rounds", admin_project_test_rounds_path(@project)
+    %td= @project.test_rounds.count
+    %td
+  %tr
+    %td
+      =link_to "Automation Driver Configs", admin_project_automation_driver_configs_path(@project)
+    %td= @project.automation_driver_configs.count
+    %td
+
+= link_to 'Back', admin_projects_path, :class => 'btn'

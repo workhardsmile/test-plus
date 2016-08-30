@@ -1,0 +1,71 @@
+.edit-triage-message  
+  .row.detail
+    .span12.columns
+      %h3= "Edit Triage Result"
+  .row
+    .alert-message.block-message.error{:style => "display:none"}
+  .row
+    = form_tag("/automation_script_results/#{@automation_script_result.id}/save_triage_result",{:id => "save_triage_result",:remote=>true}) do
+      %fieldset
+        .clearfix
+          = label_tag 'Error Type'
+          .required *
+          .input
+            - if @automation_script_result.error_type_id                          
+              - if @automation_script_result.error_type.result_type == "pass"
+                - error_type_options = ErrorType.pass_options
+              - else
+                - error_type_options = ErrorType.pass_and_failed_options
+              = select_tag "error_type_id", options_for_select(error_type_options, @automation_script_result.error_type_id), prompt: "Select error type", :class => "validate[required]"
+            - else              
+              = select_tag "error_type_id", options_for_select( ErrorType.all_options), prompt: "Select error type", :class => "validate[required]"
+        .clearfix
+          = label_tag 'Script Note'
+          .input
+            - if @automation_script_result.automation_script.note
+              = text_area_tag 'note', @automation_script_result.automation_script.note, disabled: true, rows: 10, style: "width: 500px"
+            - else
+              = text_area_tag 'note', nil, placeholder: "No Automation Script Note.", disabled: true, rows: 10, style: "width: 500px"
+
+        .clearfix
+          .input.copy-note
+            =image_tag("copy.ico", class: "ui-icon")            
+            %span.copy-note-text= "copy automation script note as comment"
+        .clearfix
+          = label_tag 'Comment'
+          .required *          
+          .input
+            - if @automation_script_result.triage_result == 'N/A'
+              = text_area_tag 'triage_result', nil, placeholder: "Add triage comments here.",rows: 10, style: "width: 500px",:class => "validate[required]"
+            - else
+              = text_area_tag 'triage_result', @automation_script_result.triage_result,rows: 10, style: "width: 500px",:class => "validate[required]"
+        .clearfix
+          .input.override
+            = check_box_tag 'override',true
+            %span= 'check to override automation script note'
+        .actions
+          = submit_tag("Save", :class => 'btn primary')
+          %input.btn.cancel_button{:type => "button", :value => "Cancel"}
+:css
+  .copy-note:hover { 
+      color: blue;
+  }
+  .override:hover { 
+      color: blue;
+  }
+
+:javascript
+  $("#save_triage_result").validationEngine()
+
+  $(function(){
+  
+    $(".cancel_button").click(function(){
+      $.fancybox.close();      
+    })
+
+    $(".input.copy-note").click(function(){
+      $("textarea[name='triage_result']").val($("#note").val());
+    })
+
+  });
+

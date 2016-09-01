@@ -1,0 +1,13 @@
+.row.sub-header
+  .span12.columns
+    %img.big-icon{:src => asset_path("#{@base_script_result.test_result}.png")}
+    %h2
+      =link_to "Base Script Results", project_base_script_results_path(@project), :remote => true
+      %span= " / "
+      - as_name = @base_script_result.automation_script_name
+      - if as_name && as_name.length >= 30
+        - as_name = as_name.slice(0,30).concat("...")
+      %span{:title => @base_script_result.automation_script_name}="#{as_name}"
+= render 'brief_info'
+.list-content-box
+  = render :partial => 'base_case_results/list', :locals => {:base_case_results => @base_case_results, :base_script_result => @base_script_result, :search => @search, :automation_script_result=>@automation_script_result}

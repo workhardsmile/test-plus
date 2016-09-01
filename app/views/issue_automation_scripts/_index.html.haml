@@ -1,0 +1,26 @@
+- session[:pre_issue_url]=nil
+.page-header
+  %h2 
+    History Issues
+    %small= "#{@project.issue_automation_scripts.count} in total"
+  = link_to "Add Issue Link","#", :id => "create-issue-link", "remote-data" => "#{new_project_issue_automation_script_path(@project)}", :class => 'btn primary'
+  =form_for @search, :url=> project_issue_automation_scripts_path(@project), :remote => true do |f|
+    %span.search
+      =f.text_field :issue_issue_display_id_or_issue_issue_summary_or_issue_reporter_or_found_case_id_or_automation_script_name_or_found_environment_or_found_browser_or_found_os_type_contains, {:id => 'search'}
+      =f.submit '', {:class => 'btn', :id => 'searchsubmit'}
+- if @message
+  .alert-message.error= @message.html_safe
+= render :partial => "list", :locals => {:issue_automation_scripts => @issue_automation_scripts, :project => @project, :search => @search}
+
+:javascript
+  $(function(){    
+    $("#create-issue-link").click(function() {
+      $.fancybox({
+          width: 400,
+          height: 400,
+          autoSize: false,
+          href: $(this).attr("remote-data"),
+          type: 'ajax'
+      }); 
+    });  
+  });

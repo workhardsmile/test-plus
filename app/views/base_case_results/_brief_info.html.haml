@@ -1,0 +1,9 @@
+- left_titles = ['Case Id:', 'Triage Result:']
+- @base_case_result.triage_result="N/A" if @base_case_result.triage_result.nil?
+- temp_text = IssueAutomationScriptsHelper.get_slice_text_from_text_by_length(@base_case_result.triage_result,30)
+/- triage = %span{:title => @base_case_result.triage_result}= temp_text
+- triage = link_to "#{temp_text}","#" ,:class => "triage-result", :title => @base_case_result.triage_result
+- left_values = [@base_case_result.automation_case_display_id, triage]
+- right_titles = ['Result:']
+- right_values = [@base_case_result.test_result]
+= render :partial => "partial/brief_info", :locals => {:left_titles => left_titles, :left_values => left_values, :right_titles => right_titles, :right_values => right_values}

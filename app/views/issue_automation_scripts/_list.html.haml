@@ -1,0 +1,33 @@
+%table
+  %tr 
+    %th
+      =sort_link search, :issue_issue_display_id,'IssueInformation', {:project_id=>project.id}, {:remote => true}
+      =sort_link search, :issue_issue_summary,'', {:project_id=>project.id}, {:remote => true}  
+    %th=sort_link search, :automation_script_name,'ScriptName', {:project_id=>project.id}, {:remote => true}
+    /%th=sort_link search, :found_case_id,'FoundCase', {:project_id=>project.id}, {:remote => true}
+    %th=sort_link search, :found_browser,'FoundBrowser', {:project_id=>project.id}, {:remote => true}
+    %th=sort_link search, :os_type,'FoundOS', {:project_id=>project.id}, {:remote => true}
+    %th=sort_link search, :found_environment,'FoundENV', {:project_id=>project.id}, {:remote => true}  
+    %th=sort_link search, :issue_reporter,'Reporter', {:project_id=>project.id}, {:remote => true}   
+    %th
+     
+  - @issue_automation_scripts.each do |issue_automation_script|
+    %tr
+      %td
+        - temp_text = IssueAutomationScriptsHelper.get_slice_text_from_text_by_length(issue_automation_script.issue_summary,30)
+        = link_to "#{issue_automation_script.issue_display_id}: #{temp_text}", issue_automation_script.issue_url, :title=>issue_automation_script.issue_summary, :target=>"_blank"
+      %td
+        - temp_text = IssueAutomationScriptsHelper.get_slice_text_from_text_by_length(issue_automation_script.automation_script_name,30)
+        - automation_script = AutomationScript.find_by_name_and_project_id(issue_automation_script.automation_script_name,issue_automation_script.project_id)
+        - link_path = (automation_script.nil?)?"#":automation_script_automation_cases_path(automation_script)
+        = link_to temp_text, link_path , :title=>issue_automation_script.automation_script_name
+        /%td
+        /- automation_case = AutomationCase.find_by_case_id_and_automation_script_id(issue_automation_script.found_case_id,automation_script.id) unless automation_script.nil?
+        /- link_path = (automation_script.nil?||automation_case.nil?)?"#":automation_script_automation_case_path(automation_script, automation_case)
+        /= link_to issue_automation_script.found_case_id,link_path,:title=>(automation_case.nil?)?"Invalid case id!":automation_case.name
+      %td= issue_automation_script.found_browser
+      %td= issue_automation_script.found_os_type
+      %td= issue_automation_script.found_environment
+      %td= issue_automation_script.reporter
+      = render :partial => 'partial/table_actions', :locals => {:show_url => nil, :edit_url => edit_project_issue_automation_script_path(issue_automation_script.project,issue_automation_script), :delete_url => project_issue_automation_script_path(issue_automation_script.project,issue_automation_script.id)}
+= paginate issue_automation_scripts

@@ -66,9 +66,9 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
-gem 'jquery-rails', '~>2.3.0'
+gem 'jquery-rails', "~> 1.0.19"
 #gem 'jquery-ui-rails'
-gem 'rmagick','2.15.4'
+gem 'rmagick', '2.15.4'
 gem 'lazy_high_charts'
 
 gem 'acts-as-taggable-on', '~> 3.4'

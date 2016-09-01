@@ -1,129 +1,95 @@
+/= "#{@project_coverages.to_json}"
 #market_coverage_chart
 
 :javascript
-  $(function () {
-      var categoryLinks = {
-        'Endurance': '#{@endurance_link}',
-        'Camps': '#{@camps_link}',
-        'Sports': '#{@sports_link}',
-        'Membership': '#{@membership_link}',
-        'RTP': '#{@rtp_link}',
-        };
-
-      $('#market_coverage_chart').highcharts({
-          chart: {
-              type: 'column'
+  $(function() {
+    var project_coverages = jQuery.parseJSON('#{@project_coverages.to_json}');
+    var data_series = [];
+    var project_names = [];
+    var colors = ['#3A8FC3', '#7BA13B', '#CBA744', '#B7592B', '#59ACBD'];
+    for (var i = 0; i < project_coverages.length; i++) {
+      project_names[i] = project_coverages[i]['name'];
+      data_series[i] = {
+        color: colors[(i % 5)],
+        y: parseFloat(project_coverages[i]['overall_coverage']),
+        url: project_coverages[i]['link'],
+        automated: parseInt(project_coverages[i]['automated']),
+        update_needed: parseInt(project_coverages[i]['update_needed']),
+        not_candidate: parseInt(project_coverages[i]['not_candidate']),
+        update_manual: parseInt(project_coverages[i]['update_manual']),
+        not_ready: parseInt(project_coverages[i]['not_ready']),
+        automatable: parseInt(project_coverages[i]['automatable']),
+        total: parseInt(project_coverages[i]['total'])
+      };
+    }
+    
+    $('#market_coverage_chart').highcharts({
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: 'Projects Automation Coverage',
+        style: {
+          fontSize: '20px',
+          fontFamily: 'Verdana, sans-serif'
+        },
+      },
+      xAxis: {
+        type: 'category',
+        categories: project_names,
+        labels: {
+          align: 'center',
+          y: 20,
+          style: {
+            fontSize: '13px',
+            fontFamily: 'Verdana, sans-serif'
           },
-          title: {
-              text: 'Markets Automation Coverage',
-              style: {
-                  fontSize: '20px',
-                  fontFamily: 'Verdana, sans-serif'
-              },
-          },
-
-          xAxis: {
-              type: 'category',
-              categories: ['Endurance','Camps','Sports','Membership','RTP'],
-              labels: {
-                  align: 'center',
-                  y: 20,
-                  style: {
-                      fontSize: '13px',
-                      fontFamily: 'Verdana, sans-serif'
-                  },
+        }
+      },
+      yAxis: {
+        min: 0,
+        max: 100,
+        title: {
+          text: 'Overall Coverage'
+        }
+      },
+      series: [{
+        name: 'Overall Coverage',
+        data: data_series,
+        dataLabels: {
+          offset: '120',
+          enabled: true,
+          color: '#000000',
+          align: 'center',
+          format: '{y} %',
+          style: {
+            fontSize: '13px',
+            fontFamily: 'Verdana, sans-serif',
+            textShadow: '0 0 3px black'
+          }
+        }
+      }],
+      legend: {
+        enabled: false
+      },
+      tooltip: {
+        useHTML: true,
+        formatter: function() {
+          return '<table><tr><td>Automated</td><td>' + this.point.automated + '</td></tr><tr><td>Automatable</td><td>' + this.point.automatable + '</td></tr><tr><td>Update Needed</td><td>' + this.point.update_needed + '</td></tr><tr><td>Not Ready</td><td>' + this.point.not_ready + '</td></tr><tr><td>Not Candidate</td><td>' + this.point.not_candidate + '</td></tr><tr><td>Update Manual</td><td>' + this.point.update_manual + '</td></tr><tr><td>Total Cases</td><td>' + this.point.total + '</td></tr>';
+        }
+      },
+      plotOptions: {
+        series: {
+          cursor: 'pointer',
+          point: {
+            events: {
+              click: function() {
+                location.href = this.options.url;
               }
-          },
-          yAxis: {
-              min: 0,
-              max: 100,
-              title: {
-                  text: 'Overall Coverage'
-              }
-          },
-          legend: {
-              enabled: false
-          },
-          tooltip: {
-              useHTML: true,
-              formatter: function () {
-                  return '<table><tr><td>Automated</td><td>' + this.point.automated + '</td></tr><tr><td>Automatable</td><td>' + this.point.automatable + '</td></tr><tr><td>Update Needed</td><td>' + this.point.update_needed + '</td></tr><tr><td>Not Ready</td><td>' + this.point.not_ready + '</td></tr><tr><td>Not Candidate</td><td>' + this.point.not_candidate + '</td></tr><tr><td>Update Manual</td><td>' + this.point.update_manual + '</td></tr><tr><td>Total Cases</td><td>' + this.point.total + '</td></tr>';
-              }
-          },
-          plotOptions: {
-            series: {
-                cursor: 'pointer',
-                point: {
-                    events: {
-                        click: function() {
-                            location.href = this.options.url;
-                        }
-                    }
-                }
             }
-          },
-
-          series: [{
-              name: 'Overall Coverage',
-              data: [
-              {color: '#3A8FC3',y: #{@endurance_overall_coverage}, url: categoryLinks['Endurance'], 
-              automated: #{@endurance_automated},
-              update_needed: #{@endurance_update_needed},
-              not_candidate: #{@endurance_not_candidate},
-              update_manual: #{@endurance_update_manual},
-              not_ready: #{@endurance_not_ready},
-              automatable: #{@endurance_automatable},
-              total: #{@endurance_total},
-              },
-              {color: '#7BA13B',y: #{@camps_overall_coverage}, url: categoryLinks['Camps'], 
-              automated: #{@camps_automated},
-              update_needed: #{@camps_update_needed},
-              not_candidate: #{@camps_not_candidate},
-              update_manual: #{@camps_update_manual},
-              not_ready: #{@camps_not_ready},
-              automatable: #{@camps_automatable},
-              total: #{@camps_total},
-              },
-              {color: '#CBA744',y: #{@sports_overall_coverage}, url: categoryLinks['Sports'], 
-              automated: #{@sports_automated},
-              update_needed: #{@sports_update_needed},
-              not_candidate: #{@sports_not_candidate},
-              update_manual: #{@sports_update_manual},
-              not_ready: #{@sports_not_ready},
-              automatable: #{@sports_automatable},
-              total: #{@sports_total},
-              },
-              {color: '#B7592B',y: #{@membership_overall_coverage}, url: categoryLinks['Membership'], 
-              automated: #{@membership_automated},
-              update_needed: #{@membership_update_needed},
-              not_candidate: #{@membership_not_candidate},
-              update_manual: #{@membership_update_manual},
-              not_ready: #{@membership_not_ready},
-              automatable: #{@membership_automatable},
-              total: #{@membership_total},
-              },
-              {color: '#59ACBD',y: #{@rtp_overall_coverage}, url: categoryLinks['RTP'], 
-              automated: #{@rtp_automated},
-              update_needed: #{@rtp_update_needed},
-              not_candidate: #{@rtp_not_candidate},
-              update_manual: #{@rtp_update_manual},
-              not_ready: #{@rtp_not_ready},
-              automatable: #{@rtp_automatable},
-              total: #{@rtp_total},
-              },
-              ],
-              dataLabels: {
-                  offset: '120',
-                  enabled: true,
-                  color: '#000000',
-                  align: 'center',                  
-                  format: '{y} %',
-                  style: {
-                      fontSize: '13px',
-                      fontFamily: 'Verdana, sans-serif',
-                      textShadow: '0 0 3px black'
-                  }
-              }
-          }]
-      });
+          }
+        }
+      }      
+    });   
   });
+  

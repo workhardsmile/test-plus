@@ -1,0 +1,64 @@
+.page-header.detail
+  %h3 Base Case Results
+  = form_for search, :url => base_script_result_base_case_results_path(@base_script_result), :remote => true do |f|
+    %span.search
+      = f.text_field :automation_case_display_id_or_case_name_or_test_result_or_triage_result_contains, {:id => 'search'}
+      = f.submit '', {:class => 'btn', :id => 'searchsubmit'}
+
+%table.zebra-striped
+  %tr
+    %th=sort_link search, :automatino_case_display_id, "Case Id", {}, {:remote => true}
+    %th=sort_link search, :base_case_name, "Case Name", {}, {:remote => true}
+    %th=sort_link search, :triage_result, "Triage Result", {}, {:remote => true}
+    %th= "Error Message"
+  - if @base_case_results.nil? or @base_case_results.count == 0
+    %tr
+      %td{:colspan => "5"}
+        %h4 No data
+  - else
+    - @base_case_results.each do |base_case_result|  
+      %tr
+        %td
+          %img.ui-icon{:src => asset_path("#{base_case_result.test_result}.png")}
+          = link_to "#{base_case_result.automation_case_display_id}", base_script_result_base_case_result_path(@base_script_result, base_case_result), :remote => true
+        %td
+          - bcr_name = IssueAutomationScriptsHelper.get_slice_text_from_text_by_length(base_case_result.case_name,60)
+          %span{:title => base_case_result.case_name}= bcr_name
+        %td
+          - base_case_result.triage_result="N/A" if base_case_result.triage_result.nil?
+          - temp_text = IssueAutomationScriptsHelper.get_slice_text_from_text_by_length(base_case_result.triage_result,30)
+          %span{:title => base_case_result.triage_result}= temp_text
+        %td
+          - if base_case_result.error_message.nil? || @automation_script_result != nil
+            %span= "N/A"
+          - else            
+            %input.btn.view_error{:type => "button", :value => "View Error Message", :id => "view-error-message", :data_message =>"#{base_case_result.error_message}"}
+
+#case-result-box{:style=>"display:none"}
+  #case-result-content
+    %span "error_message"
+ 
+= paginate @base_case_results
+
+:javascript
+  function formatMessage(message, title){
+    var html_header = "<div class='row detail'><div class='span12 columns'><h3>"+title+"</h3></div></div>"
+    message.replace("'",'"');
+    lines = message.split("\n");
+    message = html_header+"<div class='row details'><span><p>"+lines.join('</p><p>')+"</p></span></div>";
+    return message
+  };
+
+  $("input#view-error-message").click(function(){    
+    var data = $(this).attr("data_message");
+    $.fancybox(
+      formatMessage(data, "Error Message"),
+      {
+        'autoDimensions'  : false,
+        'width'             : 800,
+        'height'            : 'auto',
+        'transitionIn'    : 'none',
+        'transitionOut'   : 'none'
+      }
+    ); 
+  });

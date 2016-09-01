@@ -36,18 +36,21 @@ class AutomationScriptResultsController < InheritedResources::Base
         case result_type
         when 'pass'
           @automation_script_result.automation_case_results.each do |acr|
+            acr.triage_result = params[:triage_result] if acr.result != 'pass'
             acr.result = 'pass'
             acr.save
           end
           @automation_script_result.result = 'pass'
         when 'failed'
           @automation_script_result.automation_case_results.where(:result => 'not-run').each do |acr|
+            acr.triage_result = params[:triage_result] if acr.result != 'pass'
             acr.result = 'failed'
             acr.save
           end
           @automation_script_result.result = 'failed'
         when 'N/A'
           @automation_script_result.automation_case_results.each do |acr|
+            acr.triage_result = params[:triage_result] if acr.result != 'pass'
             acr.result = 'not-run'
             acr.save
           end
@@ -89,10 +92,11 @@ class AutomationScriptResultsController < InheritedResources::Base
   def stop
     asr = AutomationScriptResult.find(params[:id])
     if not asr.end?
-      asr.state = "stopping"
+      asr.state = "killed"
+      asr.result = "warning"
       asr.save
-      sa = asr.slave_assignments.last if asr
-      SlaveAssignmentsHelper.send_slave_assignment_to_list sa, "stop" if sa
+      #sa = asr.slave_assignments.last if asr
+      #SlaveAssignmentsHelper.send_slave_assignment_to_list sa, "stop" if sa
     end
 
     render :nothing => true

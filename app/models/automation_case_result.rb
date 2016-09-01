@@ -7,6 +7,7 @@
 #  error_message               :string(255)
 #  screen_shot                 :string(255)
 #  priority                    :string(255)
+#  priority                    :string(255)
 #  automation_case_id          :integer
 #  automation_script_result_id :integer
 #  created_at                  :datetime

@@ -60,7 +60,6 @@
       = link_to 'Back', project_test_suites_path(@project), :class => 'btn'
 
 :javascript
-
   $(function(){
     $("form.edit_test_suite").on("keypress", function (e) {
       if (e.keyCode == 13) {
@@ -89,7 +88,6 @@
         $.ajax({url:url,dataType:"json",data: {search_by_tag: as_tag, search_by_owner: as_owner_id, search_by_name: as_name}}).success(function(data){$("#automationscripts").empty(); if (data.automation_scripts.length>0){$.each(data.automation_scripts, function(i,item){if (contains(item.id)==false){var ele="<option value='"+item.id+"'>"+item.name+"</option>";$("#automationscripts").append(ele);} });} });
       };
     });
-
     $("input.do_search").click(function(){
         var as_tag = $("select#search_by_tag").val();
         var as_owner_id = $("select#search_by_owner").val();
@@ -115,6 +113,12 @@
         $('#automationscripts').append($(elem));
         $('#as-ids input').remove("input[value='"+elem.value+"']");
       });
+    });    
+    $('#clear-all-button').click(function(){
+      $('#as-ids').empty();
+      $('#automationscripts-selected option').each(function(idx, elem){
+        $('#automationscripts').append($(elem));
+      });
     });
     $('#add-all-button').click(function(){
       $('#automationscripts option').each(function(idx, elem){
@@ -122,10 +126,5 @@
         $('#as-ids').append($('.span7 #test_suite_automation_script_ids_').clone().val($(elem).attr('value')));
       });
     });
-    $('#clear-all-button').click(function(){
-      $('#as-ids').empty();
-      $('#automationscripts-selected option').each(function(idx, elem){
-        $('#automationscripts').append($(elem));
-      });
-    });
-  });
+  }); 
+   

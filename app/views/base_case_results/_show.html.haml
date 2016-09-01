@@ -1,0 +1,65 @@
+.list-content-box
+  .row
+    .span16.columns
+      %img.big-icon{:src => asset_path("#{@base_case_result.test_result}.png")}
+      %h2
+        =link_to "Base Script Results", project_base_script_results_path(@project), :remote => true
+        %span=" / "
+        - bsr_name = @base_script_result.automation_script_name
+        - if bsr_name && bsr_name.length >= 20
+          - bsr_name = bsr_name.slice(0,20).concat("...")
+        =link_to "#{@base_script_result.automation_script_name}", project_base_script_result_path(@project, @base_script_result), :remote => true, :title => @base_script_result.automation_script_name
+        %span=" / "
+        - bcr_name = @base_case_result.case_name
+        - if bcr_name && bcr_name.length >= 20
+          - bcr_name = bcr_name.slice(0,20).concat("...")
+        %span{:title => @base_case_result.case_name}="#{bcr_name}"
+  =render "brief_info"
+
+  .row.detail
+    .span16.columns
+      %h3 Error Message
+  .row.detail
+    .span16.columns
+      .error-message
+        %span
+          - if @base_case_result.error_message and @base_case_result.error_message != "N/A"          
+            - format_error_message(@base_case_result.error_message)
+          - else
+            %h6 No Error Messages
+
+.row.detail
+  .span16.columns    
+    %h3 Screen Shot
+.row.detail
+  .span16.columns
+    .screen-shot-box
+      - if @base_case_result.screen_shots && @base_case_result.screen_shots.count > 0
+        - @base_case_result.screen_shots.each do |ss|
+          .screen-shot-image
+            = link_to image_tag(ss.screen_shot.url(:thumb)), ss.screen_shot.url, :rel => 'attachments', :class => "screen-shot"
+      - else
+        %h6 No Screen Shots  
+#triage-result-box
+  #triage-result-content{:style=> "width:800px"}
+    - error_message = @base_case_result.triage_result
+    - if error_message.nil?
+      - error_message = "N/A" 
+    / - @automation_script_result.automation_case_results.each do |acr|
+    /   - error_message << acr.error_message    
+    .row.detail
+      %h3= "Triage Reuslt"
+    %span= error_message
+
+
+
+
+:javascript
+  $("#triage-result-box").css("display", "none");
+  $("#view-triage-result").fancybox({
+    'overlayShow': true    
+  });
+
+  $(function(){
+    $("a.screen-shot").fancybox({ 'autoDimensions' : true});
+  });

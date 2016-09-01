@@ -9,13 +9,14 @@
   %tr
     %th=sort_link search, :automation_case_case_id, "Case Id", {}, {:remote => true}
     %th=sort_link search, :automation_case_name, "Case Name", {}, {:remote => true}
+    %th=sort_link search, :triage_result, "Triage Result", {}, {:remote => true}
     %th=sort_link search, :automation_case_version, "Version", {}, {:remote => true}
     %th=sort_link search, :automation_case_priority, "Priority", {}, {:remote => true}
     %th=sort_link search, :result, "Result"
 
   - if automation_case_results.nil? or automation_case_results.count == 0
     %tr
-      %td{:colspan => "5"}
+      %td{:colspan => "6"}
         %h4 No data
   - else
     - automation_case_results.each do |automation_case_result|
@@ -25,11 +26,90 @@
           = link_to "#{automation_case_result.case_id}", automation_script_result_automation_case_result_path(automation_script_result, automation_case_result), :remote => true
         %td
           - acr_name = automation_case_result.name
-          - if acr_name and acr_name.length >= 60
-            - acr_name = acr_name.slice(0,60).concat("...")
+          - if acr_name and acr_name.length >= 40
+            - acr_name = acr_name.slice(0,40).concat("...")
           %span{:title => automation_case_result.name}= acr_name
+        %td
+          - asr = automation_case_result.automation_script_result
+          - if asr.end? && can?(:update, AutomationScriptResult, {:project_id => asr.test_round.project.id}) 
+            - if automation_case_result.triage_result == "N/A"
+              - unless automation_case_result.result == 'pass'
+                %input{:type => "button", :value => "Triage", "remote-data" => "/automation_script_results/#{asr.id}/add_triage_result", :class => "btn primary add-triage-result"}
+            - else
+              - if asr.error_type.result_type == "failed"
+                - triage_result_class = "btn danger view-triage-result"
+              - else  
+                - triage_result_class = "btn view-triage-result"
+              %input{:type => "button", :value => "#{asr.error_type.name}", "remote-data" => "/automation_script_results/#{asr.id}/view_triage_result", :class => triage_result_class}
         %td= automation_case_result.version
         %td= automation_case_result.priority
         %td= automation_case_result.result
 
 = paginate automation_case_results
+
+:javascript
+  $(function(){
+    $("input.view-triage-result").click(function() {
+      $.fancybox({
+          width: 400,
+          height: 400,
+          autoSize: false,
+          href: $(this).attr("remote-data"),
+          type: 'ajax'
+      }); 
+    });
+    $("input.add-triage-result").click(function() {
+      $.fancybox({
+          width: 400,
+          height: 400,
+          autoSize: false,
+          href: $(this).attr("remote-data"),
+          type: 'ajax'
+      }); 
+    });
+
+    $("input.rerun_btn:not(:disabled)").click(function() {
+      $(this).addClass("disabled");
+      $(this).disabled = true;
+      $.ajax({
+        url: $(this).attr("remote-data")
+      }).success(function(data) {
+        location.reload();
+      })
+    });
+
+    $(".triage-result").change(function() {
+      var triage_result = $("option:selected", this).text();
+      var comments = prompt("Please enter your comments", "");
+      if (comments != null) {
+        if (comments != "") {
+          triage_result = triage_result + ", " + comments
+        }
+      var display_text = triage_result;
+      if (triage_result.length > 18)
+        {
+          display_text = triage_result.substring(0,18)+"..."
+        };
+
+
+        var id = $(this).attr("id");
+        var url = "/update_automation_script_result_triagge_result?id=" + id + "&triage_result=" + triage_result;
+        var ele = $(this);
+
+        $.ajax({url: url, dataType: "json"}).success(function(data){
+          if (data.result == "failed") {
+              alert("Updating triage result failed, something is wrong with the server. Please try again later.");
+            } 
+          else 
+            {
+              ele.parent().attr("title", triage_result);                        
+              $("input[remote-data='/automation_script_results/" + id + "/rerun']").remove();
+              ele.parent().parent().children().first().children("img").attr("src", "/assets/" + data.asr_result + ".png");
+              $("img.big-icon").attr("src", "/assets/" + data.tr_result + ".png");
+              ele.parent().html(display_text);
+            }
+        });
+      }
+    });
+  });
+  

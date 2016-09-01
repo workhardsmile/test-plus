@@ -9,7 +9,7 @@
   AutomationCase, TestSuite, TestRound, TestType, AutomationScriptResult, AutomationCaseResult,
   TestEnvironment, TargetService].each{|t| t.delete_all}
 automator = User.create({
-  email: 'automator@testplus.com',
+  email: 'automator@marquee.com',
   password: '111111',
   display_name: 'TestPlus Automator'
 })

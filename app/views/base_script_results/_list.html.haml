@@ -1,0 +1,50 @@
+.list-content-box
+  .page-header
+    %h2
+      Base Script Result    
+      %small= "#{@project.base_script_results.count} in total"
+    = form_for search, :url => project_base_script_results_path(project), :remote => true do |f|
+      %span.search
+        = f.text_field :automation_script_name_or_environment_or_browser_or_os_type_or_triage_result_contains, {:id => 'search'}
+        = f.submit '', {:class => 'btn', :id => 'searchsubmit'}
+  %table.zebra-striped
+    %tr
+      %th=sort_link search, :automation_script_name, "Name", {}, {:remote => true} 
+      %th=sort_link search, :triage_result, "Triage Result", {}, {:remote => true}    
+      %th=sort_link search, :environment, "Environment", {}, {:remote => true}
+      %th=sort_link search, :browser, "Browser", {}, {:remote => true}
+      %th=sort_link search, :os_type, "OS", {}, {:remote => true}
+      %th=sort_link search, :is_latest, "Latest", {}, {:remote => true}
+      %th Pass
+      %th Failed
+      %th Warning
+      %th Not Run
+      
+     
+    - if base_script_results.nil? or base_script_results.count == 0
+      %tr
+        %td{:colspan => "9"}
+          %h4 No data
+    - else
+      -base_script_results.each do |bsr|
+        %tr
+          %td
+            - icon_name = bsr.test_result          
+            %img.ui-icon{:src => asset_path("#{icon_name}.png")}
+            - bsr_name = IssueAutomationScriptsHelper.get_slice_text_from_text_by_length(bsr.automation_script_name,30)
+            %b= link_to "#{bsr_name}", project_base_script_result_path(project, bsr), :remote => true, :title => bsr.automation_script_name
+          %td 
+            - bsr.triage_result="N/A" if bsr.triage_result.nil?
+            - temp_text = IssueAutomationScriptsHelper.get_slice_text_from_text_by_length(bsr.triage_result,30)
+            %span{:title => bsr.triage_result}= temp_text
+          %td= bsr.environment  
+          %td= bsr.browser
+          %td= bsr.os_type
+          %td= ("#{bsr.is_latest}"=="0")?"No":"Yes"
+          %td= bsr.pass_count
+          %td= bsr.failed_count
+          %td= bsr.warning_count
+          %td= bsr.not_run_count
+          
+
+= paginate base_script_results

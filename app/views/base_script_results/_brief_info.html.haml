@@ -1,0 +1,101 @@
+- unless @base_script_result.triage_result.nil?
+  - temp_text = IssueAutomationScriptsHelper.get_slice_text_from_text_by_length(@base_script_result.triage_result,30)
+  - triage = link_to "#{temp_text}","#" ,:class => "triage-result", :title => @base_script_result.triage_result
+- else
+  - triage = 'N/A'
+- apply_label = apply_triage = close_label = close_button = ''
+- if @automation_script_result != nil
+  - close_label="Operation:"
+  - close_button=link_to "Open in New", project_base_script_result_path(@base_script_result.project, @base_script_result), :class=>"btn primary", :id=>"go_current_page", :target=>'_blank'
+  - close_button+=" "
+  - close_button+=link_to "Close Me", "#", :class=>"btn primary", :id=>"close_current_window", :bsr_id => @base_script_result.id
+  - if "#{@base_script_result.triage_result}" !="" && @base_script_result.triage_result != "N/A"
+    - apply_label="Apply Base Triage:"
+    - apply_triage=link_to "Apply Base Triage", "#", :class=>"btn primary", :id=>"apply_triage_result", :script_result_id=>@automation_script_result.id, :trage_result=>@base_script_result.triage_result, :bsr_id => @base_script_result.id
+- left_titles = ['Environment:','Browser:','Operation System:','Triage Result:',apply_label]
+- left_values = [@base_script_result.environment, @base_script_result.browser, @base_script_result.os_type, triage, apply_triage]
+- right_titles = ['Pass Count:', 'Failed Count:', 'Warning Count:', 'Not Run Count:',close_label]
+- right_values = [@base_script_result.pass_count, @base_script_result.failed_count, @base_script_result.warning_count, @base_script_result.not_run_count, close_button]
+
+.row.detail
+  .span16.columns
+    %h3 Details
+.row.details
+  #my-tab-content.tab-content
+    #details.tab-pane.active
+      .row.brief-info
+        .span8.columns.brief-left
+          .span3.columns
+            %ul.title
+              -left_titles.each do |t|
+                %li= t
+          .span5.columns
+            %ul.value
+              -left_values.each do |v|
+                - value = v
+                - if value && value.to_s.length >= 30
+                  - value = value.slice(0,30).concat("...")
+                - if v.start_with?('<select class="triage-result"') or v.start_with?('<a ')
+                  %li= v
+                - else
+                  %li.long-name{:title => v}= value
+        .span8.columns.brief-right
+          .span3.columns
+            %ul.title
+              -right_titles.each do |t|
+                %li= t
+          .span5.columns
+            %ul.value
+              -right_values.each do |v|
+                - value = v
+                - if value && value.to_s.length >= 30
+                  - value = value.slice(0,30).concat("...")
+                - if v.to_s.start_with?('<select class="triage-result"') or v.to_s.start_with?('<a ')
+                  %li= v
+                - else
+                  %li.long-name{:title => v}= value
+
+:javascript  
+  $(function() {
+    $("#triage-result-box").css("display", "none");
+    $("#view-triage-result").fancybox(
+      {
+        'overlayShow': true,
+        'autoDimensions'  : false,
+        'width'             : 800,
+        'height'            : 'auto',
+        'transitionIn'    : 'none',
+        'transitionOut'   : 'none'
+      });
+      
+    $("a#apply_triage_result").click(function() {
+      var parent_href=parent.window.location.href;
+      var bsr_id=$(this).attr("bsr_id");      
+      var triage_result = $(this).attr("trage_result");
+      var comments = prompt("Please enter your comments", ""); 
+      if (comments != null && comments != "") {
+        triage_result = triage_result + ", " + comments            
+        var id = $(this).attr("script_result_id");
+        var url = "/update_automation_script_result_triagge_result?id=" + id + "&triage_result=" + triage_result;
+        var ele = $(this);
+        $.ajax({url: url, dataType: "json"}).success(function(data){
+         if (data.result == "failed") {
+            alert("Updating triage result failed, something is wrong with the server. Please try again later.");
+          } 
+          else{
+             parent.window.location.href=parent_href.split("#")[0].split("?base_script_result_id")[0]+"?base_script_result_id="+bsr_id;
+             //parent.window.location.reload();
+             parent.$.fancybox.close();           
+          }       
+        });
+      } 
+    });
+    
+    $("a#close_current_window").click(function() {
+      var parent_href=parent.window.location.href;
+      var bsr_id=$(this).attr("bsr_id");  
+      parent.window.location.href=parent_href.split("#")[0].split("?base_script_result_id")[0]+"?base_script_result_id="+bsr_id;    
+      //parent.window.location.reload();
+      parent.$.fancybox.close();   
+    });
+  });

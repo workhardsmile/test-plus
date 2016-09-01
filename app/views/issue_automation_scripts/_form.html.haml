@@ -1,0 +1,160 @@
+= form_for @issue_automation_script do |f|
+  -if @issue_automation_script.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@issue_automation_script.errors.count, "error")} prohibited this issue from being saved:"
+      %ul
+        - @issue_automation_script.errors.full_messages.each do |msg|
+          %li= msg
+  -all_issues=@issue_automation_script.project.issues
+  %fieldset
+    %legend= title
+    - if @message
+      .alert-message.error=@message.html_safe
+    .clearfix
+      = f.label "Issue id"
+      .required *
+      .input
+        = f.select :issue_display_id, options_from_collection_for_select(all_issues.insert(0,Issue.new({:issue_display_id=>""})), :issue_display_id, :issue_display_id, @issue_automation_script.issue_display_id),{},{:class => "chzn-select validate[required]",:id => "droplist_issue_display_id", :style=>"width:200px;margin-left:0px"}
+    .clearfix 
+      = f.label :issue_summary
+      .required *
+      .input
+        = select_tag "issue_summary", options_from_collection_for_select(all_issues, :issue_summary, :issue_display_id),:id => "droplist_issue_summary", :style=>"display:none"
+        = f.text_field :issue_summary, :class => "validate[required, funcCall[checkOnlySpace]]", :id => "textinput_issue_summary", :style=>"width:350px;margin-left:0px"
+    .clearfix
+      = f.label :issue_url
+      .required *
+      .input
+        = select_tag "issue_url", options_from_collection_for_select(all_issues, :issue_url, :issue_display_id), :id => "droplist_issue_url", :style=>"display:none"
+        = f.text_field :issue_url, :class => "validate[required, funcCall[checkOnlySpace]]", :id => "textinput_issue_url", :style=>"width:350px;margin-left:0px"
+    .clearfix
+      = f.label "Script name"
+      .required *
+      .input
+        = f.select :automation_script_name, options_from_collection_for_select(@issue_automation_script.project.automation_scripts.insert(0,AutomationScript.new({:name=>""})), :name, :name, @issue_automation_script.automation_script_name),{},{:class => "chzn-select validate[required]",:id => "droplist_automation_script_name", :style=>"width:360px;margin-left:0px"}
+    .clearfix
+      = f.label "Issue reporter"
+      .input
+        = f.text_field :reporter, :value => (@issue_automation_script.reporter.nil?)?"":@issue_automation_script.reporter, :style=>"width:200px;margin-left:0px"
+    .clearfix
+      = f.label "Found case id"
+      .input
+        = f.select :found_case_id, [], {}, {:id => "droplist_found_case_id"}
+    .clearfix
+      = f.label "Found browser"
+      .input
+        - browser_array = @issue_automation_script.project.browsers.map { |browser| [browser.name, browser.name] }
+        = f.select :found_browser, browser_array
+    .clearfix
+      = f.label "Found OS"
+      .input
+        - os_type_array = @issue_automation_script.project.operation_systems.map { |operation_system| [operation_system.name, operation_system.name] }
+        = f.select :found_os_type, os_type_array
+    .clearfix
+      = f.label "Found environment"
+      .input
+        - environment_array = @issue_automation_script.project.test_environments.map { |test_environment| [test_environment.name, test_environment.name] }
+        = f.select :found_environment, environment_array
+    .clearfix
+      = f.hidden_field :project_id, :id=>"textinput_project_id"
+      = f.hidden_field :issue_id, :id=>"textinput_issue_id"
+      %input{:value=>"#{@issue_automation_script.automation_script_name}", :style=>"display:none", :id=>"default_automation_script_name"}
+      %input{:value=>"#{@issue_automation_script.found_case_id}", :style=>"display:none", :id=>"default_found_case_id"}
+      %input{:value=>"#{@issue_automation_script.id}", :style=>"display:none", :id=>"issue_automation_script_id"}
+    .actions
+      = f.submit 'Save', :class => "btn primary"
+      - if @issue_automation_script.automation_script_name!=nil && session[:pre_issue_url]!= nil
+        = link_to 'Cancel', session[:pre_issue_url], :class => "btn primary"
+      - else
+        = link_to 'Cancel', project_issue_automation_scripts_path(@issue_automation_script.project),:class => "btn primary"
+
+:javascript
+  $(function(){
+    var url_prefix = "http://jirafnd.dev.activenetwork.com/browse/...";
+    $("#new_issue_automation_script").validationEngine({promptPosition: "bottomRight", scroll: false});
+    $(".edit_issue_automation_script").validationEngine({promptPosition: "bottomRight", scroll: false});
+     
+    $("div#droplist_issue_display_id_chzn").find("div.chzn-search").find("input").change(function(){
+      var text=$(this).val();
+      var selected_li = $("li.result-selected&li.active-result");
+      if (selected_li == null || selected_li.text() != text ){    
+         $("div#droplist_issue_display_id_chzn").find(".chzn-single&.chzn-single-with-drop").find("span").text(text);             
+         var obj = document.getElementById("droplist_issue_display_id");
+         obj.options.add(new Option(text, text));
+         obj.options[obj.options.length-1].selected=true; 
+         $("#textinput_issue_summary").val("");
+         $("#textinput_issue_url").val(url_prefix);         
+      }
+    });
+    
+    $("#droplist_issue_display_id").change(function(){
+      var text = $("option:selected", this).text()+"";
+      var drop_summary = document.getElementById("droplist_issue_summary");
+      var text_summary = $("#textinput_issue_summary");
+      var drop_url = document.getElementById("droplist_issue_url");
+      var text_url = $("#textinput_issue_url");
+      if (text != "" && text != "Input or Select One" && text != "Select an Option"){       
+        for(var i = 0, len = drop_summary.options.length; i < len; i++){
+          if (drop_summary.options[i].text == text){
+            text_summary.val(drop_summary.options[i].value);
+          }
+        }
+        for(var i = 0, len = drop_url.options.length; i < len; i++){
+          if (drop_url.options[i].text == text){
+            text_url.val(drop_url.options[i].value);
+          }
+        }
+      }
+    });
+    
+    function load_found_case_ids(script_name){
+      var found_case_id = "";
+      var project_id = document.getElementById("textinput_project_id").value+"";
+      var drop_case = document.getElementById("droplist_found_case_id");
+      var default_text = $("#default_found_case_id").val();
+      var default_script_id = $("#issue_automation_script_id").val();
+      if (default_text != "" &&  default_script_id == ""){
+         drop_case.options.length=0;   
+         drop_case.options.add(new Option(default_text, default_text));  
+         drop_case.options[0].selected = true;
+      }
+      else{
+        drop_case.options.length = 0;
+        drop_case.options.add(new Option("NONE", ""));
+        var url = "/get_cases_by_case_id?case_id="+found_case_id+"&script_name="+script_name+"&project_id="+project_id;
+        $.ajax({url: url, dataType: "json"}).success(function(data){
+           var json=eval(data);
+           for(var i = 0, len = json.length; i < len; i++){
+             drop_case.options.add(new Option(json[i]["case_id"], json[i]["case_id"]));
+             if (default_text !="" && default_text.toUpperCase() == json[i]["case_id"].toUpperCase()){
+               drop_case.options[i+1].selected = true;
+             }
+           }           
+        });
+      }
+    }  
+    
+    $("#droplist_automation_script_name").change(function(){
+      var script_name = $("option:selected", this).text()+"";
+      load_found_case_ids(script_name);      
+    });
+    
+    var init_script_label = $("#default_automation_script_name");
+    if ( init_script_label.val() != ""){
+      load_found_case_ids(init_script_label.val());
+      if ($("#issue_automation_script_id").val() == ""){
+        var drop_script=$("div#droplist_automation_script_name_chzn");      
+        drop_script.find("div.chzn-search").find("input").attr("disabled",true);
+        drop_script.find(".chzn-drop").css("display","none"); 
+      }
+    }   
+         
+    var init_drop_issue = $("div#droplist_issue_display_id_chzn").find("a.chzn-single").find("span");
+    if (init_drop_issue.text()=="Select an Option"){
+      init_drop_issue.text("Input or Select One");     
+    }
+  });  
+  
+  
+  
+    

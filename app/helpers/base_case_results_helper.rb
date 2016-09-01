@@ -1,0 +1,2 @@
+module BaseCaseResultsHelper
+end

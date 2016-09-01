@@ -9,7 +9,7 @@ development:
   reconnect: false
   host: localhost
   pool: 5
-  database: dashboard
+  database: testplus
   username: root
   password: 
 

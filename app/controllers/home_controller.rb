@@ -33,19 +33,25 @@ class HomeController < ApplicationController
         activity.save
       end
     end
-    %w(Endurance Sports Membership RTP Camps).each do |m|
-      p = Project.find_by_name(m)
-      eval "@#{m.downcase}_link = url_for([:coverage,p])"
-      eval "@#{m.downcase}_automated = p.count_test_case_by_plan_type_and_options('regression',{:automated_status => 'Automated'})"
-      eval "@#{m.downcase}_automatable = p.count_test_case_by_plan_type_and_options('regression',{:automated_status => 'Automatable'})"
-      eval "@#{m.downcase}_update_needed = p.count_test_case_by_plan_type_and_options('regression',{:automated_status => 'Update Needed'})"
-      eval "@#{m.downcase}_update_manual = p.count_test_case_by_plan_type_and_options('regression',{:automated_status => 'Update Manual'})"
-      eval "@#{m.downcase}_not_ready = p.count_test_case_by_plan_type_and_options('regression',{:automated_status => 'Not Ready for Automation'})"
-      eval "@#{m.downcase}_not_candidate = p.count_test_case_by_plan_type_and_options('regression',{:automated_status => 'Not a Candidate'})"
-      eval "@#{m.downcase}_total = p.count_test_case_by_plan_type_and_options('regression')"
-      eval "@#{m.downcase}_overall_coverage = Project.caculate_coverage_by_project_and_priority_and_type('#{m.downcase}', 'Overall','regression')"
+    # %w(Endurance Sports Membership RTP Camps).each do |m|
+    @project_coverages = []
+    Project.find(:all,:order=>'name').each do |p|
+      unless %w(camps rtp).include?(p.name.downcase)
+        @project_coverage = {}
+        @project_coverage["name"] = p.name
+        @project_coverage["link"] = url_for([:coverage,p])
+        @project_coverage["automated"] = p.count_test_case_by_plan_type_and_options('regression',{:automated_status => 'Automated'})
+        @project_coverage["automatable"] = p.count_test_case_by_plan_type_and_options('regression',{:automated_status => 'Automatable'})
+        @project_coverage["update_needed"] = p.count_test_case_by_plan_type_and_options('regression',{:automated_status => 'Update Needed'})
+        @project_coverage["update_manual"] = p.count_test_case_by_plan_type_and_options('regression',{:automated_status => 'Update Manual'})
+        @project_coverage["not_ready"] = p.count_test_case_by_plan_type_and_options('regression',{:automated_status => 'Not Ready for Automation'})
+        @project_coverage["not_candidate"] = p.count_test_case_by_plan_type_and_options('regression',{:automated_status => 'Not a Candidate'})
+        @project_coverage["total"] = p.count_test_case_by_plan_type_and_options('regression')
+        @project_coverage["overall_coverage"] = Project.caculate_coverage_by_project_and_priority_and_type(p.name, 'Overall','regression')
+        @project_coverages = @project_coverages << @project_coverage
+      end
     end
-
+    @project_coverages   
   end
 
   def get_activities_by_project

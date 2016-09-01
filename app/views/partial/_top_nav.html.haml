@@ -19,17 +19,17 @@
         %li= link_to 'Admin', admin_projects_path
       = render :partial => 'partial/login_menu'
       
-:javascript
-  $("a.menu").click(function(){
-    if ($(this).parent('li').hasClass('open')){
-      $(this).parent('li').removeClass('open');
-    }
-    else{
-      $(this).parent('li').addClass('open');
-    }
-  });    
-  $(function(){
-    $('a.menu').parent('li').removeClass('open'); 
+:javascript  
+  $(function(){     
+    -# $('a.menu').parent('li').removeClass('open'); 
+    -# $("a.menu").click(function(){
+      -# if ($(this).parent('li').hasClass('open')){
+        -# $(this).parent('li').removeClass('open');
+      -# }
+      -# else{
+        -# $(this).parent('li').addClass('open');
+      -# }
+    -# });    
     if ($("ul.menu > li[class*='activate']").length <= 0){
       //current_tab = location.pathname.split("/projects/");
       //$("ul.menu > li[name*='"+current_tab+"']").addClass("activate");
@@ -72,4 +72,4 @@
       }
       pre_url = $.address.value();
     }).history(true);
-  })
+  });

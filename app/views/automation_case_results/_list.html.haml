@@ -26,16 +26,13 @@
           = link_to "#{automation_case_result.case_id}", automation_script_result_automation_case_result_path(automation_script_result, automation_case_result), :remote => true
         %td
           - acr_name = automation_case_result.name
-          - if acr_name and acr_name.length >= 40
-            - acr_name = acr_name.slice(0,40).concat("...")
+          - if acr_name and acr_name.length >= 50
+            - acr_name = acr_name.slice(0,50).concat("...")
           %span{:title => automation_case_result.name}= acr_name
         %td
           - asr = automation_case_result.automation_script_result
           - if asr.end? && can?(:update, AutomationScriptResult, {:project_id => asr.test_round.project.id}) 
-            - if automation_case_result.triage_result == "N/A"
-              - unless automation_case_result.result == 'pass'
-                %input{:type => "button", :value => "Triage", "remote-data" => "/automation_script_results/#{asr.id}/add_triage_result", :class => "btn primary add-triage-result"}
-            - else
+            - unless automation_case_result.triage_result == "N/A"
               - if asr.error_type.result_type == "failed"
                 - triage_result_class = "btn danger view-triage-result"
               - else  

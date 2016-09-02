@@ -71,5 +71,83 @@ set a.name = replace(b.name, '  ', ' ') where a.name like '%  %';
 update old_test_plans a left join old_test_plans b on a.id = b.id
 set a.name = replace(b.name, '  ', ' ') where a.name like '%  %';
 
+delimiter //
+
+DROP PROCEDURE IF EXISTS `testlink`.`import_test_to_testplus`
+//
+CREATE PROCEDURE `testlink`.`import_test_to_testplus`()
+BEGIN
+
+drop TABLE IF EXISTS old_projects;
+CREATE TABLE `old_projects` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `testlink_name` varchar(45) DEFAULT NULL,
+  `prefix` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+drop TABLE IF EXISTS old_test_cases;
+CREATE TABLE `old_test_cases` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `test_plan_id` int(11) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `case_id` varchar(45) DEFAULT NULL,
+  `version` int(11) DEFAULT NULL,
+  `priority` int(11) DEFAULT NULL,
+  `automated_status` varchar(45) DEFAULT NULL,
+  `test_link_id` varchar(45) DEFAULT NULL,
+  `keywords` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ;
+
+drop TABLE IF EXISTS old_test_plans;
+
+CREATE TABLE `old_test_plans` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `project_id` int(11) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `version` varchar(45) DEFAULT NULL,
+  `test_link_id` int(11) DEFAULT NULL,
+  `plan_type` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ;
+
+drop TABLE IF EXISTS old_test_steps;
+CREATE TABLE `old_test_steps` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `test_case_id` varchar(45) DEFAULT NULL,
+  `test_link_id` varchar(45) DEFAULT NULL,
+  `step_number` varchar(5) DEFAULT NULL,
+  `action` text,
+  `expected_result` text,
+  PRIMARY KEY (`id`)
+);
+
+truncate table old_projects;
+truncate table old_test_cases;
+truncate table old_test_plans;
+truncate table old_test_steps;
+
+call get_test_cases_for_project('Platform-Commerce','Platform-Commerce','Regression','5');
+
+call update_test_case_info;
+
+call update_test_steps;
+
+#remove multiple space char in the test plan name
+update old_test_plans a left join old_test_plans b on a.id = b.id
+set a.name = replace(b.name, '  ', ' ') where a.name like '%  %';
+
+update old_test_plans a left join old_test_plans b on a.id = b.id
+set a.name = replace(b.name, '  ', ' ') where a.name like '%  %';
+
+update old_test_plans a left join old_test_plans b on a.id = b.id
+set a.name = replace(b.name, '  ', ' ') where a.name like '%  %';
+
+# insert a user as admin 
+#delete from users where login = 'admin';
+#INSERT INTO users (login, password, role_id, email,first, last,locale,active)
+#VALUES ('admin','21232f297a57a5a743894a0e4a801fc3','9','admin@test.com','admin','last','en_GB','1');
+
 END
 //

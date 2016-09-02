@@ -1,5 +1,6 @@
-DELIMITER $$
 DROP PROCEDURE IF EXISTS `testplus`.`get_schedule_scripts_by_tnumber_and_project_and_platform`;
+DROP TABLE IF EXISTS `testplus`.`temp_schedule_scripts`;
+DELIMITER $$
 CREATE PROCEDURE `testplus`.`get_schedule_scripts_by_tnumber_and_project_and_platform`(
   IN _tnumber int(11),
   IN _project_name varchar(255),
@@ -24,7 +25,7 @@ else
 	where BB.name=_project_name and CC.name=_platform);
 end if;
 
-UPDATE slaves set ip_address=_ip, project_name=_project_name, status='online', active=1 where name=_salvename;
+UPDATE slaves set ip_address=_ip, project_name=_project_name, status='busy', active=1 where name=_salvename;
 
 CREATE TABLE IF NOT EXISTS `temp_schedule_scripts`(
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -40,6 +41,8 @@ CREATE TABLE IF NOT EXISTS `temp_schedule_scripts`(
   `source_cmd` varchar(255) DEFAULT NULL,
   `exec_path` varchar(255) DEFAULT NULL,
   `exec_cmd` varchar(255) DEFAULT NULL,
+  `env_name` varchar(255) DEFAULT NULL,
+  `deleted` tinyint(1) DEFAULT 0,
    PRIMARY KEY (`id`));
 INSERT INTO `temp_schedule_scripts`(
   `platform`,
@@ -53,15 +56,17 @@ INSERT INTO `temp_schedule_scripts`(
   `source_path`,
   `source_cmd`,
   `exec_path`,
-  `exec_cmd`)
+  `exec_cmd`,
+  `env_name`)
   (SELECT _platform, _ip, E.id round_id, D.id script_result_id, C.time_out_limit, C.name script_name, 
   _project_name, E.branch_name, B.source_paths, B.source_control source_cmd,
-  B.script_main_path exec_path, A.name exec_cmd
+  B.script_main_path exec_path, A.`name` exec_cmd, F.`name` env_name
   FROM automation_drivers A 
   inner join automation_driver_configs B on A.id=B.automation_driver_id
   inner join automation_scripts C on B.id=C.automation_driver_config_id
   inner join automation_script_results D on C.id=D.automation_script_id
   inner join test_rounds E on E.id = D.test_round_id
+  inner join test_environments F on F.id = E.test_environment_id
   where D.state='scheduling' and E.id=_test_round limit _tnumber for update);
   
 -- UPDATE automation_script_results set state='done' where id in(select script_result_id from `temp_schedule_scripts` where `ip`=_ip);

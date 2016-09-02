@@ -17,6 +17,7 @@ TestPlusWebMain::Application.configure do
   config.assets.compile = false
   # Generate digests for assets URLs
   config.assets.digest = true
+  config.assets.precompile = ['fancybox/jquery.fancybox-1.3.4.css']
   # Specifies the header that your server uses for sending files
   # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for apache
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx

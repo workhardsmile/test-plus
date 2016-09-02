@@ -23,26 +23,20 @@ RAILS_ROOT  = ENV['RAILS_ROOT'] || "/home/active/testplus/testplus-web-main"
       d.from_email = 'testplus@active.com'
       d.from_name = 'TestPlus resque monitoring'
       d.delivery_method = :smtp
-      d.server_host = 'mx1.dev.activenetwork.com'
+      d.server_host = 'mx1.dev.istuary.com'
       d.server_port = 25
     end
 
     God.contact(:email) do |c|
       c.name = 'Eric Yang'
       c.group = 'TestPlus Team'
-      c.to_email = 'eric.yang@activenetwork.com'
-    end
-
-    God.contact(:email) do |c|
-      c.name = 'Tyrael Tong'
-      c.group = 'TestPlus Team'
-      c.to_email = 'tyrael.tong@activenetwork.com'
+      c.to_email = 'gang.wu@istuary.com'
     end
 
     God.contact(:email) do |c|
       c.name = 'Smart Huang'
       c.group = 'TestPlus Team'
-      c.to_email = 'smart.huang@activenetwork.com'
+      c.to_email = 'smart.huang@istuary.com'
     end
 
     # restart if memory gets too high

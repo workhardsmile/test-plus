@@ -10,8 +10,8 @@ development:
   host: localhost
   pool: 5
   database: testplus
-  username: root
-  password: 
+  username: testplus
+  password: testplus123
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -22,24 +22,23 @@ test:
   reconnect: false
   host: localhost
   pool: 5
-  database: testplus_test
-  username: root
-  password:
+  database: testplus
+  username: testplus
+  password: testplus123
 
 production:
   adapter: mysql2
   encoding: utf8
   reconnect: false
-  host: 10.107.100.114
-  #  port: 3306
-  database: dashboard
+  host: localhost
   pool: 5
-  username: dashboard
-  password: dashboardrocks!
+  database: testplus
+  username: testplus
+  password: testplus123
 
 local_testlink:
   adapter: mysql2
-  host: 10.119.11.198
-  username: active
-  password: "@ctive123"
+  host: localhost
   database: testlink
+  username: testplus
+  password: testplus123  

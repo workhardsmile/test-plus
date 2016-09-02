@@ -34,7 +34,7 @@ TestPlusWebMain::Application.configure do
   # use mailcatcher for testing
   config.action_mailer.smtp_settings = { :address => "127.0.0.1", :port => 1025 }
   # config.action_mailer.smtp_settings = {
-  #   address:'smtp.dev.activenetwork.com',
+  #   address:'smtp.dev.istuary.com',
   #   port:25,
   #   enable_starttls_auto:true
   # }

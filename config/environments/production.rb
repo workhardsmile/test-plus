@@ -52,9 +52,12 @@ TestPlusWebMain::Application.configure do
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address:'smtp.dev.activenetwork.com',
+    address:'smtp.163.com',
     port:25,
-    enable_starttls_auto:true
+    enable_starttls_auto:true,
+    openssl_verify_mode:'none',
+    user_name: 'demo_db@163.com',
+    password: '$******$'
   }
 
   # Send deprecation notices to registered listeners

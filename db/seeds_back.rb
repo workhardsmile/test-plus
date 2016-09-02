@@ -15,13 +15,13 @@ automator = User.create({
 })
 
 tyrael = User.create({
-  email: 'tyrael.tong@activenetwork.com',
+  email: 'tyrael.tong@istuary.com',
   password: '111111',
   display_name: 'Tyrael Tong'
 })
 
 eric = User.create({
-  email: 'eric.yang@activenetwork.com',
+  email: 'gang.wu@istuary.com',
   password: '111111',
   display_name: 'Eric Yang'
 })
@@ -39,7 +39,7 @@ camps = Project.create({
   :leader => tyrael,
   :project_category => aw,
   :state => 'ongoing',
-  :source_control_path => 'http://fndsvn.dev.activenetwork.com/camps',
+  :source_control_path => 'http://fndsvn.dev.istuary.com/camps',
   :icon_image_file_name => 'camps.png',
   :icon_image_content_type => 'image/png',
   :icon_image_file_size => 7763
@@ -50,7 +50,7 @@ endurance = Project.create({
   :leader => eric,
   :project_category => aw,
   :state => 'ongoing',
-  :source_control_path => 'http://fndsvn.dev.activenetwork.com/endurance',
+  :source_control_path => 'http://fndsvn.dev.istuary.com/endurance',
   :icon_image_file_name => 'endurance.png',
   :icon_image_content_type => 'image/png',
   :icon_image_file_size => 18857
@@ -61,7 +61,7 @@ sports = Project.create({
   :leader => tyrael,
   :project_category => aw,
   :state => 'ongoing',
-  :source_control_path => 'http://fndsvn.dev.activenetwork.com/sports',
+  :source_control_path => 'http://fndsvn.dev.istuary.com/sports',
   :icon_image_file_name => 'sports.png',
   :icon_image_content_type => 'image/png',
   :icon_image_file_size => 16291

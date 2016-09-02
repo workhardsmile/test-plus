@@ -70,24 +70,24 @@ namespace :dash do
     qas = []
 
     admins << automator = { "email" => 'automator@testplus.com', "name" => 'TestPlus Automator' }
-    admins << tyrael = { "email" => 'tyrael.tong@activenetwork.com', "name" => 'Tyrael Tong' }
-    admins << chris = { "email" => 'chris.zhang@activenetwork.com', "name" => 'Chris Zhang' }
-    admins << eric = { "email" => 'eric.yang@activenetwork.com', "name" => 'Eric Yang' }
+    admins << tyrael = { "email" => 'tyrael.tong@istuary.com', "name" => 'Tyrael Tong' }
+    admins << chris = { "email" => 'chris.zhang@istuary.com', "name" => 'Chris Zhang' }
+    admins << eric = { "email" => 'eric.yang@istuary.com', "name" => 'Eric Yang' }
     admins << leo = {"email" => 'leo.yin@active.com', "name" => 'Leo Yin'}
 
-    qa_managers << smart = { "email" => 'smart.huang@activenetwork.com', "name" => 'Smart Huang' }
-    qa_managers << jabco = { "email" => 'jabco.shen@activenetwork.com', "name" => 'Jabco Shen' }
-    qa_managers << fiona = { "email" => 'fiona.zhou@activenetwork.com', "name" => 'Fiona Zhou' }
+    qa_managers << smart = { "email" => 'smart.huang@istuary.com', "name" => 'Smart Huang' }
+    qa_managers << jabco = { "email" => 'jabco.shen@istuary.com', "name" => 'Jabco Shen' }
+    qa_managers << fiona = { "email" => 'fiona.zhou@istuary.com', "name" => 'Fiona Zhou' }
 
-    qa_developers << tina = { "email" => 'tina.xu@activenetwork.com', "name" => 'Tina Xu' }
-    qa_developers << sky = { "email" => 'sky.li@activenetwork.com', "name" => 'Sky Li' }
-    qa_developers << justin = { "email" => 'justin.luo@activenetwork.com', "name" => 'Justin Luo' }
-    qa_developers << evonne = { "email" => 'evonne.fu@activenetwork.com', "name" => 'Evonne Fu' }
-    qa_developers << toby = { "email" => 'toby.tang@activenetwork.com', "name" => 'Toby tang' }
-    qa_developers << randy = { "email" => 'randy.zhang@activenetwork.com', "name" => 'Randy Zhang' }
-    qa_developers << james = { "email" => 'james.lv@activenetwork.com', "name" => 'James Lv' }
+    qa_developers << tina = { "email" => 'tina.xu@istuary.com', "name" => 'Tina Xu' }
+    qa_developers << sky = { "email" => 'sky.li@istuary.com', "name" => 'Sky Li' }
+    qa_developers << justin = { "email" => 'justin.luo@istuary.com', "name" => 'Justin Luo' }
+    qa_developers << evonne = { "email" => 'evonne.fu@istuary.com', "name" => 'Evonne Fu' }
+    qa_developers << toby = { "email" => 'toby.tang@istuary.com', "name" => 'Toby tang' }
+    qa_developers << randy = { "email" => 'randy.zhang@istuary.com', "name" => 'Randy Zhang' }
+    qa_developers << james = { "email" => 'james.lv@istuary.com', "name" => 'James Lv' }
 
-    qas << sophie = { "email" => 'sophie.du@activenetwork.com', "name" => 'Sophie Du' }
+    qas << sophie = { "email" => 'sophie.du@istuary.com', "name" => 'Sophie Du' }
 
     role_hashes = Hash.new
     role_hashes["admin"] = admins
@@ -138,16 +138,16 @@ namespace :dash do
     qa_role.ability_definitions.flatten
     qa_role.save
 
-    smart = User.find_by_email("smart.huang@activenetwork.com")
-    jabco = User.find_by_email("jabco.shen@activenetwork.com")
-    fiona = User.find_by_email("fiona.zhou@activenetwork.com")
+    smart = User.find_by_email("smart.huang@istuary.com")
+    jabco = User.find_by_email("jabco.shen@istuary.com")
+    fiona = User.find_by_email("fiona.zhou@istuary.com")
 
     camps = Project.create(
       :name => 'Camps',
       :leader => smart,
       :project_category => aw,
       :state => 'ongoing',
-      :source_control_path => 'http://fndsvn.dev.activenetwork.com/camps',
+      :source_control_path => 'http://fndsvn.dev.istuary.com/camps',
       :icon_image_file_name => 'camps.png',
       :icon_image_content_type => 'image/png',
       :icon_image_file_size => 7763,
@@ -161,7 +161,7 @@ namespace :dash do
       :leader => jabco,
       :project_category => aw,
       :state => 'ongoing',
-      :source_control_path => 'http://fndsvn.dev.activenetwork.com/endurance',
+      :source_control_path => 'http://fndsvn.dev.istuary.com/endurance',
       :icon_image_file_name => 'endurance.png',
       :icon_image_content_type => 'image/png',
       :icon_image_file_size => 18857,
@@ -175,7 +175,7 @@ namespace :dash do
       :leader => fiona,
       :project_category => aw,
       :state => 'ongoing',
-      :source_control_path => 'http://fndsvn.dev.activenetwork.com/sports',
+      :source_control_path => 'http://fndsvn.dev.istuary.com/sports',
       :icon_image_file_name => 'sports.png',
       :icon_image_content_type => 'image/png',
       :icon_image_file_size => 16291,
@@ -302,15 +302,15 @@ namespace :dash do
     qa_managers = []
     qa_developers = []
 
-    qa_managers << doreen = { "email" => 'Doreen.Xue@activenetwork.com'}
-    qa_managers << justin = { "email" => 'Justin.Lakin@activenetwork.com'}
-    qa_managers << karen = { "email" => 'Karen.Bishop@activenetwork.com'}
-    qa_managers << adan = { "email" => 'adam.english@activenetwork.com'}
-    qa_managers << huiping = { "email" => 'Huiping.Zheng@activenetwork.com'}
+    qa_managers << doreen = { "email" => 'Doreen.Xue@istuary.com'}
+    qa_managers << justin = { "email" => 'Justin.Lakin@istuary.com'}
+    qa_managers << karen = { "email" => 'Karen.Bishop@istuary.com'}
+    qa_managers << adan = { "email" => 'adam.english@istuary.com'}
+    qa_managers << huiping = { "email" => 'Huiping.Zheng@istuary.com'}
 
-    qa_developers << rob = { "email" => 'Rob.Wallace@activenetwork.com'}
-    qa_developers << michael = { "email" => 'Michael.Begley@activenetwork.com'}
-    qa_developers << ophelia = { "email" => 'Ophelia.Chan@activenetwork.com'}
+    qa_developers << rob = { "email" => 'Rob.Wallace@istuary.com'}
+    qa_developers << michael = { "email" => 'Michael.Begley@istuary.com'}
+    qa_developers << ophelia = { "email" => 'Ophelia.Chan@istuary.com'}
 
     role_hashes = Hash.new
     role_hashes["qa_manager"] = qa_managers

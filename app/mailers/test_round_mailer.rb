@@ -1,5 +1,5 @@
 class TestRoundMailer < AsyncMailer
-  default :from => "TestPlus <testplus@activenetwork.com>", :content_type => "text/html"
+  default :from => "TestPlus <demo_db@163.com>", :content_type => "text/html"
   # send email to creator and script owners when test round is finished.
   def finish_mail(test_round_id)
     @test_round = TestRound.find(test_round_id)
@@ -12,8 +12,8 @@ class TestRoundMailer < AsyncMailer
       end
       mail_to << @test_round.creator.email unless @test_round.creator.email == 'automator@testplus.com'
       mail_to += @test_round.owner_emails
-      mail_to << 'felix.gaytan@activenetwork.com'
-      mail_to << 'smart.huang@activenetwork.com'      
+      mail_to << 'gang.wu@istuary.com'
+      mail_to << 'smart.huang@istuary.com'      
       mail_to = mail_to.map{|n| n.downcase}.uniq.join(',')
       subject = "[#{@project} #{@test_round.test_suite.test_type.name}##{@test_round.id} on #{@test_round.test_environment.name}] #{@test_round.result} : for testing #{@test_round.test_object}"
       send_mail(mail_to, subject)

@@ -1,6 +1,6 @@
 camps = Project.find_by_name("Camps")
-eric = User.find_by_email('eric.yang@activenetwork.com')
-tyrael = User.find_by_email('tyrael.tong@activenetwork.com')
+eric = User.find_by_email('eric.yang@istuary.com')
+tyrael = User.find_by_email('tyrael.tong@istuary.com')
 
 tp = TestPlan.find_by_name("Demo Plan")
 as = AutomationScript.find_by_name("Demo Script")

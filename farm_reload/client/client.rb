@@ -9,7 +9,7 @@ module TestPlus
       trap('TERM'){EventMachine.stop}
 
       EventMachine.run do
-        EventMachine.connect('testplus.dev.activenetwork.com', 9527, ClientConn) do |conn|
+        EventMachine.connect('testplus.dev.istuary.com', 9527, ClientConn) do |conn|
           puts 'Client#connect'
         end
       end

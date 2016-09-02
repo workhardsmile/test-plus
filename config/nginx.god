@@ -23,14 +23,14 @@ NGINX_ROOT = "/opt/nginx"
       d.from_email = 'testplus@active.com'
       d.from_name = 'TestPlus nginx monitoring'
       d.delivery_method = :smtp
-      d.server_host = 'smtp.dev.activenetwork.com'
+      d.server_host = 'smtp.dev.istuary.com'
       d.server_port = 25
     end
 
     God.contact(:email) do |c|
       c.name = 'Smart Huang'
       c.group = 'TestPlus Team'
-      c.to_email = 'smart.huang@activenetwork.com'
+      c.to_email = 'gang.wu@istuary.com'
     end
 
     w.start_if do |start|

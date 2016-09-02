@@ -1,0 +1,15 @@
+delimiter //
+
+DROP PROCEDURE IF EXISTS `testlink`.`update_test_steps`
+//
+CREATE PROCEDURE `testlink`.`update_test_steps`()
+BEGIN
+ALTER TABLE old_test_steps CONVERT TO CHARACTER SET utf8;
+
+insert into old_test_steps(step_number,action,expected_result,test_link_id,test_case_id)
+select s.step_number, s.actions, s.expected_results, s.id, tc.id from tcsteps s
+join nodes_hierarchy c on c.id = s.id
+join nodes_hierarchy p on p.id = c.parent_id
+join old_test_cases tc on p.parent_id = tc.test_link_id;
+END
+//

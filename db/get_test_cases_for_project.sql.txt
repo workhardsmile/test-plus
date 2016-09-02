@@ -1,0 +1,41 @@
+delimiter //
+
+DROP PROCEDURE IF EXISTS `testlink`.`get_test_cases_for_project`
+//
+CREATE PROCEDURE `testlink`.`get_test_cases_for_project`(IN projectName char(45),IN testlinkName char(45),IN testType char(45), IN rootNodeId int(10))
+BEGIN
+DECLARE project_id int ;
+DECLARE prefixValue char(25) ;
+
+Set project_id = (select count(id) from old_projects where name =projectName);
+if project_id = 0 then
+insert into old_projects(name,testlink_name, prefix)
+select projectName,n.name,p.prefix from testprojects p
+join nodes_hierarchy n on n.id = p.id
+where n.name = testlinkName
+And node_type_id = 1;
+Set project_id = (select id from old_projects where name =projectName);
+else
+Set project_id = (select id from old_projects where name =projectName);
+end if;
+
+call testlink.get_all_child_nodes_by_id(rootNodeId);
+
+insert into old_test_plans (project_id,name,test_link_id, plan_type)
+select project_id,CONCAT(p.name,"_",tp.name),tp.id, testType from nodes_hierarchy tp
+join nodes_hierarchy p on p.id = tp.parent_id
+join nodes_hierarchy tc on tp.id = tc.parent_id
+join tmpLst t on t.id = tc.id
+where t.node_type = 3
+group by tp.id;
+
+Set prefixValue = (select prefix from old_projects where name =projectName);
+
+insert into old_test_cases(test_plan_id,name, test_link_id,case_id)
+select tp.id, tc.name, tc.id, prefixValue from tmpLst t
+join nodes_hierarchy tc on t.id = tc.id
+join old_test_plans tp on tp.test_link_id = tc.parent_id
+where t.node_type = 3;
+
+END
+//

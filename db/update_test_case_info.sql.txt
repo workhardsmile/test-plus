@@ -1,0 +1,49 @@
+delimiter //
+
+DROP PROCEDURE IF EXISTS `testlink`.`update_test_case_info`
+//
+CREATE PROCEDURE `testlink`.`update_test_case_info`()
+BEGIN
+
+UPDATE old_test_cases tc
+JOIN
+(Select tc1.id, max(v1.version) as version, v1.importance,v1.tc_external_id from tcversions v1
+     join nodes_hierarchy c on c.id = v1.id
+     join old_test_cases tc1 on c.parent_id =tc1.test_link_id
+     group by tc1.id
+) AS result
+on result.id = tc.id
+Set tc.version = result.version,
+     tc.priority = result.importance,
+     tc.case_id = CONCAT(tc.case_id,result.tc_external_id);
+
+
+UPDATE old_test_cases c
+JOIN (SELECT result.test_link_id,f.value
+	  FROM   cfield_design_values f
+      JOIN (SELECT tc.test_link_id, v.id AS latest_version, tc.case_id
+			FROM   old_test_cases tc
+			JOIN nodes_hierarchy n ON n.parent_id = tc.test_link_id
+		    JOIN tcversions v ON v.id = n.id
+			WHERE v.version = tc.version) AS result
+	  ON result.latest_version = f.node_id
+	  WHERE  f.field_id = 8) AS auto
+ON auto.test_link_id = c.test_link_id
+SET    c.automated_status = auto.value;
+
+UPDATE old_test_cases c
+JOIN (SELECT tc.test_link_id FROM old_test_cases tc
+JOIN testcase_keywords tk on tk.testcase_id = tc.test_link_id
+JOIN keywords k on k.id = tk.keyword_id
+WHERE k.keyword = 'CUI') AS auto
+ON auto.test_link_id = c.test_link_id
+SET c.keywords = 'CUI';
+
+update old_test_plans tp
+JOIN
+(select max(version) as version,test_plan_id from old_test_cases group by test_plan_id) AS result
+on result.test_plan_id = tp.id
+set tp.version = result.version;
+
+END
+//

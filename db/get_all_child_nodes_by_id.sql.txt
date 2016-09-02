@@ -1,0 +1,27 @@
+delimiter //
+
+DROP PROCEDURE IF EXISTS `testlink`.`get_all_child_nodes_by_id`
+//
+CREATE PROCEDURE `testlink`.`get_all_child_nodes_by_id`(IN rootid int(5))
+BEGIN
+ DECLARE Level int ;
+ drop TABLE IF EXISTS tmpLst;
+ CREATE TABLE tmpLst (
+  id int,
+  nLevel int,
+  node_type int,
+  sCort varchar(8000)
+ )ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+
+ Set Level=0 ;
+ INSERT into tmpLst SELECT id,Level,node_type_id,parent_id FROM nodes_hierarchy WHERE parent_id=rootid;
+ WHILE ROW_COUNT()>0 DO
+  SET Level=Level+1 ;
+  INSERT into tmpLst
+   SELECT A.id,Level,A.node_type_id,concat(B.sCort,"-",A.id) FROM nodes_hierarchy A,tmpLst B
+    WHERE  A.parent_id=B.id AND B.nLevel=Level-1  ;
+ END WHILE;
+
+END
+//
+

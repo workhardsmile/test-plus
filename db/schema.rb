@@ -322,7 +322,7 @@ ActiveRecord::Schema.define(:version => 20160829055928) do
   end
 
   create_table "import_testlink_configs", :force => true do |t|
-    t.string   "marquee_project"
+    t.string   "testplus_project"
     t.string   "testlink_project"
     t.datetime "created_at"
     t.datetime "updated_at"

@@ -22,9 +22,9 @@ end
 desc "import qa test cases to TestPlus for specifical project "
 # task :import_test_cases => :environment , :mp_name , :p_name do |t,args|
 task :import_test_cases , [:mp_name, :p_name] => :environment  do |t, args|
-  host = "10.119.11.198"
-  user = "active"
-  pwd = "@ctive123"
+  host = "192.168.28.210"
+  user = "testplus"
+  pwd = "testplus123"
   db = "testlink"
   puts "will start import data from #{host}/#{db}"
   [TestLinkProject,TestLinkPlan,TestLinkCase,TestLinkCaseStep].each do |klass|

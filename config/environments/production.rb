@@ -1,3 +1,10 @@
+img_prefix = 'app/assets/images/'
+js_prefix    = 'app/assets/javascripts/'
+style_prefix = 'app/assets/stylesheets/'
+images = Dir["#{img_prefix}**/*.*"].map      { |x| x.gsub(img_prefix,    '') }
+javascripts = Dir["#{js_prefix}**/*.*"].map      { |x| x.gsub(js_prefix,    '') }
+css         = Dir["#{style_prefix}**/*.*"].map  { |x| x.gsub(style_prefix, '') }
+
 TestPlusWebMain::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
@@ -17,7 +24,7 @@ TestPlusWebMain::Application.configure do
   config.assets.compile = false
   # Generate digests for assets URLs
   config.assets.digest = true
-  config.assets.precompile = ['fancybox/jquery.fancybox-1.3.4.css']
+  
   # Specifies the header that your server uses for sending files
   # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for apache
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx
@@ -40,6 +47,7 @@ TestPlusWebMain::Application.configure do
 
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
   # config.assets.precompile += %w( search.js )
+  config.assets.precompile += css
 
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false

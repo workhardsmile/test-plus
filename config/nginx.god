@@ -22,10 +22,11 @@ NGINX_ROOT = "/opt/nginx"
     God::Contacts::Email.defaults do |d|
       d.from_name = 'TestPlus nginx monitoring'
       d.from_email = 'demo_db@163.com'
-      d.password = '$******$'
       d.delivery_method = :smtp
       d.server_host = 'smtp.163.com'
       d.server_port = 25
+      d.server_user = 'demo_db@163.com'
+      d.server_password = '$******$'
     end
 
     God.contact(:email) do |c|

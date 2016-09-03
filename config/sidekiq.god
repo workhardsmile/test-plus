@@ -1,26 +1,28 @@
 # run with: god -c /path/to/xxxx.god -D
 #
-# This is the actual config file used to keep testplus resque job running.
+# This is the actual config file used to keep testplus web server running.
 
-RAILS_ENV   = ENV['RAILS_ENV']  || "production"
-RAILS_ROOT  = ENV['RAILS_ROOT'] || "/opt/test-plus"
+RAILS_ROOT = "/opt/test-plus"
+SIDEKIQ_ROOT = "/opt/update-testlink"
 
-["testplus_farm","testplus_mailer","testplus_data_sync"].each do |name|
+%w{80 8000 8001 8002}.each do |port|
   God.watch do |w|
-    w.dir      = "#{RAILS_ROOT}"
-    w.name     = "resque-#{name}-watcher"
-    w.group    = 'resque'
-    w.interval = 60.seconds
-    w.env      = {"QUEUE"=>name, 'PIDFILE' => "#{RAILS_ROOT}/tmp/pids/#{name}.pid"}
-    w.start    = "cd #{RAILS_ROOT}/ && RAILS_ENV=#{RAILS_ENV} rake environment resque:work QUEUE=#{name}"
-    w.start_grace   = 60.seconds
-    w.log      = "#{RAILS_ROOT}/log/god-resque-#{name}.log"
-
+    w.name = "sidekiq-watcher"
+    w.log = "#{RAILS_ROOT}/log/god-SIDEKIQ.log"
+    w.interval = 30.seconds # default
+    w.start = "cd #{SIDEKIQ_ROOT}&&bundle exec sidekiq"
+    w.stop = "ps -ef|grep sidekiq|grep -v 'grep'|awk '{print $2}'|xargs kill -9"
+    w.start_grace = 30.seconds
+    w.restart_grace = 30.seconds
+    w.pid_file = "#{SIDEKIQ_ROOT}/logs/sidekiq.pid"
+    
     w.uid = 'iron'
     w.gid = 'iron'
 
-    God::Contacts::Email.defaults do |d|
-      d.from_name = 'TestPlus resque monitoring'
+    w.behavior(:clean_pid_file)
+
+    God::Contacts::Email.defaults do |d|      
+      d.from_name = 'TestPlus sidekiq monitoring'
       d.from_email = 'demo_db@163.com'
       d.password = '$******$'
       d.delivery_method = :smtp
@@ -32,12 +34,6 @@ RAILS_ROOT  = ENV['RAILS_ROOT'] || "/opt/test-plus"
       c.name = 'Frank Wu'
       c.group = 'TestPlus Team'
       c.to_email = 'gang.wu@istuary.com'
-    end
-
-    God.contact(:email) do |c|
-      c.name = 'Smart Huang'
-      c.group = 'TestPlus Team'
-      c.to_email = 'smart.huang@istuary.com'
     end
 
     # restart if memory gets too high
@@ -67,6 +63,10 @@ RAILS_ROOT  = ENV['RAILS_ROOT'] || "/opt/test-plus"
         c.times = 5
         c.transition = :start
         c.interval = 60.seconds
+      end
+      
+      on.condition(:process_exits) do |c|
+        c.notify = 'me'
       end
     end
 

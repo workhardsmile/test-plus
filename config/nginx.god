@@ -2,10 +2,10 @@
 #
 # This is the actual config file used to keep testplus web server running.
 
-RAILS_ROOT = "/home/active/testplus/testplus-web-main"
+RAILS_ROOT = "/opt/test-plus"
 NGINX_ROOT = "/opt/nginx"
 
-%w{3000}.each do |port|
+%w{80 8000 8001 8002}.each do |port|
   God.watch do |w|
     w.name = "nginx-watcher"
     w.log = "#{RAILS_ROOT}/log/god-nginx.log"
@@ -20,15 +20,16 @@ NGINX_ROOT = "/opt/nginx"
     w.behavior(:clean_pid_file)
 
     God::Contacts::Email.defaults do |d|
-      d.from_email = 'testplus@active.com'
       d.from_name = 'TestPlus nginx monitoring'
+      d.from_email = 'demo_db@163.com'
+      d.password = '$******$'
       d.delivery_method = :smtp
-      d.server_host = 'smtp.dev.istuary.com'
+      d.server_host = 'smtp.163.com'
       d.server_port = 25
     end
 
     God.contact(:email) do |c|
-      c.name = 'Smart Huang'
+      c.name = 'Frank Wu'
       c.group = 'TestPlus Team'
       c.to_email = 'gang.wu@istuary.com'
     end

@@ -25,6 +25,7 @@ NGINX_ROOT = "/opt/nginx"
       d.delivery_method = :smtp
       d.server_host = 'smtp.163.com'
       d.server_port = 25
+      d.server_auth = true
       d.server_user = 'demo_db@163.com'
       d.server_password = '$******$'
     end

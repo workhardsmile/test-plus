@@ -5,8 +5,7 @@
 RAILS_ROOT = "/opt/test-plus"
 SIDEKIQ_ROOT = "/opt/update-testlink"
 
-%w{80 8000 8001 8002}.each do |port|
-  God.watch do |w|
+God.watch do |w|
     w.name = "sidekiq-watcher"
     w.log = "#{RAILS_ROOT}/log/god-SIDEKIQ.log"
     w.interval = 30.seconds # default
@@ -23,12 +22,12 @@ SIDEKIQ_ROOT = "/opt/update-testlink"
 
     God::Contacts::Email.defaults do |d|      
       d.from_name = 'TestPlus sidekiq monitoring'
-      d.from_name = 'TestPlus nginx monitoring'
       d.from_email = 'demo_db@163.com'
       d.delivery_method = :smtp
       d.server_host = 'smtp.163.com'
       d.server_port = 25
       d.server_auth = true
+      d.server_domain='smtp.163.com'
       d.server_user = 'demo_db@163.com'
       d.server_password = '$******$'
     end
@@ -80,5 +79,4 @@ SIDEKIQ_ROOT = "/opt/update-testlink"
         c.notify = {:contacts => ['TestPlus Team'], :priority => 'Urgent', :category => 'production'}
       end
     end
-  end
 end

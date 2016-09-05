@@ -21,12 +21,12 @@ RAILS_ROOT  = ENV['RAILS_ROOT'] || "/opt/test-plus"
 
     God::Contacts::Email.defaults do |d|
       d.from_name = 'TestPlus resque monitoring'
-      d.from_name = 'TestPlus nginx monitoring'
       d.from_email = 'demo_db@163.com'
       d.delivery_method = :smtp
       d.server_host = 'smtp.163.com'
       d.server_port = 25
       d.server_auth = true
+      d.server_domain='smtp.163.com'
       d.server_user = 'demo_db@163.com'
       d.server_password = '$******$'
     end

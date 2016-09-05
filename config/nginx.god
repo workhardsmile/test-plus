@@ -7,7 +7,7 @@ NGINX_ROOT = "/opt/nginx"
 
 %w{80 8000 8001 8002}.each do |port|
   God.watch do |w|
-    w.name = "nginx-watcher"
+    w.name = "nginx-watcher-#{port}"
     w.log = "#{RAILS_ROOT}/log/god-nginx.log"
     w.interval = 30.seconds # default
     w.start = "#{NGINX_ROOT}/sbin/nginx"
@@ -26,6 +26,7 @@ NGINX_ROOT = "/opt/nginx"
       d.server_host = 'smtp.163.com'
       d.server_port = 25
       d.server_auth = true
+      d.server_domain='smtp.163.com'
       d.server_user = 'demo_db@163.com'
       d.server_password = '$******$'
     end

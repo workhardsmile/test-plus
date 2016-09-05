@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160829055928) do
+ActiveRecord::Schema.define(:version => 20160901110005) do
 
   create_table "ability_definitions", :force => true do |t|
     t.string   "ability"
@@ -583,6 +583,7 @@ ActiveRecord::Schema.define(:version => 20160829055928) do
     t.string   "test_link_name"
     t.boolean  "monitor_flag",            :default => false
     t.string   "testplus_name"
+    t.string   "dashboard_name"
   end
 
   add_index "projects", ["leader_id"], :name => "index_projects_on_leader_id"
@@ -758,6 +759,23 @@ ActiveRecord::Schema.define(:version => 20160829055928) do
     t.string   "position"
     t.date     "start_date"
     t.date     "turn_date"
+  end
+
+  create_table "temp_schedule_scripts", :force => true do |t|
+    t.string  "platform"
+    t.string  "ip"
+    t.integer "test_round_id"
+    t.integer "script_result_id"
+    t.integer "timeout_limit"
+    t.string  "script_name"
+    t.string  "project_name"
+    t.string  "branch_name"
+    t.string  "source_path"
+    t.string  "source_cmd"
+    t.string  "exec_path"
+    t.string  "exec_cmd"
+    t.string  "env_name"
+    t.boolean "deleted",          :default => false
   end
 
   create_table "test_cases", :force => true do |t|

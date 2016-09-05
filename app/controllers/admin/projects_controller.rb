@@ -63,6 +63,7 @@ class Admin::ProjectsController < InheritedResources::Base
     params[:project][:browsers] = browsers
     params[:project][:operation_systems] = operation_systems
     params[:project][:test_environments] = test_environments
+    params[:project][:dashboard_name] = ""
     super
   end
 

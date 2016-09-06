@@ -65,6 +65,7 @@ TestPlusWebMain::Application.configure do
     port:25,
     enable_starttls_auto:true,
     openssl_verify_mode:'none',
+    domain: '163.com',
     user_name: 'demo_db@163.com',
     password: '$******$'
   }

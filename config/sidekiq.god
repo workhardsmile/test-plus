@@ -27,7 +27,7 @@ God.watch do |w|
       d.server_host = 'smtp.163.com'
       d.server_port = 25
       d.server_auth = true
-      d.server_domain='smtp.163.com'
+      d.server_domain='163.com'
       d.server_user = 'demo_db@163.com'
       d.server_password = '$******$'
     end
@@ -64,7 +64,7 @@ God.watch do |w|
       on.condition(:tries) do |c|
         c.times = 5
         c.transition = :start
-        c.interval = 60.seconds
+        c.interval = 30.seconds
       end
       
       on.condition(:process_exits) do |c|

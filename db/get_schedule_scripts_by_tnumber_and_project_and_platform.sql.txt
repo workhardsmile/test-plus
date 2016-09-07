@@ -17,12 +17,12 @@ if _project_name = '*' then
   set _test_round=(select AA.id from test_rounds AA 
     inner join projects BB on BB.id=AA.project_id
     inner join browsers CC on CC.id=AA.browser_id
-    where CC.name=_platform);	
+    where CC.name=_platform and AA.state='scheduling' limit 1);	
 else
   set _test_round=(select AA.id from test_rounds AA 
 	inner join projects BB on BB.id=AA.project_id
 	inner join browsers CC on CC.id=AA.browser_id
-	where BB.name=_project_name and CC.name=_platform);
+	where BB.name=_project_name and CC.name=_platform and AA.state='scheduling' limit 1);
 end if;
 
 UPDATE slaves set ip_address=_ip, project_name=_project_name, status='busy', active=1 where name=_salvename;

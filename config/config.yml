@@ -1,5 +1,5 @@
 production:
-  logserver_url: http://10.119.11.199
+  logserver_url: http://192.168.28.210:8001
 
 development:
-  logserver_url: http://10.119.11.199
+  logserver_url: http://192.168.28.210:8001

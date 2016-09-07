@@ -1,5 +1,22 @@
 DROP PROCEDURE IF EXISTS `testplus`.`get_schedule_scripts_by_tnumber_and_project_and_platform`;
 DROP TABLE IF EXISTS `testplus`.`temp_schedule_scripts`;
+CREATE TABLE IF NOT EXISTS `temp_schedule_scripts`(
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `platform` varchar(255) DEFAULT NULL,
+  `ip` varchar(255) DEFAULT NULL,
+  `test_round_id` int(11) DEFAULT NULL,
+  `script_result_id` int(11) DEFAULT NULL,
+  `timeout_limit` int(11) DEFAULT NULL,
+  `script_name` varchar(255) DEFAULT NULL,
+  `project_name` varchar(255) DEFAULT NULL,
+  `branch_name` varchar(255) DEFAULT NULL,
+  `source_path` varchar(255) DEFAULT NULL,
+  `source_cmd` varchar(255) DEFAULT NULL,
+  `exec_path` varchar(255) DEFAULT NULL,
+  `exec_cmd` varchar(255) DEFAULT NULL,
+  `env_name` varchar(255) DEFAULT NULL,
+  `deleted` tinyint(1) DEFAULT 0,
+   PRIMARY KEY (`id`));
 DELIMITER $$
 CREATE PROCEDURE `testplus`.`get_schedule_scripts_by_tnumber_and_project_and_platform`(
   IN _tnumber int(11),
@@ -17,12 +34,12 @@ if _project_name = '*' then
   set _test_round=(select AA.id from test_rounds AA 
     inner join projects BB on BB.id=AA.project_id
     inner join browsers CC on CC.id=AA.browser_id
-    where CC.name=_platform and AA.state='scheduling' limit 1);	
+    where CC.name=_platform and AA.state in ('scheduling','running') limit 1);	
 else
   set _test_round=(select AA.id from test_rounds AA 
 	inner join projects BB on BB.id=AA.project_id
 	inner join browsers CC on CC.id=AA.browser_id
-	where BB.name=_project_name and CC.name=_platform and AA.state='scheduling' limit 1);
+	where BB.name=_project_name and CC.name=_platform and AA.state in ('scheduling','running') limit 1);
 end if;
 
 UPDATE slaves set ip_address=_ip, project_name=_project_name, status='busy', active=1 where name=_salvename;
@@ -67,7 +84,7 @@ INSERT INTO `temp_schedule_scripts`(
   inner join automation_script_results D on C.id=D.automation_script_id
   inner join test_rounds E on E.id = D.test_round_id
   inner join test_environments F on F.id = E.test_environment_id
-  where D.state='scheduling' and E.id=_test_round limit _tnumber for update);
+  where D.state='scheduling' and E.id=_test_round limit _tnumber);
   
 -- UPDATE automation_script_results set state='done' where id in(select script_result_id from `temp_schedule_scripts` where `ip`=_ip);
 -- UPDATE slave_assignments set status='killed' where automation_script_result_id in(select script_result_id from `temp_schedule_scripts` where `ip`=_ip); 
@@ -84,25 +101,25 @@ INSERT INTO `slave_assignments`
 FROM `temp_schedule_scripts` X
 inner join `slaves` Y on X.ip=Y.ip_address 
 inner join `automation_script_results` Z on Z.id=X.script_result_id 
-where X.ip=_ip and Y.name=_salvename and Z.state='scheduling' for update);
+where X.ip=_ip and Y.name=_salvename and Z.state='scheduling');
 
 UPDATE automation_script_results set state='running',start_time=utc_timestamp()
 where state='scheduling' and id in(
 select SA.automation_script_result_id from `slave_assignments` SA 
 inner join `slaves` S on S.id=SA.slave_id 
 inner join `temp_schedule_scripts` T on T.script_result_id=SA.automation_script_result_id 
-where S.ip_address=_ip and SA.status='pending' for update);
+where S.ip_address=_ip and SA.status='pending');
 
 delete from capabilities where slave_id=(
-select id from `slaves` where `name`=_salvename and ip_address=_ip limit 1 for update);
+select id from `slaves` where `name`=_salvename and ip_address=_ip limit 1);
 
 insert into capabilities(`name`,`version`,`slave_id`) 
 (select _platform, _pversion, id from `slaves` 
-where `name`=_salvename and ip_address=_ip limit 1 for update);
+where `name`=_salvename and ip_address=_ip limit 1);
 
 insert into capabilities(`name`,`version`,`slave_id`) 
 (select TS.`exec_cmd`, '1.0', S.id from `slaves` S 
 inner join `temp_schedule_scripts` TS on S.ip_address=TS.ip
-where S.`name`=_salvename and S.ip_address=_ip limit 1 for update);
+where S.`name`=_salvename and S.ip_address=_ip limit 1);
 END$$
 DELIMITER ;

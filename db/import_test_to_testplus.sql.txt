@@ -128,7 +128,7 @@ truncate table old_test_cases;
 truncate table old_test_plans;
 truncate table old_test_steps;
 
-call get_test_cases_for_project('Platform-Commerce','Platform-Commerce','Regression','5');
+call get_test_cases_for_project('IronHide','IronHide','Regression','14');
 
 call update_test_case_info;
 

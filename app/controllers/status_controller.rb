@@ -36,9 +36,9 @@ class StatusController < ApplicationController
   end
 
   def update
-    if request.remote_ip != '127.0.0.1'
-      render :text => "Not allowed to call this interface from outside server."
-    else
+    # if request.remote_ip != '127.0.0.1'
+      # render :text => "Not allowed to call this interface from outside server."
+    # else
       protocol = params[:protocol]
       what = protocol[:what]
       test_round_id = protocol[:round_id]
@@ -59,7 +59,6 @@ class StatusController < ApplicationController
         end
       end
       render :nothing => true
-    end
   end
 
   protected

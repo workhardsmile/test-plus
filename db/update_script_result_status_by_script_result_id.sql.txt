@@ -1,8 +1,8 @@
-DROP PROCEDURE IF EXISTS `testplus`.`update_script_result_status_by_script_result_id`;
+DROP PROCEDURE IF exists `testplus`.`update_script_result_status_by_script_result_id`;
 DELIMITER $$
 CREATE PROCEDURE `testplus`.`update_script_result_status_by_script_result_id`(IN _script_result_id int(11))
 BEGIN
-delete from `temp_schedule_scripts` where `script_result_id`=_script_result_id;
+delete from `temp_schedule_scripts` where `script_result_id`=_script_result_id and `script_result_id`!=(select id from `automation_script_results` where state!='done' and id=_script_result_id limit 1 for update);
 update `automation_script_results` set state='done', end_time=utc_timestamp(), result='warning' where id=_script_result_id;
 update `slave_assignments` set `status`='complete' where `automation_script_result_id`=_script_result_id;
 UPDATE `slaves` set `status`='free' where id=(select `slave_id` from `slave_assignments` where `automation_script_result_id`=_script_result_id order by id desc limit 1 for update);

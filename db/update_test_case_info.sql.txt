@@ -1,6 +1,6 @@
-DROP PROCEDURE if exists `testplus`.`update_test_case_info`;
+DROP PROCEDURE if exists `testlink`.`update_test_case_info`;
 DELIMITER $$
-CREATE PROCEDURE `testplus`.`update_test_case_info`()
+CREATE PROCEDURE `testlink`.`update_test_case_info`()
 BEGIN
 
 

@@ -1,9 +1,8 @@
-delimiter //
-
-DROP PROCEDURE IF EXISTS `testlink`.`update_test_case_info`
-//
-CREATE PROCEDURE `testlink`.`update_test_case_info`()
+DROP PROCEDURE if exists `testplus`.`update_test_case_info`;
+DELIMITER $$
+CREATE PROCEDURE `testplus`.`update_test_case_info`()
 BEGIN
+
 
 UPDATE old_test_cases tc
 JOIN
@@ -27,7 +26,7 @@ JOIN (SELECT result.test_link_id,f.value
 		    JOIN tcversions v ON v.id = n.id
 			WHERE v.version = tc.version) AS result
 	  ON result.latest_version = f.node_id
-	  WHERE  f.field_id = 8) AS auto
+	  WHERE  f.field_id = 1) AS auto
 ON auto.test_link_id = c.test_link_id
 SET    c.automated_status = auto.value;
 
@@ -45,5 +44,6 @@ JOIN
 on result.test_plan_id = tp.id
 set tp.version = result.version;
 
-END
-//
+
+END$$
+DELIMITER ;

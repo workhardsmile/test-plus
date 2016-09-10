@@ -12,7 +12,7 @@ class StatusController < ApplicationController
       CiMapping.find_all_by_ci_value(ci_value).each do |ci_mapping|
         unless ci_mapping.project.branches.index branch_name
           logger.error "Branch #{parameter} could not be found: #{ci_mapping.inspect}"
-          return
+        return
         end
         test_environment = ci_mapping.project.test_environments.find_by_name(env)
         if test_environment
@@ -37,31 +37,39 @@ class StatusController < ApplicationController
 
   def update
     # if request.remote_ip != '127.0.0.1'
-      # render :text => "Not allowed to call this interface from outside server."
+    # render :text => "Not allowed to call this interface from outside server."
     # else
-      protocol = params[:protocol]
-      what = protocol[:what]
-      test_round_id = protocol[:round_id]
-      logger.info "#{protocol}"
-      test_round = TestRound.find(test_round_id)
+    protocol = params[:protocol]
+    what = protocol[:what]
+    test_round_id = protocol[:round_id]
+    logger.info "#{protocol}"
+    test_round = TestRound.find(test_round_id)
 
-      automation_script_result = test_round.find_automation_script_result_by_script_name(protocol[:data]['script_name'])
-      #if automation_script_result and not automation_script_result.end?
-      if automation_script_result
-        case what
+    automation_script_result = test_round.find_automation_script_result_by_script_name(protocol[:data]['script_name'])
+    #if automation_script_result and not automation_script_result.end?
+    if automation_script_result
+      case what
 
-        when 'Script'
-          if automation_script_result.state == "running" or automation_script_result.state == "scheduling" or (automation_script_result.state == "stopping" and protocol[:data]['state'] and protocol[:data]['state'].downcase == "killed")
-            update_automation_script(test_round, protocol[:data])
+      when 'Script'
+        if automation_script_result.state == "running" or automation_script_result.state == "scheduling" or (automation_script_result.state == "stopping" and protocol[:data]['state'] and protocol[:data]['state'].downcase == "killed")
+          update_automation_script(test_round, protocol[:data])
+          if "#{AutomationScriptResult.count(:conditions=>{:state=>'done',:test_round_id=>test_round.id})}".strip == "1"
+            test_round.start_time = automation_script_result.start_time
+            test_round.save!
           end
-        when 'Case'
-          update_automation_case(test_round, protocol[:data])
+          if test_round.all_automation_script_results_finished?
+            test_round.end_running!
+          end
         end
+      when 'Case'
+        update_automation_case(test_round, protocol[:data])
       end
-      render :nothing => true
+    end
+    render :nothing => true
   end
 
   protected
+
   def update_automation_script(test_round, data)
     #    if test_round.state != "completed"
     state = data['state'].downcase
@@ -101,8 +109,8 @@ class StatusController < ApplicationController
       automation_case_result = automation_script_result.find_case_result_by_case_id(automation_case.id)
       automation_case_result.screen_shot = screen_shot_name unless (screen_shot_name.nil? or screen_shot_name.empty?)
       automation_case_result.server_log = data['server_log'] unless data['server_log'].nil?
-      automation_case_result.update!(data)
-      automation_case_result.save!
+    automation_case_result.update!(data)
+    automation_case_result.save!
     end
   end
 end

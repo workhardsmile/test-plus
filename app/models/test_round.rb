@@ -291,5 +291,11 @@ class TestRound < ActiveRecord::Base
     end
     result
   end
-
+  
+  def update_end_time
+    if self.start_time.blank?
+      self.start_time = Time.now
+    end
+    self.end_time = Time.now
+  end
 end

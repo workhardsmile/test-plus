@@ -11,7 +11,7 @@
     %span.search
       = f.text_field :creator_email_or_test_environment_name_or_test_object_or_test_suite_test_type_name_contains, {:id => 'search'}
       = f.submit '', {:class => 'btn', :id => 'searchsubmit'}
-
+      
 %table.zebra-striped
   %tr
     %th="NO."
@@ -52,6 +52,8 @@
         %td
           - if tr.state == "completed" && can?(:update, TestRound, {:project_id => project.id}) 
             %input.btn.primary.rerun_btn{:type => "button", :value => "Rerun", "rerun_failed" => "test_rounds/#{tr.id}/rerun_failed", "rerun_all" => "test_rounds/#{tr.id}/rerun", "test-round" => "#{tr.id}"}
+          - else
+            %input.btn.primary.stop_btn{:type => "button", :value => "Stop", "stop_all" => "test_rounds/#{tr.id}/stop_all", "test-round" => "#{tr.id}"}  
 = paginate test_rounds
 
 #rerun_confirmation.modal.fade{:style => "display: none; "}
@@ -63,6 +65,15 @@
   .modal-footer
     %a.btn.primary.confirm_rerun_failed{:href => "#"} Rerun Failed
     %a.btn.primary.confirm_rerun_all{:href => "#"} Rerun All
+    %a.btn.cancel_rerun{"data-dismiss" => "modal", :href => "#"} Cancel
+#stop_confirmation.modal.fade{:style => "display: none; "}
+  .modal-header
+    %h3 Stop all the tests?
+  .modal-body
+    #modal_text
+      This action will result in clearing all the results, are you sure with this?
+  .modal-footer
+    %a.btn.primary.confirm_stop_all{:href => "#"} Stop All
     %a.btn.cancel_rerun{"data-dismiss" => "modal", :href => "#"} Cancel
     
 
@@ -85,6 +96,23 @@
           $("#login_error").hide();
       }
     });
+    
+    $("input.stop_btn:not(:disabled)").click(function(){
+      var stop = $(this);
+      $('#stop_confirmation').css("display", "block");
+      
+      $('.cancel_rerun').live('click',function(e){
+        $('#stop_confirmation').css("display", "none");
+      });
+      
+      $('.confirm_stop_all').live('click',function(e){
+        $(stop).addClass("disabled");
+        $(stop).disabled = true;
+        $.ajax({url: $(stop).attr("stop_all")}).success(function(data) {
+          location.reload();
+        });
+      });
+    });        
 
     $("input.rerun_btn:not(:disabled)").click(function(){
       var rerun = $(this);

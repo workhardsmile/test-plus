@@ -6,6 +6,7 @@ TestPlusWebMain::Application.routes.draw do
   post 'automation_progresses/dump', :controller => "automation_progresses", :action => "dump_all_monitor_projects"
   get 'automation_progresses/:project_id', :controller => "automation_progresses", :action => "project_progress"
   get 'automation_progresses', :controller => "automation_progresses", :action => "index"
+  post "get_schedule_scripts", :controller => 'temp_schedule_scripts', :action => 'get_schedule_scripts'
 
   resources :offer_monitoring_records
 
@@ -68,6 +69,7 @@ TestPlusWebMain::Application.routes.draw do
       get "show_report", :controller => 'test_rounds', :action => 'show_report'
       get "rerun", :controller => 'test_rounds', :action => 'rerun'
       get "rerun_failed", :controller => 'test_rounds', :action => 'rerun_failed'
+      get "stop_all", :controller => 'test_rounds', :action => 'stop_all'
       post "save_to_testlink"
     end
     resources :test_suites

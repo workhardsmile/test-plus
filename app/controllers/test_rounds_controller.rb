@@ -1,10 +1,10 @@
 require 'csv'
+
 class TestRoundsController < InheritedResources::Base
   respond_to :js
   respond_to :csv
   belongs_to :project
   before_filter :authenticate_user!, :only => [:new, :crete]
-
   def config_notify_email
     @test_round = TestRound.find(params[:test_round_id])
     @notification_emails = @test_round.notification_emails
@@ -13,6 +13,7 @@ class TestRoundsController < InheritedResources::Base
       format.js { render :layout => false}
     end
   end
+
   def send_notify_email
     @test_round = TestRound.find(params[:test_round_id])
     @notification_emails = params[:notify_emails]
@@ -31,12 +32,31 @@ class TestRoundsController < InheritedResources::Base
       end
     end
   end
+
+  def stop_all
+    test_round = TestRound.find(params[:test_round_id])
+    test_round.automation_script_results.each do |asr|
+      if not asr.end?
+        asr.state = "killed"
+        asr.result = "warning"
+        asr.end_time = Time.now
+        asr.save
+        AutomationScriptResultsHelper.delete_assign_script(asr.id)
+      end
+    end
+    test_round.state = 'completed'
+    test_round.result = 'warning'
+    test_round.save
+    render :nothing => true
+  end
+
   def rerun_failed
     test_round = TestRound.find(params[:test_round_id])
     # rerun_automation_script_results(test_round, test_round.automation_script_results.where("result != 'pass' and triage_result ='N/A'"))
     rerun_automation_script_results(test_round, test_round.automation_script_results.where("result != 'pass' and error_type_id is null"))
     render :nothing => true
   end
+
   def rerun
     test_round = TestRound.find(params[:test_round_id])
     rerun_automation_script_results(test_round, test_round.automation_script_results)
@@ -66,10 +86,11 @@ class TestRoundsController < InheritedResources::Base
   def show_report
     @project ||= Project.find(params[:project_id])
     @test_round ||= TestRound.find(params[:test_round_id])
-    @triage_result_analysis = @test_round.triage_result_analysis    
+    @triage_result_analysis = @test_round.triage_result_analysis
   end
 
   protected
+
   def resource
     @project ||= Project.find(params[:project_id])
     @test_round ||= TestRound.find(params[:id])
@@ -89,21 +110,21 @@ class TestRoundsController < InheritedResources::Base
     existing_branch_scripts = ProjectBranchScript.where(:project_id => test_round.project_id, :branch_name => branch_name).map(&:automation_script_name)
 
     automation_script_results.each do |asr|
-      # conditions about rerun
-      # the status of automation script is 'completed', otherwise marked it as 'Not Ready'
-      # the script is in current branch, otherwise marked it as 'Not in Branch'
-      # if there is no slave_assignment, create a new one
-      # if there is existing slave assignment, reset it for rerun
+    # conditions about rerun
+    # the status of automation script is 'completed', otherwise marked it as 'Not Ready'
+    # the script is in current branch, otherwise marked it as 'Not in Branch'
+    # if there is no slave_assignment, create a new one
+    # if there is existing slave assignment, reset it for rerun
 
       if asr.automation_script.status =='Completed'
         if (branch_name != 'master') and existing_branch_scripts.index(asr.automation_script.name).nil?
-          asr.set_to_not_in_branch
+        asr.set_to_not_in_branch
         else
           asr.clear
           AutomationScriptResultRunner.rerun(asr.id)
         end
       else
-        asr.set_to_not_ready
+      asr.set_to_not_ready
       end
     end
   end

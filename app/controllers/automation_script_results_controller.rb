@@ -94,7 +94,9 @@ class AutomationScriptResultsController < InheritedResources::Base
     if not asr.end?
       asr.state = "killed"
       asr.result = "warning"
+      asr.end_time = Time.now
       asr.save
+      AutomationScriptResultsHelper.delete_assign_script(asr.id)
       #sa = asr.slave_assignments.last if asr
       #SlaveAssignmentsHelper.send_slave_assignment_to_list sa, "stop" if sa
     end

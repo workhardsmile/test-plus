@@ -31,6 +31,7 @@
             = image_tag("#{browser}.png", class: "ui-icon",title: "#{browser}")
         %td
           - slave.capabilities_hash[:drivers].each do |driver|
-            = image_tag("#{driver}.png", class: "ui-icon",title: "#{driver}")
+            - _img = "#{driver}"=="pyunit" ? "maven" : driver
+            = image_tag("#{_img}.png", class: "ui-icon",title: "#{driver}")
 
 = paginate slaves

@@ -208,7 +208,7 @@
       - else
         - @test_round.automation_script_results.each do |asr|
           %tr{:class => "#{asr.result.downcase} border"}
-            %td= link_to asr.name, "http://testplus.dev.istuary.com/test_rounds/#{@test_round.id}/automation_script_results/#{asr.id}"
+            %td= link_to asr.name, "#{TestPlus_CONFIG['root_url']}/test_rounds/#{@test_round.id}/automation_script_results/#{asr.id}"
             %td
               %span{:class => "#{asr.result.downcase}"}= asr.automation_script.owner.display_name
             %td
@@ -219,5 +219,5 @@
                 %span= "#{asr.error_type.name.upcase} - #{asr.triage_result}"
     %p
       = "Click "
-      = link_to "#{@test_round.project} #{@test_round}", "http://testplus.dev.istuary.com/projects/#{@test_round.project.id}/test_rounds/#{@test_round.id}"
+      = link_to "#{@test_round.project} #{@test_round}", "#{TestPlus_CONFIG['root_url']}/projects/#{@test_round.project.id}/test_rounds/#{@test_round.id}"
       = " for more information."

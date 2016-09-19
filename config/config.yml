@@ -1,5 +1,7 @@
 production:
-  logserver_url: http://192.168.28.210:8001
+  root_url: http://192.168.28.210
+  logserver_url: http://192.168.28.210:8001 
 
 development:
+  root_url: http://192.168.28.210
   logserver_url: http://192.168.28.210:8001

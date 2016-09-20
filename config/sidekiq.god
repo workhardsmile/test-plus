@@ -7,7 +7,7 @@ SIDEKIQ_ROOT = "/opt/update-testlink"
 
 God.watch do |w|
     w.name = "sidekiq-watcher"
-    w.log = "#{RAILS_ROOT}/log/god-SIDEKIQ.log"
+    w.log = "#{RAILS_ROOT}/log/god-sidekiq.log"
     w.interval = 30.seconds # default
     w.start = "cd #{SIDEKIQ_ROOT}&&bundle exec sidekiq"
     w.stop = "ps -ef|grep sidekiq|grep -v 'grep'|awk '{print $2}'|xargs kill -9"

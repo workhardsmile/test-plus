@@ -42,7 +42,7 @@ else
 	where BB.name=_project_name and CC.name=_platform and AA.state in ('scheduling','running') limit 1);
 end if;
 
-UPDATE slaves set ip_address=_ip, project_name=_project_name, status='busy', active=1 where name=_salvename;
+UPDATE slaves set ip_address=_ip, status='busy', active=1 where name=_salvename;
 
 CREATE TABLE IF NOT EXISTS `temp_schedule_scripts`(
   `id` int(11) NOT NULL AUTO_INCREMENT,

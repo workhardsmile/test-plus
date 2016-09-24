@@ -130,7 +130,7 @@ class TestRoundsController < InheritedResources::Base
   end
 
   def not_a_valid_email?(email)
-    (email =~ /\A([\S].?)+@(activenetwork|active)\.com\z/i).nil?
+    (email =~ /\A([\S].?)+@(.*)\.com\z/i).nil?
   end
 
 end

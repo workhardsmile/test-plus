@@ -67,7 +67,7 @@ TestPlusWebMain::Application.configure do
     openssl_verify_mode:'none',
     domain: '163.com',
     user_name: 'demo_db@163.com',
-    password: '$******$'
+    password: '163istuary'
   }
 
   # Send deprecation notices to registered listeners

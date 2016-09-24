@@ -29,7 +29,7 @@ God.watch do |w|
       d.server_auth = true
       d.server_domain='163.com'
       d.server_user = 'demo_db@163.com'
-      d.server_password = '$******$'
+      d.server_password = '163istuary'
     end
 
     God.contact(:email) do |c|

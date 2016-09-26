@@ -76,6 +76,7 @@ class AutomationScriptResultsController < InheritedResources::Base
     automation_script_result = AutomationScriptResult.find(automation_script_result_id)
     test_round = automation_script_result.test_round
     automation_script_result.clear
+    AutomationScriptResultsHelper.delete_assign_script(automation_script_result_id)
 
     if automation_script_result.is_in_current_branch?
       if automation_script_result.automation_script.status == 'Completed'

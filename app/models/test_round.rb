@@ -182,10 +182,11 @@ class TestRound < ActiveRecord::Base
   end
 
   def calculate_pass_rate!
-    if automation_case_count == 0
+    case_result_count = pass_count.to_i + failed_count.to_i + warning_count.to_i + not_run_count.to_i
+    if case_result_count == 0
       0.0
     else
-      self.pass_rate = (pass_count.to_f * 100)/ automation_case_count
+      self.pass_rate = (pass_count.to_f * 100)/ case_result_count
       self.pass_rate.round(2)
     end
   end

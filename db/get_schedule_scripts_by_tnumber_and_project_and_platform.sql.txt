@@ -31,12 +31,12 @@ CREATE PROCEDURE `testplus`.`get_schedule_scripts_by_tnumber_and_project_and_pla
 BEGIN
 DECLARE _test_round int(11);
 if _project_name = '*' then 
-  set _test_round=(select concat('(',group_concat(AA.id),')') from test_rounds AA 
+  set _test_round=(select group_concat(AA.id) from test_rounds AA 
     inner join projects BB on BB.id=AA.project_id
     inner join browsers CC on CC.id=AA.browser_id
     where CC.name=_platform and AA.state in ('scheduling','running'));	
 else
-  set _test_round=(select concat('(',group_concat(AA.id),')') from test_rounds AA 
+  set _test_round=(select group_concat(AA.id) from test_rounds AA 
 	inner join projects BB on BB.id=AA.project_id
 	inner join browsers CC on CC.id=AA.browser_id
 	where BB.name=_project_name and CC.name=_platform and AA.state in ('scheduling','running'));

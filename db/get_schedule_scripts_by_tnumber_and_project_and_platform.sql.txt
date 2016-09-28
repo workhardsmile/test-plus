@@ -31,12 +31,12 @@ CREATE PROCEDURE `testplus`.`get_schedule_scripts_by_tnumber_and_project_and_pla
 BEGIN
 DECLARE _test_round int(11);
 if _project_name = '*' then 
-  set _test_round=(select AA.id from test_rounds AA 
+  set _test_round=(select group_concat(AA.id) from test_rounds AA 
     inner join projects BB on BB.id=AA.project_id
     inner join browsers CC on CC.id=AA.browser_id
     where CC.name=_platform and AA.state in ('scheduling','running') limit 1);	
 else
-  set _test_round=(select AA.id from test_rounds AA 
+  set _test_round=(select group_concat(AA.id) from test_rounds AA 
 	inner join projects BB on BB.id=AA.project_id
 	inner join browsers CC on CC.id=AA.browser_id
 	where BB.name=_project_name and CC.name=_platform and AA.state in ('scheduling','running') limit 1);
@@ -84,7 +84,7 @@ INSERT INTO `temp_schedule_scripts`(
   inner join automation_script_results D on C.id=D.automation_script_id
   inner join test_rounds E on E.id = D.test_round_id
   inner join test_environments F on F.id = E.test_environment_id
-  where D.state='scheduling' and E.id=_test_round limit _tnumber);
+  where D.state='scheduling' and find_in_set(E.id,_test_round) limit _tnumber);
   
 -- UPDATE automation_script_results set state='done' where id in(select script_result_id from `temp_schedule_scripts` where `ip`=_ip);
 -- UPDATE slave_assignments set status='killed' where automation_script_result_id in(select script_result_id from `temp_schedule_scripts` where `ip`=_ip); 

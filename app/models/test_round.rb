@@ -108,7 +108,7 @@ class TestRound < ActiveRecord::Base
   end
 
   def all_automation_script_results_finished?
-    automation_script_results.all?{|asr| asr.end?}
+    self.automation_script_results.all?{|asr| asr.end?}
   end
 
   def update_start_time

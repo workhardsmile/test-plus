@@ -127,6 +127,7 @@ class TestRound < ActiveRecord::Base
 
   def end_running!
     #if running?
+    update_start_time
     self.end_time = Time.now
     calculate_duration!
     calculate_pass_rate!

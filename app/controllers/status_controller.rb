@@ -72,14 +72,14 @@ class StatusController < ApplicationController
       TargetService.create_services_for_automation_script_result(data['service'], automation_script_result)
     end
     automation_script_result.update_state!(state)
-    done_count = AutomationScriptResult.count(:conditions=>{:state=>'done',:test_round_id=>test_round.id}) #test_round.find_automation_script_result_by_state('done').length.to_i
-    if done_count == 1
-      test_round.start_time = automation_script_result.start_time
-      test_round.save!
-    end
-    if test_round.all_automation_script_results_finished? or done_count == test_round.automation_script_results.length
-      test_round.end_running!
-    end
+    # done_count = AutomationScriptResult.count(:conditions=>{:state=>'done',:test_round_id=>test_round.id}) #test_round.find_automation_script_result_by_state('done').length.to_i
+    # if done_count == 1
+      # test_round.start_time = automation_script_result.start_time
+      # test_round.save!
+    # end
+    # if test_round.all_automation_script_results_finished? or done_count == test_round.automation_script_results.length
+      # test_round.end_running!
+    # end
     test_round.update_state!    
     if test_round.end?
       # check if any counter of automation script result is lower than test round's

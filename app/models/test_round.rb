@@ -126,14 +126,12 @@ class TestRound < ActiveRecord::Base
   end
 
   def end_running!
-    if running?
-      calculate_result!
-      self.end_time = Time.now
-      calculate_duration!
-      calculate_pass_rate!
-      calculate_result!
-      self.exported_status ='N'
-    end
+    #if running?
+    self.end_time = Time.now
+    calculate_duration!
+    calculate_pass_rate!
+    calculate_result!
+    self.exported_status ='N' if running?
   end
 
   def scheduling?
@@ -200,7 +198,7 @@ class TestRound < ActiveRecord::Base
       start_running!
       service_triggr_record.update_attributes(status: 'running') if service_triggr_record      
     end
-    save
+    self.save!
   end
 
   def send_triage_mail?

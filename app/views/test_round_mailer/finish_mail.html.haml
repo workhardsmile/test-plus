@@ -198,7 +198,7 @@
               %h5.pass= @test_round.pass_rate.nil? ? 'N/A' : number_to_percentage(@test_round.pass_rate, :precision => 2)
     %h3 
       Automation Script Results
-      %small= "#{@test_round.automation_script_results.count} in total"
+      %small= "(#{@test_round.automation_script_results.count} in total)"
     %table
       %tr.border
         %th Automation Script Name

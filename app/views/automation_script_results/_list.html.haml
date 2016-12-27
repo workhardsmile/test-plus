@@ -1,5 +1,7 @@
 .page-header.detail
-  %h3 Automation Script Results
+  %h3 
+    Automation Script Results
+    %small= "#{automation_script_results.count} in total"
   = form_for search, :url => test_round_automation_script_results_path(test_round), :remote => true do |f|
     %span.search
       = f.text_field :automation_script_name_or_state_or_automation_script_version_or_triage_result_or_automation_script_owner_email_contains, {:id => 'search'}

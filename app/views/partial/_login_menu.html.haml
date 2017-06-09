@@ -2,9 +2,9 @@
   -if user_signed_in?
     %li.menu
       %span= "Login as #{current_user.display_name} | "
-    - if $authenticate_method == :database_authenticatable
-      %li.menu
-        = link_to 'Reset password', edit_password_url(current_user, :reset_password_token => current_user.reset_password_token)
+      -# - if $authenticate_method == :database_authenticatable
+      -# %li.menu
+      -# = link_to 'Reset password', edit_password_url(current_user, :reset_password_token => current_user.reset_password_token)
     %li.menu
       = link_to 'Logout', destroy_user_session_path
   -else

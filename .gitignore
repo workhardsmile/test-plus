@@ -1,6 +1,7 @@
-/log/*
+/log/
 /Gemfile.lock
 /.project
 /*.pyc
-/tmp/*
-/public/assets/*
+/tmp
+/public/assets
+/.idea
